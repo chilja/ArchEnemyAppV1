@@ -1,0 +1,29 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="220dp"
+	android:layout_height="44dp"
+	android:layout_margin="8dp"
+	android:layout_gravity="bottom"
+	android:gravity="bottom"
+	android:orientation="horizontal"
+	android:background="@drawable/twitter_button"
+	android:layout_alignParentBottom="true"
+	android:layout_centerHorizontal="true">
+
+	<ImageView
+		android:src="@drawable/twitter"
+		android:layout_width="20dp"
+		android:layout_height="20dp"
+		android:layout_gravity="center_vertical|left"/>
+ 	    
+	<Button
+  		android:id="@+id/twitterButton"
+  		android:textStyle="bold"
+		android:textSize="16sp"
+		android:textColor="@android:color/white"
+		android:layout_width="match_parent"
+     	android:layout_height="match_parent"
+		android:layout_gravity="center"  
+		android:gravity="center"
+		android:background="@android:color/transparent"/>
+	
+</LinearLayout>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_cat_band_members">Band members</string> 
+    <string name="pref_cat_providers">Provider</string>
+   
+    <string name="pref_michael_amott_title">Michael Amott</string>
+    <string name="pref_alyssa_white_gluz_title">Alyssa White-Gluz</string>
+        
+    <string name="pref_member_summary_on">Following</string>
+    <string name="pref_member_summary_off">Not following</string>  	
+</resources>

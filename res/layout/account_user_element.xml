@@ -1,0 +1,25 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+   android:orientation="vertical"
+   android:layout_centerInParent="true"
+   android:layout_width="match_parent"
+   android:layout_height="wrap_content"
+   android:layout_margin="10dp"
+   android:gravity="center" >
+   
+	<TextView
+		android:id="@+id/subTextView"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:gravity="center"
+		android:textSize="14sp"
+		android:text="@string/fb_subtext_out" />
+	
+	<TextView
+	    android:id="@+id/userNameView"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:gravity="center"
+	    android:textSize="18sp" 
+	    android:textStyle="bold"/>
+	
+</LinearLayout>

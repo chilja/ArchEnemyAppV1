@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="facebook">Facebook</string>
+    <string name="action_fb_share">Share on Facebook</string>
+	
+	<string name="error_dialog_title">Error</string>
+	<string name="error_dialog_button_text">OK</string>
+	<string name="error_dialog_default_text">No response from server.</string>
+	<string name="error_authentication_retry">An error occurred that requires your attention. %1$s</string>
+	<string name="error_authentication_reopen">An error occurred, please re-login.</string>
+	<string name="error_permission">Please allow us to post on your behalf.</string>
+	<string name="error_server">The server is busy, please retry later.</string>
+	<string name="error_bad_request">An error occurred, please contact the developer with the following message: %1$s</string>
+	<string name="error_unknown">An unknown error occurred, please contact the developer with the following message: %1$s</string>
+	
+	<string name="fb_share_name">SEE ARCH ENEMY LIVE ON STAGE!</string>
+	<string name="fb_share_caption">BUY TICKETS NOW!</string>
+	<string name="fb_share_button">Share</string>
+	<string name="fb_share_description1">On</string>
+	<string name="fb_share_description2">at</string>
+	<string name="fb_share_description3">-</string>
+	<string name="fb_share_description4">-</string>
+	<string name="progress_dialog_text">Sharing...</string>
+	<string name="result_dialog_button_text">Story has been shared.</string>
+	
+	<string name="fb_subtext_in">You are logged in as</string>
+    <string name="fb_subtext_out">You are not logged in.</string>
+    
+    <string name="pref_facebook_title">Facebook</string>
+    <string name="pref_facebook_summary_off">Not receiving postings from the official accounts</string>
+    <string name="pref_facebook_summary_on">Receiving postings from the official accounts</string>
+    
+    <string name="facebook_login_header">Log in with Facebook to receive postings from the official accounts</string>
+    <string name="facebook_loading">Loading from Facebook...</string>
+	
+</resources>

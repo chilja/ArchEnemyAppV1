@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    android:background="@drawable/box" >
+	    
+    <ImageView 
+        android:id="@+id/imageView"	 
+        android:layout_width="120dp"
+        android:layout_height="180dp"
+	    android:layout_alignParentTop="true"	
+	    android:layout_alignParentLeft="true"
+	    android:layout_marginLeft="5dp"
+	    android:layout_marginTop="5dp"
+	    android:background="@android:color/black"/>	   
+	        
+	<TextView
+        android:id="@+id/nameView"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/imageView"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+	<TextView
+        android:id="@+id/descriptionView"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/imageView"
+        android:layout_below="@id/nameView"
+        android:textSize="16sp" />
+				
+	<include layout="@layout/facebook_share_button"/>		
+
+</RelativeLayout>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="red" >#800000</color>
+    <color name="grey">#242020</color>
+    <color name="beige">#ada075</color>
+    <color name="lightgrey">#a19595</color>
+    <color name="com_facebook_background">#f5f5f7</color>
+    <color name="com_facebook_text">#bcbdc2</color>
+    <color name="com_facebook_blue">#3B5998</color>
+    <color name="twitter_blue">#55acee</color>
+    
+</resources>

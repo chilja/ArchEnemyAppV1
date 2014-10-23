@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- the theme applied to the application or activity -->
+    <style name="CustomActionBarTheme"
+           parent="@style/Theme.AppCompat">
+        <item name="android:actionBarStyle">@style/ActivityActionBar</item>
+        <item name="android:actionModeStyle">@style/ActivityActionMode</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:background">@android:color/transparent</item> 
+    </style>
+
+    <!-- ActionBar styles -->
+    <style name="DrawerActionBar"
+           parent="@style/Widget.AppCompat.ActionBar">
+    </style>
+    
+    <style name="ActivityActionBar"
+           parent="@style/Widget.AppCompat.ActionBar">
+          <item name="android:titleTextStyle">@style/ActivityActionBarTitleText</item>
+          <item name="android:gestureColor">@color/red</item>
+          <item name="android:background">@color/grey</item>
+    </style>
+    
+    <style name="ActivityActionMode"
+           parent="@style/Widget.AppCompat.ActionMode">
+          <item name="android:titleTextStyle">@style/ActivityActionBarTitleText</item>   
+    </style>
+    
+     <!-- ActionBar title text -->
+    <style name="ActivityActionBarTitleText"
+           parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+</resources>

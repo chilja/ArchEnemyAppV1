@@ -1,0 +1,44 @@
+<RelativeLayout 
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:padding="5dp">
+	 	
+	<TextView
+	    android:id="@+id/messageView"
+	    style="@style/NewsContent"
+		android:paddingTop ="5dp"
+		android:paddingLeft="5dp"
+		android:paddingBottom="5dp">
+	</TextView>	
+		
+    <ImageView 
+        android:id="@+id/providerIconView"
+        style="@style/Icon"
+        android:src="@drawable/twitter"
+        android:layout_below="@+id/messageView"/>
+	
+	<TextView
+		android:id="@+id/userView"
+	    style="@style/SmallText.Lightgrey"
+		android:paddingLeft="5dp"
+   		android:layout_below="@+id/messageView"
+   		android:layout_toRightOf="@+id/providerIconView">
+	</TextView>
+	
+	<ImageView 
+        android:id="@+id/iconView"
+        style="@style/ArchEnemyIcon"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_below="@+id/messageView"
+        android:layout_toRightOf="@+id/userView"/>
+	
+	<TextView
+		android:id="@+id/dateView"
+		style="@style/SmallText.Lightgrey"
+   		android:layout_below="@+id/messageView"
+    	android:layout_toRightOf="@+id/iconView">
+	</TextView>
+	
+</RelativeLayout>

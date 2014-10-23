@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"   
+    android:layout_gravity="center_vertical"
+    android:padding="5dp" >
+    
+    <LinearLayout
+         android:orientation="vertical"
+         android:gravity="left"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content" 
+         android:layout_gravity="left">
+
+	   <TextView
+	       	android:id="@+id/locationView" 
+	       	style="@style/MediumText"/>
+	   
+        <TextView
+			android:id="@+id/countryView"
+           	style="@style/SmallText.Lightgrey"/>
+		   
+	</LinearLayout>
+  
+	<LinearLayout
+        android:orientation="vertical"
+        android:gravity="right"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" 
+        android:layout_gravity="right">
+            
+        <TextView
+           android:id="@+id/dateView" 
+           style="@style/MediumText"
+           android:layout_gravity="right"/>
+        
+        
+	   <TextView
+	       android:id="@+id/venueView"
+	       	style="@style/SmallText.Lightgrey"
+           	android:layout_gravity="right"
+            />
+
+   </LinearLayout>
+	   
+</LinearLayout>

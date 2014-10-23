@@ -1,0 +1,101 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="AppBaseTheme" parent="Theme.AppCompat.Light">
+    </style>
+
+    <style name="AppTheme" parent="AppBaseTheme">
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    </style>
+
+    <style name="Image">
+        <item name="android:layout_width">150dp</item>
+        <item name="android:layout_height">150dp</item>
+        <item name="android:gravity">center</item>
+    </style>
+    
+    <style name="Icon">
+        <item name="android:layout_width">16dp</item>
+        <item name="android:layout_height">16dp</item>
+        <item name="android:gravity">right</item>
+    </style>
+    
+    <style name="ArchEnemyIcon">
+        <item name="android:layout_width">15dp</item>
+        <item name="android:layout_height">15dp</item>
+        <item name="android:layout_gravity">bottom</item>
+        <item name="android:gravity">bottom</item>
+        <item name="android:src">@drawable/ic_menu</item>
+    </style>
+    
+    <style name="List">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_margin">10dp</item>
+        <item name="android:divider">@color/red</item>
+        <item name="android:dividerHeight">1sp</item>
+        <item name="android:choiceMode">singleChoice</item>
+    </style>   
+    
+    <style name="Text" >        
+    	<item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+    
+    <style name="Text.Lightgrey" >        
+        <item name="android:textColor">@color/lightgrey</item>
+    </style>
+    
+    <style name="MediumText" parent="Text">        
+        <item name="android:textSize">16sp</item>
+    </style>
+    
+    <style name="SmallText" parent="Text">        
+        <item name="android:textSize">14sp</item>
+    </style>
+    
+    <style name="SmallText.Lightgrey">
+        <item name="android:textColor">@color/lightgrey</item>
+    </style>
+    
+    <style name="NewsContent">        
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+    
+    <style name="User">        
+    	<item name="android:layout_width">139dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/lightgrey</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:paddingLeft">4dp</item>
+        <item name="android:paddingRight">4dp</item>
+    </style>
+    
+    <style name="Timestamp">        
+    	<item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/lightgrey</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:paddingLeft">4dp</item>
+        <item name="android:layout_alignParentRight">true</item>
+    	<item name="android:gravity">right</item>
+    </style>
+    
+    <style name="TitleStrip">        
+    	<item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">4dp</item>
+    </style>
+    
+</resources>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <string name="tour_image_url">http://www.archenemy.net/2014/tourposters/108.jpg</string>
+
+	<string-array name="tourData">	    
+	    <item>11.11.2014;House Of Blues - Sunset Strip;West Hollywood, CA;USA;http://soundrink.com/front/tour/arch-enemy</item>
+	    <item>12.11.2014;House Of Blues;Anaheim, CA;USA;http://soundrink.com/front/tour/arch-enemy</item>
+	    <item>14.11.2014;The Marquee;Tempe, AZ;USA; http://soundrink.com/front/tour/arch-enemy</item>	    
+	    <item>15.11.2014;Sunshine Theater;Albuquerque, NM;USA; http://soundrink.com/front/tour/arch-enemy</item>
+	    <item>16.11.2014;Ogden Theatre;Denver, CO;USA; http://soundrink.com/front/tour/arch-enemy</item>
+	    <item>18.11.2014;Mill City Nights;Minneapolis, MN;USA; http://soundrink.com/front/tour/arch-enemy</item>
+	    <item>19.11.2014;Mojoes;Joliet, IL;USA; http://soundrink.com/front/tour/arch-enemy</item>
+	    <item>20.11.2014;The Intersection;Grand Rapids, MI;USA; http://soundrink.com/front/tour/arch-enemy</item>
+	    <item>21.11.2014;The Majestic Theatre;Detroit, MI;USA; http://soundrink.com/front/tour/arch-enemy</item>
+	    <item>22.11.2014;Bogart\'s;Cincinnati, OH;USA;http://soundrink.com/front/tour/arch-enemy</item>
+	    <item>23.11.2014;House Of Blues;Cleveland, OH;USA; http://soundrink.com/front/tour/arch-enemy</item>
+	    <item>10.11.2014;Regency Center;San Francisco, CA;USA; http://soundrink.com/front/tour/arch-enemy</item>
+	</string-array>
+	
+	
+</resources>

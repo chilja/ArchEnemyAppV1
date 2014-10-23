@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:net.archenemy.archenemyapp="http://schemas.android.com/apk/res-auto" >
+    
+    <item android:id="@+id/actionRefreshTwitter"
+          android:title="@string/action_twitter_refresh"
+          android:icon="@drawable/ic_action_refresh"
+          net.archenemy.archenemyapp:showAsAction="ifRoom"/>
+    
+    <item android:id="@+id/actionAccounts"
+          android:title="@string/action_accounts"/>
+        
+    <item android:id="@+id/actionSettings"
+          android:title="@string/action_settings"/>   
+     
+</menu>
