@@ -25,10 +25,12 @@ public class Utility {
 	}
 	
 	public static void startBrowserActivity(Activity activity, String uri) {
-		uri = uri.trim();
-		Intent intent = new Intent(Intent.ACTION_VIEW);
-    	intent.setData(Uri.parse(uri));
-    	activity.startActivity(intent);
+		if (uri != null && uri != "") {
+			uri = uri.trim();
+			Intent intent = new Intent(Intent.ACTION_VIEW);
+	    	intent.setData(Uri.parse(uri));
+	    	activity.startActivity(intent);
+		}
 	}
 
 }

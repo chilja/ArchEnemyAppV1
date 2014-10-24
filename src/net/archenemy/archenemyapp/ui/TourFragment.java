@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.archenemy.archenemyapp.R;
+import net.archenemy.archenemyapp.data.Show;
 import net.archenemy.archenemyapp.data.Utility;
-import net.archenemy.archenemyapp.logic.Show;
 
 import com.facebook.widget.FacebookDialog;
 import com.facebook.widget.FacebookDialog.PendingCall;

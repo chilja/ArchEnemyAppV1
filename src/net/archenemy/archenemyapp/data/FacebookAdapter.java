@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Locale;
 
 import net.archenemy.archenemyapp.R;
-import net.archenemy.archenemyapp.logic.BandMember;
 import net.archenemy.archenemyapp.ui.FacebookShareElement;
 import net.archenemy.archenemyapp.ui.FeedListElement;
 
@@ -61,6 +60,7 @@ public class FacebookAdapter {
 	private static final String TAG_PICTURE = "picture";
 	private static final String TAG_LINK = "link";
 	private static final String TAG_DATE = "created_time";
+	private static final String TAG_FROM = "from";
 	
 	private Activity mActivity;
 	private DataAdapter mDataAdapter;
@@ -202,7 +202,7 @@ public class FacebookAdapter {
 	                                           .getGraphObject()
 	                                           .getInnerJSONObject();
 	                
-	                String successMessage = mActivity.getString(R.string.result_dialog_button_text);	               
+	                String successMessage = mActivity.getString(R.string.fb_result_dialog_button_text);	               
 	                FacebookRequestError error = response.getError();
 	                
 	                //Show result toast
@@ -228,7 +228,7 @@ public class FacebookAdapter {
 	        //Show progress dialog
 	        mProgressDialog = ProgressDialog.show(mActivity, "", 
 	                mActivity.getResources()
-	                .getString(R.string.progress_dialog_text), true);
+	                .getString(R.string.fb_progress_dialog_text), true);
 			Log.i(TAG, "Publish story");
 	        requestTask.execute();	
 	    }
@@ -259,7 +259,7 @@ public class FacebookAdapter {
 
 	    if (error == null) {
 	        // There was no response from the server.
-	        dialogBody = mActivity.getString(R.string.error_dialog_default_text);
+	        dialogBody = mActivity.getString(R.string.fb_error_dialog_default_text);
 	    } else {
 	        switch (error.getCategory()) {
 	            case AUTHENTICATION_RETRY:
@@ -267,7 +267,7 @@ public class FacebookAdapter {
 	                // message id, and retry the operation later.
 	                String userAction = (error.shouldNotifyUser()) ? "" :
 	                	mActivity.getString(error.getUserActionMessageId());
-	                dialogBody = mActivity.getString(R.string.error_authentication_retry, 
+	                dialogBody = mActivity.getString(R.string.fb_error_authentication_retry, 
 	                                       userAction);
 	                listener = new DialogInterface.OnClickListener() {
 	                    @Override
@@ -284,7 +284,7 @@ public class FacebookAdapter {
 	            case AUTHENTICATION_REOPEN_SESSION:
 	                // Close the session and reopen it.
 	                dialogBody = 
-	                		mActivity.getString(R.string.error_authentication_reopen);
+	                		mActivity.getString(R.string.fb_error_authentication_reopen);
 	                listener = new DialogInterface.OnClickListener() {
 	                    @Override
 	                    public void onClick(DialogInterface dialogInterface, 
@@ -299,7 +299,7 @@ public class FacebookAdapter {
 
 	            case PERMISSION:
 	                // A permissions-related error
-	                dialogBody = mActivity.getString(R.string.error_permission);
+	                dialogBody = mActivity.getString(R.string.fb_error_permission);
 	                listener = new DialogInterface.OnClickListener() {
 	                    @Override
 	                    public void onClick(DialogInterface dialogInterface, 
@@ -316,12 +316,12 @@ public class FacebookAdapter {
 	            case THROTTLING:
 	                // This is usually temporary, don't clear the fields, and
 	                // ask the user to try again.
-	                dialogBody = mActivity.getString(R.string.error_server);
+	                dialogBody = mActivity.getString(R.string.fb_error_server);
 	                break;
 
 	            case BAD_REQUEST:
 	                // This is likely a coding error, ask the user to file a bug.
-	                dialogBody = mActivity.getString(R.string.error_bad_request, 
+	                dialogBody = mActivity.getString(R.string.fb_error_bad_request, 
 	                                       error.getErrorMessage());
 	                break;
 
@@ -331,7 +331,7 @@ public class FacebookAdapter {
 	                // An unknown issue occurred, this could be a code error, or
 	                // a server side issue, log the issue, and either ask the
 	                // user to retry, or file a bug.
-	                dialogBody = mActivity.getString(R.string.error_unknown, 
+	                dialogBody = mActivity.getString(R.string.fb_error_unknown, 
 	                                       error.getErrorMessage());
 	                break;
 	        }
@@ -340,8 +340,8 @@ public class FacebookAdapter {
 	    // Show the error and pass in the listener so action
 	    // can be taken, if necessary.
 	    new AlertDialog.Builder(mActivity)
-	            .setPositiveButton(R.string.error_dialog_button_text, listener)
-	            .setTitle(R.string.error_dialog_title)
+	            .setPositiveButton(R.string.fb_error_dialog_button_text, listener)
+	            .setTitle(R.string.fb_error_dialog_title)
 	            .setMessage(dialogBody)
 	            .show();
 	}
@@ -355,28 +355,31 @@ public class FacebookAdapter {
 	}
 
 	private ArrayList<FeedListElement> parseJson (JSONObject jsonObj){
+		
 		ArrayList<FeedListElement> feedElements = new ArrayList<FeedListElement>();
 		JSONArray posts = null;
-		Log.e(TAG, "Parse response...");
+		Log.i(TAG, "Parse response...");
 		if (jsonObj != null) {    		                    
 	        try {
 				posts = jsonObj.getJSONArray(TAG_DATA);					
 				for (int i = 0; i < posts.length(); i++) {
 					try {
+						
 						JSONObject object = posts.getJSONObject(i);
 	             
 						String date = object.getString(TAG_DATE);
 						String message = object.getString(TAG_MESSAGE);
 						String picture = object.getString(TAG_PICTURE);
 						String link = object.getString(TAG_LINK);
-						String id = object.getString(TAG_ID);
-						String name = object.getString(TAG_NAME);
+						JSONObject fromObj = object.getJSONObject(TAG_FROM);
+						String name = fromObj.getString(TAG_NAME);
+						String id = fromObj.getString(TAG_ID);
 	            
 						FeedListElement element = 
 								new FeedListElement.FacebookElement(mActivity,name, id, message, date, picture, link);
 						feedElements.add(element);
 					} catch (JSONException e) {
-						e.printStackTrace();
+						//ignore objects with missing tags
 					}
 				}
 	        } catch (JSONException e1) {

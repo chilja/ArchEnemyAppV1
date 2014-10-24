@@ -1,6 +1,7 @@
-package net.archenemy.archenemyapp.data;
+package net.archenemy.archenemyapp.ui;
 
-import net.archenemy.archenemyapp.ui.FacebookAccount;
+import net.archenemy.archenemyapp.data.FacebookAdapter;
+import net.archenemy.archenemyapp.data.Utility;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;

@@ -3,12 +3,11 @@ package net.archenemy.archenemyapp.ui;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import net.archenemy.archenemyapp.R;
+import net.archenemy.archenemyapp.data.BandMember;
 import net.archenemy.archenemyapp.data.DataAdapter;
-import net.archenemy.archenemyapp.data.FacebookActivity;
 import net.archenemy.archenemyapp.data.FacebookAdapter;
 import net.archenemy.archenemyapp.data.TwitterAdapter;
 import net.archenemy.archenemyapp.data.Utility;
-import net.archenemy.archenemyapp.logic.BandMember;
 import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
@@ -53,7 +52,7 @@ public class MainActivity
 	private static final int FACEBOOK = 0;
 	private static final int TWITTER = 1;
 	private static final int TOUR = 2;
-	private int mSelectedMenuItem = TOUR;// initial selection
+	private static int mSelectedMenuItem = TOUR;// initial selection
 	
 	//fragments
 	private FacebookFragment mFacebookFragment;
@@ -70,11 +69,11 @@ public class MainActivity
 	
 	//Twitter
 	private TwitterAdapter mTwitterAdapter;
-	private boolean mTwitterIsRefreshed = false;
+	private static boolean mTwitterIsRefreshed = false;
 	
 	//Facebook
 	private FacebookAdapter mFacebookAdapter;		
-	private boolean mFacebookIsRefreshed = false;
+	private static boolean mFacebookIsRefreshed = false;
 	
 	//Facebook Callback
 	protected void onSessionStateChange(final Session session, SessionState state, Exception exception) {
@@ -90,6 +89,7 @@ public class MainActivity
 	//Facebook Callback
 	@Override
 	public void onLogin() {
+		//redirection from facebook
 		if (getVisibleFragmentIndex() == FACEBOOK) {
 			if (mPendingLogin) {
 				mPendingLogin = false;
@@ -126,6 +126,8 @@ public class MainActivity
 	    	mTwitterLoginFragment = (TwitterLoginFragment) getSupportFragmentManager().findFragmentByTag(TwitterLoginFragment.TAG);
 		    mFacebookLoginFragment = (FacebookLoginFragment) getSupportFragmentManager().findFragmentByTag(FacebookLoginFragment.TAG);
 	    	mTourFragment = (TourFragment) getSupportFragmentManager().findFragmentByTag(TourFragment.TAG);
+	    	
+	    	mFacebookIsRefreshed = savedInstanceState.getBoolean(FACEBOOK_IS_REFRESHED, false);
 	    } 
 	    
 	    if (mTwitterFragment == null)
@@ -154,7 +156,6 @@ public class MainActivity
 	    } else {
 	    	if (savedInstanceState != null) {	
 		    	mTwitterIsRefreshed = savedInstanceState.getBoolean(TWITTER_IS_REFRESHED, false);
-		    	mFacebookIsRefreshed = savedInstanceState.getBoolean(FACEBOOK_IS_REFRESHED, false);
 		    	restoreFragment(savedInstanceState);					
 		    } else {
 		    	showFragment(mSelectedMenuItem, false);
@@ -266,14 +267,14 @@ public class MainActivity
 	//Twitter Callback
     public void onFeedRequestCompleted() { 
 		mTwitterFragment.refresh();
-	    Log.i(TAG, "Received twitter feeds");	
+	    Log.i(TAG, "Received twitter feed");	
 	}
 	
 	//Facebook Callback
 	@Override
 	public void onFeedRequestCompleted(BandMember member) {
 		mFacebookFragment.refresh();
-		Log.i(TAG, "Received facebook feeds");
+		Log.i(TAG, "Received facebook feed");
 	}
 
 	//Twitter Callback
@@ -330,13 +331,14 @@ public class MainActivity
 		FragmentTransaction transaction = mFragmentManager.beginTransaction();
 		transaction.replace(R.id.fragmentContainer, fragment, fragment.getTAG());
 		transaction.show(fragment);
+		
+		clearBackStack();
 
       //back navigation
     	if (addToBackStack) {
     		transaction.addToBackStack(null);
-    	} else {
-    		clearBackStack();
-    	}
+    	} 
+    	
     	transaction.commit();
     	
     	//set action bar title

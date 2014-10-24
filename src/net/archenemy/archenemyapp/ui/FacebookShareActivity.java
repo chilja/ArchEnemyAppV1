@@ -5,7 +5,6 @@ import java.io.Serializable;
 import net.archenemy.archenemyapp.R;
 import net.archenemy.archenemyapp.R.id;
 import net.archenemy.archenemyapp.R.layout;
-import net.archenemy.archenemyapp.data.FacebookActivity;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;

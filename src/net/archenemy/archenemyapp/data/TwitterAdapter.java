@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import net.archenemy.archenemyapp.logic.BandMember;
 import net.archenemy.archenemyapp.ui.FeedListElement;
 import android.app.Activity;
 import android.content.SharedPreferences;

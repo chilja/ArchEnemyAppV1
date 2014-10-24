@@ -59,7 +59,7 @@ public abstract class FacebookShareElement implements Serializable {
 	
 		private static final long serialVersionUID = 1L;
 		private static final String SHOW_KEY = "show";
-		private transient ArrayList<net.archenemy.archenemyapp.logic.Show> mShowList;
+		private transient ArrayList<net.archenemy.archenemyapp.data.Show> mShowList;
 		private int mSelectedShowIndex;
 		
 		public Show(int requestCode, FacebookShareActivity activity, int showIndex) {
@@ -73,7 +73,7 @@ public abstract class FacebookShareElement implements Serializable {
 		    setSelectedShow(showIndex, false);	    
 		}
 		
-		protected net.archenemy.archenemyapp.logic.Show getShow(){
+		protected net.archenemy.archenemyapp.data.Show getShow(){
 			return mShowList.get(mSelectedShowIndex);
 		}
 		
@@ -96,7 +96,7 @@ public abstract class FacebookShareElement implements Serializable {
 	    
 	    @Override
 		public Bundle getPostingParameters() {
-	    	net.archenemy.archenemyapp.logic.Show show = getShow();
+	    	net.archenemy.archenemyapp.data.Show show = getShow();
 	        Bundle postParams = new Bundle();
 	        postParams.putString("name", mActivity.getResources().getString(R.string.fb_share_name));
 	        postParams.putString("caption", mActivity.getResources().getString(R.string.fb_share_caption));

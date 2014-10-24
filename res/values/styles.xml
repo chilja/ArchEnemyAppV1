@@ -64,6 +64,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">@android:color/white</item>
+        <item name="android:maxLines">25</item>
     </style>
     
     <style name="User">        
@@ -95,7 +96,7 @@
         <item name="android:singleLine">true</item>
         <item name="android:textStyle">bold</item>
         <item name="android:paddingTop">0dp</item>
-        <item name="android:paddingBottom">4dp</item>
+        <item name="android:paddingBottom">8dp</item>
     </style>
     
 </resources>

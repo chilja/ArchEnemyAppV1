@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.archenemy.archenemyapp.R;
+import net.archenemy.archenemyapp.data.BandMember;
 import net.archenemy.archenemyapp.data.DataAdapter;
 import net.archenemy.archenemyapp.data.TwitterAdapter;
 import net.archenemy.archenemyapp.data.Utility;
-import net.archenemy.archenemyapp.logic.BandMember;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;

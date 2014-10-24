@@ -1,9 +1,8 @@
-package net.archenemy.archenemyapp.logic;
+package net.archenemy.archenemyapp.data;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
-import net.archenemy.archenemyapp.data.DataAdapter;
 import net.archenemy.archenemyapp.ui.FeedListElement;
 import android.app.Activity;
 import android.content.SharedPreferences;

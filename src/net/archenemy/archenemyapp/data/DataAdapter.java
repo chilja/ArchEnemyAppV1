@@ -11,8 +11,6 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.TreeMap;
 import net.archenemy.archenemyapp.R;
-import net.archenemy.archenemyapp.logic.BandMember;
-import net.archenemy.archenemyapp.logic.Show;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
