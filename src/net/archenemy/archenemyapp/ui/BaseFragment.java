@@ -1,10 +1,7 @@
 package net.archenemy.archenemyapp.ui;
 
 import net.archenemy.archenemyapp.R;
-import net.archenemy.archenemyapp.R.string;
 import net.archenemy.archenemyapp.data.DataAdapter;
-import android.app.Activity;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
@@ -12,7 +9,7 @@ import android.support.v7.app.ActionBarActivity;
 
 public abstract class BaseFragment extends Fragment {
 	
-	protected int mTitle = R.string.app_name;
+	protected int mTitle = R.string.app_name;//default
 	protected String mTitleString = "";
 	protected DataAdapter mDataAdapter;
 	protected ActionBarActivity mActivity;
@@ -47,5 +44,4 @@ public abstract class BaseFragment extends Fragment {
 		mActivity = (ActionBarActivity)getActivity() ;
 		mFragmentManager = mActivity.getSupportFragmentManager();	
 	}
-
 }

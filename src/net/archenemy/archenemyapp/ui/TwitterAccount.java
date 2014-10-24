@@ -4,29 +4,24 @@ import twitter4j.User;
 import net.archenemy.archenemyapp.R;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import net.archenemy.archenemyapp.data.TwitterAdapter;
-import net.archenemy.archenemyapp.data.DataAdapter;
 
 public class TwitterAccount extends AccountFragment 
 	implements TwitterAdapter.ProfileCallback {
 	
+	public static final int TITLE = R.string.title_twitter;	
+	public static final String TAG = "TwitterAccount";
+	
 	private TwitterAdapter mTwitterAdapter;
 	
 	private User mUser;
-	
-	protected static final int TITLE = R.string.title_twitter;
-	
-	public static final String TAG = "TwitterAccount";
 	
 	public int getTitle() {
 		return TITLE;
@@ -48,7 +43,7 @@ public class TwitterAccount extends AccountFragment
 	        ViewGroup container, Bundle savedInstanceState) {
 	    
 		super.onCreateView(inflater, container, savedInstanceState);
-	    View view = inflater.inflate(getLayout(), container, false);
+	    View view = inflater.inflate(R.layout.twitter_account, container, false);
 		
 		// Find the user's name view
 		mUserNameView = (TextView) view.findViewById(R.id.userNameView);
@@ -81,7 +76,7 @@ public class TwitterAccount extends AccountFragment
 		    		
 		    		
 		    	}else{
-		    		mTwitterAdapter.login(); 
+		    		mTwitterAdapter.logIn(); 
 		    	}
 		    }
 		});
@@ -97,17 +92,13 @@ public class TwitterAccount extends AccountFragment
 		return view;
 	}
 	
-	protected int getLayout() {
-		return R.layout.twitter_account;
-	}
-	
 	private void setLoggedIn(){
-    	mSubtext.setText(R.string.fb_subtext_in);
+    	mSubtext.setText(R.string.twitter_logged_in);
     	mLoginButton.setText(R.string.twitter_logout);  	
 	}
 	
 	private void setLoggedOut(){
-    	mSubtext.setText(R.string.fb_subtext_out);
+    	mSubtext.setText(R.string.twitter_login_header);
     	mUserNameView.setText(null);
     	mLoginButton.setText(R.string.twitter_login);
 	}
@@ -119,7 +110,6 @@ public class TwitterAccount extends AccountFragment
 
 	@Override
 	public void onAuthorizationCompleted(Boolean isAuthorized) {
-		// TODO Auto-generated method stub
 		mTwitterAdapter.getUserProfile(this);
 	}
 

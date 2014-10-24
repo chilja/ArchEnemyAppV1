@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 public class BandMember {
+	
 	private String mName;
 	private String mTwitterUser;
 	private String mTwitterUserId;

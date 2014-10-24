@@ -10,13 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphUser;
-import com.facebook.widget.ProfilePictureView;
 import android.support.v7.app.ActionBarActivity;
 
 public class FacebookAccount extends AccountFragment 
@@ -25,11 +22,9 @@ public class FacebookAccount extends AccountFragment
 	public static final String TAG = "FacebookAccount";
 
 	protected FacebookAdapter mFacebookAdapter;
-	
-	//Key for pending publish action
-	protected static final String PENDING_PUBLISH_KEY = "pendingPublishReauthorization";
 		
 	protected UiLifecycleHelper mUiHelper;
+	
 	protected Session.StatusCallback mCallback = new Session.StatusCallback() {
 	    @Override
 	    public void call(final Session session, final SessionState state, final Exception exception) {
@@ -55,7 +50,7 @@ public class FacebookAccount extends AccountFragment
 	    mFacebookAdapter = new FacebookAdapter(mActivity);
 	    mUiHelper = new UiLifecycleHelper(mActivity, mCallback); 
 	    
-	    if (Utility.isConnectedToNetwork(mActivity, true)) {
+	    if (Utility.isConnectedToNetwork(mActivity, false)) {
 		    mUiHelper.onCreate(savedInstanceState);  
 	    } 
 	}
@@ -72,27 +67,36 @@ public class FacebookAccount extends AccountFragment
 		mSubtext = (TextView) view.findViewById(R.id.subTextView);	
 		// Find the facebook login button
 		mLoginButton = (Button) view.findViewById(R.id.loginButton);
-			
-		// Initialize the UI elements
-		if (savedInstanceState != null) {
-		    mFacebookAdapter.setPendingPublish(
-		            savedInstanceState.getBoolean(PENDING_PUBLISH_KEY, false));
+
+		
+		if (Utility.isConnectedToNetwork(mActivity, false)) {
+			if(mFacebookAdapter.isLoggedIn()) {
+				// Get the user's data
+				mFacebookAdapter.makeUserRequest(this);
+				setLoggedIn();
+			} else {
+				setLoggedOut();
+			}
+		} else {
+			setOffline();
 		}
-		setLoggedOut();
-		
-		// Get the user's data
-		mFacebookAdapter.makeUserRequest(this);
-		
 		return view;
 	}
 
 	private void setLoggedOut(){
-		mSubtext.setText(R.string.fb_subtext_out);
+		mLoginButton.setEnabled(true);
+		mSubtext.setText(R.string.facebook_login_header);
 		mUserNameView.setText(null);  	
 	}
 
 	private void setLoggedIn(){
+		mLoginButton.setEnabled(true);
 		mSubtext.setText(R.string.fb_subtext_in);
+	}
+	
+	private void setOffline() {
+		mLoginButton.setEnabled(false);
+		mSubtext.setText(R.string.fb_subtext_offline);
 	}
 
 	public void onUserRequestCompleted(GraphUser user) {

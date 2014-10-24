@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Locale;
 
 import net.archenemy.archenemyapp.R;
-import net.archenemy.archenemyapp.ui.FacebookShareElement;
 import net.archenemy.archenemyapp.ui.FeedListElement;
 
 import org.json.JSONArray;
@@ -22,10 +21,8 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -40,7 +37,6 @@ import com.facebook.model.GraphUser;
 public class FacebookAdapter {
 	
 	protected static final String TAG = "FacebookAdapter";
-	private static final String PREF_KEY = "pref_facebook_key";
 	
 	// Activity code to flag an incoming activity result is due 
 	// to a new permissions request
@@ -63,21 +59,16 @@ public class FacebookAdapter {
 	private static final String TAG_FROM = "from";
 	
 	private Activity mActivity;
-	private DataAdapter mDataAdapter;
 	private ProgressDialog mProgressDialog;
 	
+	// flag for pending reauthorization request
 	private boolean mPendingPublishReauthorization = false;
 	
 	public FacebookAdapter(Activity activity){
 		mActivity = activity;
-		mDataAdapter = new DataAdapter(mActivity);
 	}
 	
 	public boolean isEnabled() {
-		// Get the app's shared preferences
-//		SharedPreferences pref = 
-//		        PreferenceManager.getDefaultSharedPreferences(mActivity);
-//			return pref.getBoolean(PREF_KEY, true);
 		return true;
 	}
 	
@@ -89,6 +80,14 @@ public class FacebookAdapter {
 		return false;
 	}
 	
+	public boolean isPendingPublish() {
+		return mPendingPublishReauthorization;
+	}
+
+	public void setPendingPublish(boolean mPendingPublishReauthorization) {
+		this.mPendingPublishReauthorization = mPendingPublishReauthorization;
+	}
+
 	public static Date getDate(String timestamp){
 		SimpleDateFormat ft = 
 			new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss+'0000'", Locale.US);
@@ -101,6 +100,62 @@ public class FacebookAdapter {
 		return date;		
 	}
 	
+	private boolean isSubsetOf(Collection<String> subset, Collection<String> superset) {
+	    for (String string : subset) {
+	        if (!superset.contains(string)) {
+	            return false;
+	        }
+	    }
+	    return true;
+	}
+
+	private ArrayList<FeedListElement> parseJson (JSONObject jsonObj){
+		
+		ArrayList<FeedListElement> feedElements = new ArrayList<FeedListElement>();
+		JSONArray posts = null;
+		Log.i(TAG, "Parse response...");
+		if (jsonObj != null) {    		                    
+	        try {
+				posts = jsonObj.getJSONArray(TAG_DATA);					
+				for (int i = 0; i < posts.length(); i++) {
+					try {
+						
+						JSONObject object = posts.getJSONObject(i);
+	             
+						String date = object.getString(TAG_DATE);
+						String message = object.getString(TAG_MESSAGE);
+						String picture = object.getString(TAG_PICTURE);
+						String link = object.getString(TAG_LINK);
+						JSONObject fromObj = object.getJSONObject(TAG_FROM);
+						String name = fromObj.getString(TAG_NAME);
+						String id = fromObj.getString(TAG_ID);
+	            
+						FeedListElement element = 
+								new FeedListElement.FacebookElement(mActivity,name, id, message, date, picture, link);
+						feedElements.add(element);
+					} catch (JSONException e) {
+						//ignore objects with missing tags
+					}
+				}
+	        } catch (JSONException e1) {
+	        	//ignore objects with missing tags
+	        }
+	    
+		} else {
+			Log.e(TAG, "Couldn't parse response");
+		}
+	    return feedElements;
+	}
+
+	private void requestPublishPermissions(Session session) {
+	    if (session != null) {
+	        Session.NewPermissionsRequest newPermissionsRequest = 
+	            new Session.NewPermissionsRequest(mActivity, PERMISSIONS).
+	                setRequestCode(REAUTH_ACTIVITY_CODE);
+	        session.requestNewPublishPermissions(newPermissionsRequest);
+	    }
+	}
+
 	public void makeUserRequest(UserCallback userCallback) {
 		if (Utility.isConnectedToNetwork(mActivity, false)){
 		final Session session = Session.getActiveSession();
@@ -180,7 +235,7 @@ public class FacebookAdapter {
 	            setPendingPublish(true);
 	            Session.NewPermissionsRequest newPermissionsRequest = new Session
 	                    .NewPermissionsRequest(mActivity, PERMISSIONS);
-	        session.requestNewPublishPermissions(newPermissionsRequest);
+	            session.requestNewPublishPermissions(newPermissionsRequest);
 	            return;
 	        }
 	        
@@ -196,11 +251,6 @@ public class FacebookAdapter {
 	                    mProgressDialog.dismiss();
 	                    mProgressDialog = null;
 	                }
-	            	
-	            	//Evaluate response
-	                JSONObject graphResponse = response
-	                                           .getGraphObject()
-	                                           .getInnerJSONObject();
 	                
 	                String successMessage = mActivity.getString(R.string.fb_result_dialog_button_text);	               
 	                FacebookRequestError error = response.getError();
@@ -233,24 +283,6 @@ public class FacebookAdapter {
 	        requestTask.execute();	
 	    }
 		}
-	}
-
-	private void requestPublishPermissions(Session session) {
-	    if (session != null) {
-	        Session.NewPermissionsRequest newPermissionsRequest = 
-	            new Session.NewPermissionsRequest(mActivity, PERMISSIONS).
-	                setRequestCode(REAUTH_ACTIVITY_CODE);
-	        session.requestNewPublishPermissions(newPermissionsRequest);
-	    }
-	}
-	
-	private boolean isSubsetOf(Collection<String> subset, Collection<String> superset) {
-	    for (String string : subset) {
-	        if (!superset.contains(string)) {
-	            return false;
-	        }
-	    }
-	    return true;
 	}
 
 	private void handleError(FacebookRequestError error) {
@@ -346,52 +378,6 @@ public class FacebookAdapter {
 	            .show();
 	}
 	
-	public boolean isPendingPublish() {
-		return mPendingPublishReauthorization;
-	}
-
-	public void setPendingPublish(boolean mPendingPublishReauthorization) {
-		this.mPendingPublishReauthorization = mPendingPublishReauthorization;
-	}
-
-	private ArrayList<FeedListElement> parseJson (JSONObject jsonObj){
-		
-		ArrayList<FeedListElement> feedElements = new ArrayList<FeedListElement>();
-		JSONArray posts = null;
-		Log.i(TAG, "Parse response...");
-		if (jsonObj != null) {    		                    
-	        try {
-				posts = jsonObj.getJSONArray(TAG_DATA);					
-				for (int i = 0; i < posts.length(); i++) {
-					try {
-						
-						JSONObject object = posts.getJSONObject(i);
-	             
-						String date = object.getString(TAG_DATE);
-						String message = object.getString(TAG_MESSAGE);
-						String picture = object.getString(TAG_PICTURE);
-						String link = object.getString(TAG_LINK);
-						JSONObject fromObj = object.getJSONObject(TAG_FROM);
-						String name = fromObj.getString(TAG_NAME);
-						String id = fromObj.getString(TAG_ID);
-	            
-						FeedListElement element = 
-								new FeedListElement.FacebookElement(mActivity,name, id, message, date, picture, link);
-						feedElements.add(element);
-					} catch (JSONException e) {
-						//ignore objects with missing tags
-					}
-				}
-	        } catch (JSONException e1) {
-	        	//ignore objects with missing tags
-	        }
-	    
-		} else {
-			Log.e(TAG, "Couldn't parse response");
-		}
-	    return feedElements;
-	}
-
 	public interface UserCallback {
 		void onUserRequestCompleted(GraphUser user);
 	}

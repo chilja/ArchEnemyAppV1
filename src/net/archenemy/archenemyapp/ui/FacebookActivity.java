@@ -18,7 +18,7 @@ implements FacebookAccount.LoginCallback{
 	protected FacebookAdapter mFacebookAdapter;
 	protected boolean mPendingLogin = false;
 	
-	//facebook lifecycle helper	
+	//Facebook lifecycle helper	
 	protected UiLifecycleHelper mUiHelper;
 	
 	protected Session.StatusCallback mCallback = 
@@ -30,10 +30,8 @@ implements FacebookAccount.LoginCallback{
 	    }
 	};
 	
-	protected void onSessionStateChange(final Session session, SessionState state, Exception exception) {
-		
+	protected void onSessionStateChange(final Session session, SessionState state, Exception exception) {		
 	}
-
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -75,17 +73,11 @@ implements FacebookAccount.LoginCallback{
 		mUiHelper.onActivityResult(requestCode, resultCode, data);
 	}
 
-
 	@Override
-	public void onLogin() {
-		// TODO Auto-generated method stub
-		
+	public void onLogin() {	
 	}
-
 
 	@Override
 	public void onLogout() {
-		// TODO Auto-generated method stub
-		
 	}
 }

@@ -1,27 +1,17 @@
 package net.archenemy.archenemyapp.ui;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-
 import net.archenemy.archenemyapp.R;
-import net.archenemy.archenemyapp.R.id;
-import net.archenemy.archenemyapp.R.layout;
-import net.archenemy.archenemyapp.R.string;
 import net.archenemy.archenemyapp.data.FacebookAdapter;
-import net.archenemy.archenemyapp.data.FacebookAdapter.FeedCallback;
-import net.archenemy.archenemyapp.data.FacebookAdapter.UserCallback;
+import net.archenemy.archenemyapp.data.FacebookShareElement;
+import net.archenemy.archenemyapp.data.DataAdapter;
+import net.archenemy.archenemyapp.data.Utility;
 
-import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionState;
-import com.facebook.UiLifecycleHelper;
-import com.facebook.model.GraphObject;
-import com.facebook.model.GraphObjectList;
 import com.facebook.model.GraphUser;
-import com.facebook.widget.ProfilePictureView;
-import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.Intent;
+
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,13 +19,18 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.support.v7.app.ActionBarActivity;
 
-public class FacebookShareFragment extends FacebookAccount
-	implements FacebookAdapter.UserCallback{
+public class FacebookShareFragment extends BaseFragment
+	implements FacebookAdapter.UserCallback,
+	DataAdapter.BitmapCallback{
+	
 	public static final String TAG = "FacebookShareFragment";
+	protected static final String PENDING_PUBLISH_KEY = "pendingPublishReauthorization";
+	
 	private FacebookShareElement mShareElement;
+	protected FacebookAdapter mFacebookAdapter;
+	
 	private Button mShareButton;
 	private ImageView mImageView;
 	private TextView mNameView;
@@ -45,14 +40,7 @@ public class FacebookShareFragment extends FacebookAccount
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 	    mActivity = (ActionBarActivity) getActivity();
-	    mFacebookAdapter = new FacebookAdapter(mActivity);
-	  //Get the content to be shared
-	    Bundle args = getArguments();
-	    if (args != null) {
-	    	mShareElement = (FacebookShareElement) args.getSerializable(FacebookShareActivity.SHARE_ELEMENT); 
-	    } else if(savedInstanceState != null)  {
-	    	mShareElement = (FacebookShareElement) savedInstanceState.getSerializable(FacebookShareActivity.SHARE_ELEMENT);
-	    }  
+	    mFacebookAdapter = new FacebookAdapter(mActivity);  
 	}
 
 	@Override
@@ -61,14 +49,20 @@ public class FacebookShareFragment extends FacebookAccount
 	    
 		super.onCreateView(inflater, container, savedInstanceState);
 	    View view = inflater.inflate(R.layout.facebook_share_fragment, container, false);
-	
-		// Find the user's name view
-		mUserNameView = (TextView) view.findViewById(R.id.userNameView);
-		mSubtext = (TextView) view.findViewById(R.id.subTextView);
+	    
+	  //Get the content to be shared
+	    Bundle args = mActivity.getIntent().getBundleExtra(FacebookShareActivity.SHARE_ELEMENT);
+	    if (args != null) {
+	    	mShareElement = (FacebookShareElement) args.getSerializable(FacebookShareActivity.SHARE_ELEMENT); 
+	    } else if(savedInstanceState != null)  {
+	    	mShareElement = (FacebookShareElement) savedInstanceState.getSerializable(FacebookShareActivity.SHARE_ELEMENT);
+	    }  
+	    
+		if (savedInstanceState != null) {
+		    mFacebookAdapter.setPendingPublish(
+		            savedInstanceState.getBoolean(PENDING_PUBLISH_KEY, false));
+		}
 		
-		// Find the login button
-		mLoginButton = (Button) view.findViewById(R.id.loginButton);
-//		
 		// Find the share button
 		mShareButton = (Button) view.findViewById(R.id.shareButton);
 	
@@ -76,7 +70,6 @@ public class FacebookShareFragment extends FacebookAccount
 	    mNameView = (TextView) view.findViewById(R.id.nameView);
 	    mDescriptionView = (TextView) view.findViewById(R.id.descriptionView);
 
-		mImageView.setImageDrawable(mShareElement.getIcon());
 		mNameView.setText(mShareElement.getText1());
 		mDescriptionView.setText(mShareElement.getText2());
 		
@@ -86,11 +79,20 @@ public class FacebookShareFragment extends FacebookAccount
 		        mFacebookAdapter.publishStory(mShareElement);  
 		    }
 		});
-
-		setLoggedOut();
 		
-		// Get the user's data
-		mFacebookAdapter.makeUserRequest(this);
+		if (Utility.isConnectedToNetwork(mActivity, false)){
+			if(mFacebookAdapter.isLoggedIn()) {
+				// Get the user's data
+				mFacebookAdapter.makeUserRequest(this);
+				DataAdapter.getBitmap(mShareElement.getImageUri(), this);
+				setLoggedIn();
+			} else {
+				setLoggedOut();
+			}
+			
+		} else {
+			setOffline();
+		}
 		
 		return view;
 	}
@@ -98,6 +100,10 @@ public class FacebookShareFragment extends FacebookAccount
 	@Override
 	public String getTAG() {
 		return TAG;
+	}
+	
+	private void setOffline() {
+		mShareButton.setEnabled(false);
 	}
 
 	private void setLoggedIn(){
@@ -109,14 +115,12 @@ public class FacebookShareFragment extends FacebookAccount
 	}
 	
 	public void onUserRequestCompleted(GraphUser user) {
-		super.onUserRequestCompleted(user);
 		if (user != null) {
             setLoggedIn();
         }	
 	}
 	
 	public void onSessionStateChange(final Session session, SessionState state, Exception exception) {
-		super.onSessionStateChange(session, state, exception);
 	    if (session != null && session.isOpened()) {
 	    	
 	    	//set the logged in state
@@ -126,7 +130,8 @@ public class FacebookShareFragment extends FacebookAccount
 	            // Session updated with new permissions
 	            // so try publishing once more.
 		        if (mFacebookAdapter.isPendingPublish()) {
-		            mFacebookAdapter.publishStory(mShareElement);
+		        	if (Utility.isConnectedToNetwork(mActivity, false))
+		        		mFacebookAdapter.publishStory(mShareElement);
 		        }
 	        }   
 	    } else {	    	
@@ -140,5 +145,10 @@ public class FacebookShareFragment extends FacebookAccount
 	    super.onSaveInstanceState(bundle);
 	    bundle.putSerializable(FacebookShareActivity.SHARE_ELEMENT,(Serializable) mShareElement);
 	    bundle.putBoolean(PENDING_PUBLISH_KEY, mFacebookAdapter.isPendingPublish());
+	}
+
+	@Override
+	public void onPostExecute(Bitmap bitmap) {
+		mImageView.setImageBitmap(bitmap);		
 	}
 }

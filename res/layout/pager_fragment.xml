@@ -3,7 +3,6 @@
     android:id="@+id/layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="8dp"
     android:orientation="vertical">
 
 	<android.support.v4.view.ViewPager
@@ -15,8 +14,8 @@
         android:id="@+id/pagerTitleStrip"
         android:background="@android:color/transparent"
         style="@style/TitleStrip"
-        />
-
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"/>
 	</android.support.v4.view.ViewPager>
        
 </LinearLayout>

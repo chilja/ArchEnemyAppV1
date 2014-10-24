@@ -1,9 +1,11 @@
 package net.archenemy.archenemyapp.ui;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import net.archenemy.archenemyapp.R;
+import net.archenemy.archenemyapp.data.FacebookShareElement;
 import net.archenemy.archenemyapp.data.Show;
 import net.archenemy.archenemyapp.data.Utility;
 
@@ -12,7 +14,6 @@ import com.facebook.widget.FacebookDialog.PendingCall;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.widget.ShareActionProvider;
@@ -113,23 +114,7 @@ public class TourFragment extends BaseFragment {
 			
 			Show show = element.getShow();
 			
-			// Publish the post using the Native Facebook Share Dialog
-			FacebookDialog.Callback callback = new FacebookDialog.Callback(){
-
-				@Override
-				public void onComplete(PendingCall pendingCall, Bundle data) {
-					// TODO Auto-generated method stub
-					
-				}
-
-				@Override
-				public void onError(PendingCall pendingCall, Exception error,
-						Bundle data) {
-					// TODO Auto-generated method stub
-					
-				}				
-			};
-			
+			// Publish the post using the Native Facebook Share Dialog			
 			FacebookDialog.ShareDialogBuilder shareDialogBuilder = new FacebookDialog.ShareDialogBuilder(mActivity);
 			shareDialogBuilder.setName(mActivity.getResources().getString(R.string.fb_share_name));
 			shareDialogBuilder.setLink(show.getTicketUri());
@@ -141,8 +126,11 @@ public class TourFragment extends BaseFragment {
 
 		} else {
 			//Publish the post using the custom share dialog
-			Intent intent = new Intent(mActivity, FacebookShareActivity.class);
-			intent.putExtra(SELECTED_SHOW_INDEX, mSelectedShowIndex);
+			Intent intent = new Intent(mActivity, FacebookShareActivity.class);			
+			Bundle args = new Bundle();
+			args.putSerializable(FacebookShareActivity.SHARE_ELEMENT,
+					(Serializable) new ShowShareElement(mActivity, element.getShow()));
+			intent.putExtra(FacebookShareActivity.SHARE_ELEMENT, args);
 	    	startActivity(intent);
 		}
 	}
@@ -254,7 +242,6 @@ public class TourFragment extends BaseFragment {
 	    private List<ShowListElement> mListElements;
 	    private final int WHITE;
 	    private final int BLACK;
-	    private final int GREY;
 
 	    public ShowListAdapter(Context context, 
 	                             List<ShowListElement> listElements) {
@@ -265,7 +252,6 @@ public class TourFragment extends BaseFragment {
 	        }
 	        WHITE = getResources().getColor(android.R.color.white);
 	        BLACK = getResources().getColor(android.R.color.black);
-	        GREY = getResources().getColor(R.color.lightgrey);
 	    }
 
 	    @Override
@@ -340,6 +326,5 @@ public class TourFragment extends BaseFragment {
     	public Show getShow() {
     		return mShow;
     	}
-    }
-    
+    }  
 }

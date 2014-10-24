@@ -1,21 +1,21 @@
 package net.archenemy.archenemyapp.data;
 
+import java.io.Serializable;
 import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
-
 import net.archenemy.archenemyapp.R;
-import net.archenemy.archenemyapp.R.string;
-import net.archenemy.archenemyapp.ui.FeedListElement;
 import android.app.Activity;
-import android.net.Uri;
-import android.util.Log;
-import android.widget.BaseAdapter;
 
 public class Show 
-	implements Comparable<Show>{
+	implements Comparable<Show>,
+		Serializable{
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public static final String TAG = "Show";
 	
 	private String mVenue;
 	private String mShowDate;
@@ -25,8 +25,7 @@ public class Show
 	private String mImageUri;
 	private String mDescription;
 	private String mCountry;
-	
-	private static final String TAG = "Show";
+
 	
 	public Show(String showDate, String venue, String location, String country, String ticketUri, String imageUri) {
 		setShowDate(showDate);
@@ -125,5 +124,4 @@ public class Show
 		}
 		return 0;
 	}	
-	
 }

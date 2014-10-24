@@ -7,13 +7,12 @@
 	 	
 	<ImageView 
         android:id="@+id/imageView"	 
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
         android:minHeight="100dp"
-        android:maxHeight="200dp"
-	    android:padding="5dp"/>
-	
+        android:minWidth="2000dp"
+        android:layout_centerHorizontal="true"/>
+
 	<TextView
 	    android:id="@+id/messageView"
 	    style="@style/NewsContent"

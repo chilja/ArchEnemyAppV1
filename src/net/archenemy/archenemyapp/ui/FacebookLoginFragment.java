@@ -2,27 +2,20 @@ package net.archenemy.archenemyapp.ui;
 
 import net.archenemy.archenemyapp.R;
 import net.archenemy.archenemyapp.data.FacebookAdapter;
-import net.archenemy.archenemyapp.data.Utility;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.facebook.Session;
-import com.facebook.SessionState;
-import com.facebook.UiLifecycleHelper;
-import com.facebook.widget.ProfilePictureView;
 
 public class FacebookLoginFragment extends AccountFragment {
 	
-	protected FacebookAdapter mFacebookAdapter;
 	public static final String TAG = "FacebookLoginFragment";
 		
 	protected static final int TITLE = R.string.title_facebook;
+	
+	protected FacebookAdapter mFacebookAdapter;
 	
 	public int getTitle() {
 		return TITLE;
@@ -38,7 +31,6 @@ public class FacebookLoginFragment extends AccountFragment {
 	    super.onCreate(savedInstanceState);
 	    mActivity = (ActionBarActivity) getActivity();
 	    mFacebookAdapter = new FacebookAdapter(mActivity);
-
 	}
 
 	@Override

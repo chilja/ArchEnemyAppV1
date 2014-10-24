@@ -1,23 +1,20 @@
 package net.archenemy.archenemyapp.ui;
 
-import net.archenemy.archenemyapp.R;
+import java.util.ArrayList;
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import java.util.ArrayList;
-
-import net.archenemy.archenemyapp.data.BandMember;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
+import net.archenemy.archenemyapp.R;
+import net.archenemy.archenemyapp.data.BandMember;
 
 public class TwitterFragment extends BaseFragment {
 	
-	protected static final int TITLE = R.string.title_twitter;
+	public static final int TITLE = R.string.title_twitter;
     public static final String TAG = "TwitterFragment";
     
     //view pager
@@ -29,21 +26,17 @@ public class TwitterFragment extends BaseFragment {
 	
 	private View mView;
 	
-	@Override
-	public void onResume() {
-		// TODO Auto-generated method stub
-		super.onResume();
-	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, 
 	        ViewGroup container, Bundle savedInstanceState) {
 	    
 		super.onCreateView(inflater, container, savedInstanceState);
-	    mView = inflater.inflate(R.layout.news_fragment, container, false);
+	    mView = inflater.inflate(R.layout.pager_fragment, container, false);
+	    
 	    init();
+	    
 	 	mBandMembers = mDataAdapter.getEnabledBandMembers();
-
         mViewPager = (ViewPager) mView.findViewById(R.id.pager);
         
         refresh();
@@ -68,7 +61,6 @@ public class TwitterFragment extends BaseFragment {
 				if (mPagerAdapter != null) {
 					mViewPager.setOffscreenPageLimit(6);
 					mViewPager.setAdapter(mPagerAdapter);
-		//			mPagerAdapter.notifyDataSetChanged();
 				}
 			}
 		}
@@ -76,13 +68,6 @@ public class TwitterFragment extends BaseFragment {
 	
 
 	class TwitterPagerAdapter extends FragmentPagerAdapter {
-		
-	    @Override
-		public Object instantiateItem(ViewGroup container, int position) {
-			// TODO Auto-generated method stub
-	    	Object o = super.instantiateItem(container, position);
-			return o;
-		}
 
 	    public TwitterPagerAdapter(FragmentManager fm) {
 	        super(fm);

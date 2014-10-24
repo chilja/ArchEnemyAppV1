@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,11 +15,12 @@ import android.view.ViewGroup;
 
 public class FacebookFragment extends BaseFragment {
 	
-	protected static final int TITLE = R.string.title_facebook;	
+	public static final int TITLE = R.string.title_facebook;	
 	public static final String TAG = "FacebookFragment";
     
     //view pager
 	protected ViewPager mViewPager;
+	
 	protected FacebookPagerAdapter mPagerAdapter;
 
 	//one page for each band member
@@ -28,15 +28,12 @@ public class FacebookFragment extends BaseFragment {
 	
 	private View mView;
 	
-	
-
-
 	@Override
 	public View onCreateView(LayoutInflater inflater, 
 	        ViewGroup container, Bundle savedInstanceState) {
 	    
 		super.onCreateView(inflater, container, savedInstanceState);
-	    mView = inflater.inflate(R.layout.news_fragment, container, false);
+	    mView = inflater.inflate(R.layout.pager_fragment, container, false);
 	    init();
 	 	mBandMembers = mDataAdapter.getEnabledBandMembers();
 	 	
@@ -48,8 +45,7 @@ public class FacebookFragment extends BaseFragment {
 	
 	public void refresh(){
 		if (mFragmentManager != null && mViewPager != null) {
-			synchronized (mFragmentManager) {
-				
+			synchronized (mFragmentManager) {				
 			mPagerAdapter = new FacebookPagerAdapter(mFragmentManager);
 				if (mPagerAdapter != null) {
 					mViewPager.setOffscreenPageLimit(6);
@@ -71,6 +67,10 @@ public class FacebookFragment extends BaseFragment {
 
 	class FacebookPagerAdapter extends FragmentPagerAdapter {
 		
+		public FacebookPagerAdapter(FragmentManager fm) {
+	        super(fm);
+	    }
+		
 		// getCount() is used as an offset to make sure that instantiateItem() returns the correct item
 		// as both TwitterFragment and FacebookFragment use a PagerAdapter
 		// Pager Adapter uses the position as a tag to retrieve the fragment
@@ -82,10 +82,6 @@ public class FacebookFragment extends BaseFragment {
 			return o;
 		}
 
-		public FacebookPagerAdapter(FragmentManager fm) {
-	        super(fm);
-	    }
-	
 	    @Override
 	    public Fragment getItem(int i) {
 	    	//create page with feeds of the corresponding band member
@@ -104,8 +100,8 @@ public class FacebookFragment extends BaseFragment {
 	    @Override
 	    public CharSequence getPageTitle(int position) {
 	    	if (position > getCount()-1) {
-	        return mBandMembers.get(position-getCount()).getName();
-	    	}else {
+	    		return mBandMembers.get(position-getCount()).getName();
+	    	} else {
 	    		return mBandMembers.get(position).getName();
 	    	}
 	    }  

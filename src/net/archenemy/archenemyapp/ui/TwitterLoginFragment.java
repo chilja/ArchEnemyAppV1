@@ -11,11 +11,11 @@ import net.archenemy.archenemyapp.data.TwitterAdapter;
 
 public class TwitterLoginFragment extends BaseFragment {
 	
-	private TwitterAdapter mTwitterAdapter;
-	protected Button mLoginButton;
-	
-	protected static final int TITLE = R.string.title_twitter;
+	public static final int TITLE = R.string.title_twitter;
 	public static final String TAG = "TwitterLoginFragment";
+	
+	private TwitterAdapter mTwitterAdapter;
+	private Button mLoginButton;
 	
 	public int getTitle() {
 		return TITLE;
@@ -50,7 +50,7 @@ public class TwitterLoginFragment extends BaseFragment {
 		    @Override
 		    public void onClick(View v) {
 		    	if (!mTwitterAdapter.isLoggedIn()) {
-		    		mTwitterAdapter.login(); 
+		    		mTwitterAdapter.logIn(); 
 		    	}
 		    }
 		});

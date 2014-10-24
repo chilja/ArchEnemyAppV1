@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import net.archenemy.archenemyapp.ui.FeedListElement;
 import android.app.Activity;
@@ -35,21 +36,11 @@ import twitter4j.conf.ConfigurationBuilder;
 
 public class TwitterAdapter {
 	
-	private static final String TAG = "TwitterAdapter";
+	public static final String TAG = "TwitterAdapter";
 	
-	
-	private boolean mIsLoggedIn = false;
-	
-	private Activity mActivity;
-	private DataAdapter mDataAdapter;
-
-	private String mConsumerKey;
-	private String mConsumerSecret;	
-
-	//twitter4j
+	// twitter4j
 	// Preference Constants
-	private static final String PREF_KEY = "pref_twitter_key";
-	static String PREFERENCE_NAME = "twitter_oauth";
+	static final String PREFERENCE_NAME = "twitter_oauth";
 	static final String PREF_KEY_OAUTH_TOKEN = "oauth_token";
 	static final String PREF_KEY_OAUTH_SECRET = "oauth_token_secret";
 	static final String PREF_KEY_TWITTER_LOGIN = "isTwitterLogedIn";
@@ -61,6 +52,13 @@ public class TwitterAdapter {
 	static final String URL_TWITTER_OAUTH_TOKEN = "oauth_token";
 	public static final String TWITTER_CALLBACK_URL = "oauth://ArchEnemyApp";
 	
+	private Activity mActivity;
+	private DataAdapter mDataAdapter;
+
+	private String mConsumerKey;
+	private String mConsumerSecret;
+	private boolean mIsLoggedIn = false;
+	
     // Twitter
     private static Twitter mTwitter;
     private static RequestToken mRequestToken;
@@ -68,7 +66,7 @@ public class TwitterAdapter {
     // Shared Preferences
     private static SharedPreferences mSharedPreferences;
 	
-   public TwitterAdapter(Activity activity) {
+    public TwitterAdapter(Activity activity) {
 		mActivity = activity;
 		loadConfig();
 		mSharedPreferences = 
@@ -76,24 +74,39 @@ public class TwitterAdapter {
 		mDataAdapter = new DataAdapter(mActivity);
 	}
 
-   public void login() {
-       // Check if already logged in
-       if (!isLoggedIn()) {
-    	   Toast.makeText(mActivity,"Connecting...", Toast.LENGTH_LONG).show();
-           new LoginTask().execute();
-          
-       } else {
-           // user already logged in with twitter
-           Toast.makeText(mActivity,
-                   "Already Logged in with twitter", Toast.LENGTH_LONG).show();
-       }
-   }
+    public boolean isEnabled() {
+		return true;
+	}
 
-   public boolean isLoggedIn() {
-       // return twitter login status from Shared Preferences
-       return mSharedPreferences.getBoolean(PREF_KEY_TWITTER_LOGIN, false);
-   }
+    public void logIn() {
+    	// Check if already logged in
+    	if (!isLoggedIn()) {
+    		Toast.makeText(mActivity,"Connecting...", Toast.LENGTH_LONG).show();
+    		new LoginTask().execute();
+	      
+    	} else {
+	       // user already logged in with twitter
+    		Toast.makeText(mActivity,
+	           "Already Logged in with twitter", Toast.LENGTH_LONG).show();
+	   }
+    }
+
+    public boolean isLoggedIn() {
+    	// return twitter login status from Shared Preferences
+    	return mSharedPreferences.getBoolean(PREF_KEY_TWITTER_LOGIN, false);
+    }
 	
+	public void logOut(ConnectionCallback callback) {
+	// Clear the shared preferences
+	    Editor editor = mSharedPreferences.edit();
+	    editor.remove(PREF_KEY_OAUTH_TOKEN);
+	    editor.remove(PREF_KEY_OAUTH_SECRET);
+	    editor.remove(PREF_KEY_TWITTER_LOGIN);
+	    editor.commit();
+	    mIsLoggedIn = false;
+		callback.onLogoutCompleted(mIsLoggedIn);
+	}
+
 	public void authorize(Uri uri, ConnectionCallback callback) {
 		if (!isLoggedIn()) {
 	        if (uri != null && uri.toString().startsWith(TWITTER_CALLBACK_URL)) {	        	
@@ -103,18 +116,11 @@ public class TwitterAdapter {
 	    }
 	}
 	
-	public static Date getDate(String timestamp){
-		SimpleDateFormat ft = 
-			new SimpleDateFormat ("yyyy-MM-dd'T'hh:mm:ss+'0000'");
-		Date date = null; 
-		try { 
-		    date = ft.parse(timestamp);  
-		} catch (ParseException e) { 
-		    Log.e(TAG,"Unparseable using " + ft); 
-		}
-		return date;		
+	public void getUserProfile(ProfileCallback callback) {
+		Log.d(TAG, "Get profile...");
+		new ProfileTask(callback).execute();
 	}
-	
+
 	public void getFeed(final FeedCallback callback) {
 		if (isEnabled()) {
 			Log.d(TAG, "Get feeds...");
@@ -125,6 +131,18 @@ public class TwitterAdapter {
 		}
 	}
 
+	public static Date getDate(String timestamp){
+		SimpleDateFormat ft = 
+			new SimpleDateFormat ("yyyy-MM-dd'T'hh:mm:ss+'0000'", Locale.US);
+		Date date = null; 
+		try { 
+		    date = ft.parse(timestamp);  
+		} catch (ParseException e) { 
+		    Log.e(TAG,"Unparseable using " + ft); 
+		}
+		return date;		
+	}
+	
 	private void loadConfig(){
 		SocialAuthConfig config = new SocialAuthConfig();
 		Resources resources = mActivity.getResources();
@@ -148,38 +166,29 @@ public class TwitterAdapter {
 				mConsumerKey = con.get_consumerKey();
 				mConsumerSecret = con.get_consumerSecret();
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} 
 	}
 	
-	public boolean isEnabled() {
-		// Get the app's shared preferences
-//		SharedPreferences pref = 
-//		        PreferenceManager.getDefaultSharedPreferences(mActivity);
-//			return pref.getBoolean(PREF_KEY, true);
-		return true;
+	private Twitter getAuthorizedTwitterInstance() {
+    	// Access Token 
+        String token = mSharedPreferences.getString(PREF_KEY_OAUTH_TOKEN, "");
+        // Access Token Secret
+        String tokenSecret = mSharedPreferences.getString(PREF_KEY_OAUTH_SECRET, "");
+    	
+        ConfigurationBuilder cb = new ConfigurationBuilder();
+        cb.setDebugEnabled(true)
+          .setOAuthConsumerKey(mConsumerKey)
+          .setOAuthConsumerSecret(mConsumerSecret)
+          .setOAuthAccessToken(token)
+          .setOAuthAccessTokenSecret(tokenSecret);
+        TwitterFactory factory = new TwitterFactory(cb.build());
+        Twitter twitter = factory.getInstance();
+        return twitter;	
 	}
 	
-	public void getUserProfile(ProfileCallback callback) {
-		Log.d(TAG, "Get profile...");
-		new ProfileTask(callback).execute();
-	}
-	
-	public void logOut(ConnectionCallback callback) {
-		// Clear the shared preferences
-	    Editor editor = mSharedPreferences.edit();
-	    editor.remove(PREF_KEY_OAUTH_TOKEN);
-	    editor.remove(PREF_KEY_OAUTH_SECRET);
-	    editor.remove(PREF_KEY_TWITTER_LOGIN);
-	    editor.commit();
-	    mIsLoggedIn = false;
-		callback.onLogoutCompleted(mIsLoggedIn);
-	}
-	    
-    public interface FeedCallback extends ConnectionCallback {
-//    	ArrayList<FeedListElement> getFeedElements();
+	public interface FeedCallback extends ConnectionCallback {
 		void onFeedRequestCompleted();
 	}
     
@@ -188,8 +197,6 @@ public class TwitterAdapter {
 	}
     
     public interface ConnectionCallback {
-//    	TwitterAdapter getTwitterAdapter();
-//		void onConnectionRequestCompleted();
 		void onLogoutCompleted(boolean isLoggedIn);
 		void onAuthorizationCompleted(Boolean isAuthorized);
 	}
@@ -206,19 +213,7 @@ public class TwitterAdapter {
 		protected Void doInBackground(BandMember... members) {
 	        
 	        try {
-	        	// Access Token 
-	            String token = mSharedPreferences.getString(PREF_KEY_OAUTH_TOKEN, "");
-	            // Access Token Secret
-	            String tokenSecret = mSharedPreferences.getString(PREF_KEY_OAUTH_SECRET, "");
-	        	
-	            ConfigurationBuilder cb = new ConfigurationBuilder();
-	            cb.setDebugEnabled(true)
-	              .setOAuthConsumerKey(mConsumerKey)
-	              .setOAuthConsumerSecret(mConsumerSecret)
-	              .setOAuthAccessToken(token)
-	              .setOAuthAccessTokenSecret(tokenSecret);
-	            TwitterFactory factory = new TwitterFactory(cb.build());
-	            Twitter twitter = factory.getInstance();
+	            Twitter twitter = getAuthorizedTwitterInstance();
 	            for (int i = 0; i<members.length; i++){
 	            	members[i].setTwitterFeedElements(
 	            			getFeedElements(twitter.getUserTimeline(Long.valueOf(members[i].getTwitterUserId()))));	
@@ -266,24 +261,10 @@ public class TwitterAdapter {
 		protected User doInBackground(Void... params) {
 	        
 	        try {
-	        	if (mTwitter == null) {
-		        	// Access Token 
-		            String accessToken = mSharedPreferences.getString(PREF_KEY_OAUTH_TOKEN, "");
-		            // Access Token Secret
-		            String accessTokenSecret = mSharedPreferences.getString(PREF_KEY_OAUTH_SECRET, "");
-		            
-		            ConfigurationBuilder cb = new ConfigurationBuilder();
-		            cb.setDebugEnabled(true)
-		              .setOAuthConsumerKey(mConsumerKey)
-		              .setOAuthConsumerSecret(mConsumerSecret)
-		              .setOAuthAccessToken(accessToken)
-		              .setOAuthAccessTokenSecret(accessTokenSecret);
-		            TwitterFactory factory = new TwitterFactory(cb.build());
-		            mTwitter = factory.getInstance();
-	        	}
+		        Twitter twitter =  getAuthorizedTwitterInstance();
 	        	// Getting user details from twitter
 	        	Long userId = mSharedPreferences.getLong(PREF_KEY_TWITTER_USER_ID,0l);
-	            User user = mTwitter.showUser(userId);
+	            User user = twitter.showUser(userId);
 	            return user;
 	            
 	        } catch (TwitterException te) {

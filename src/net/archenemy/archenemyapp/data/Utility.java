@@ -19,7 +19,7 @@ public class Utility {
         	return true;
         } else {
         	if (makeToast) 
-        		Toast.makeText(activity,"No network connection available", Toast.LENGTH_LONG).show();
+        		Toast.makeText(activity,"No network connection available", Toast.LENGTH_SHORT).show();
         	return false;
         }
 	}
