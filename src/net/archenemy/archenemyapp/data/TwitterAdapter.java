@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import net.archenemy.archenemyapp.ui.FeedListElement;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -19,6 +18,9 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
+
+import net.archenemy.archenemyapp.ui.ListElement;
+import net.archenemy.archenemyapp.ui.Tweet;
 
 import org.brickred.socialauth.SocialAuthConfig;
 import org.brickred.socialauth.android.SocialAuthAdapter.Provider;
@@ -214,7 +216,7 @@ public class TwitterAdapter
 	        try {
 	            Twitter twitter = getAuthorizedTwitterInstance();
 	            for (int i = 0; i<members.length; i++){
-	            	members[i].setTwitterFeedElements(
+	            	members[i].setTweets(
 	            			getFeedElements(twitter.getUserTimeline(Long.valueOf(members[i].getTwitterUserId()))));	
 	            }	            
 	            return null;
@@ -225,8 +227,8 @@ public class TwitterAdapter
 	        return null;
 	    }
 		
-		private ArrayList<FeedListElement> getFeedElements(List<twitter4j.Status> statuses){
-			ArrayList<FeedListElement> listElements= new ArrayList<FeedListElement>();
+		private ArrayList<ListElement> getFeedElements(List<twitter4j.Status> statuses){
+			ArrayList<ListElement> listElements= new ArrayList<ListElement>();
 			for (twitter4j.Status status : statuses) {
 				URLEntity[] urlEntities = status.getURLEntities();
 				String link = null;
@@ -234,8 +236,8 @@ public class TwitterAdapter
 					URLEntity url = urlEntities[0];
 					link = url.getExpandedURL();
 				}
-				FeedListElement.TwitterElement element = 
-						new FeedListElement.TwitterElement(mActivity, 
+				ListElement element = 
+						new Tweet(mActivity, 
 								status.getUser().getScreenName(), status.getText(), status.getCreatedAt(), link);
 				listElements.add(element);
 	        }

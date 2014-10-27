@@ -3,7 +3,10 @@ package net.archenemy.archenemyapp.data;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import net.archenemy.archenemyapp.ui.FeedListElement;
+import com.facebook.model.GraphUser;
+
+import net.archenemy.archenemyapp.ui.ListElement;
+
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -17,9 +20,10 @@ public class BandMember {
 	private String mFacebookUserId;
 	private String mPrefKey;
 	private int mUserId;
+	private GraphUser mGraphUser;
 
-	private ArrayList<FeedListElement> mFacebookFeedElements = new ArrayList<FeedListElement>();
-	private ArrayList<FeedListElement> mTwitterFeedElements = new ArrayList<FeedListElement>();
+	private ArrayList<ListElement> mPosts = new ArrayList<ListElement>();
+	private ArrayList<ListElement> mTweets = new ArrayList<ListElement>();
 	
 	public BandMember(String name, String prefKey, int userId,
 								String twitterUser, String twitterUserId, 
@@ -64,21 +68,30 @@ public class BandMember {
 		return mFacebookUserId;
 	}
 
-	public ArrayList<FeedListElement> getFacebookFeedElements() {
-		return mFacebookFeedElements;
+	public ArrayList<ListElement> getPosts() {
+		return mPosts;
 	}
 	
-	public ArrayList<FeedListElement> getTwitterFeedElements() {
-		return mTwitterFeedElements;
+	public ArrayList<ListElement> getTweets() {
+		return mTweets;
 	}
 
-	public void setFacebookFeedElements(ArrayList<FeedListElement> facebookFeedElements) {
-		mFacebookFeedElements = facebookFeedElements;
-		Collections.sort(mFacebookFeedElements);
+	public void setPosts(ArrayList<ListElement> posts) {
+		mPosts = posts;
+		Collections.sort(mPosts);
 	}
 
-	public void setTwitterFeedElements(ArrayList<FeedListElement> twitterFeedElements) {
-		mTwitterFeedElements = twitterFeedElements;
-		Collections.sort(mTwitterFeedElements);
+	public void setTweets(ArrayList<ListElement> tweets) {
+		mTweets = tweets;
+		Collections.sort(mPosts);
 	}
+
+	public GraphUser getGraphUser() {
+		return mGraphUser;
+	}
+	
+	public void setGraphUser(GraphUser graphUser) {
+		mGraphUser = graphUser;
+	}
+
 }

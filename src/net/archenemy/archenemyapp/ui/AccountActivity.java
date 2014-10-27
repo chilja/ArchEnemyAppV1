@@ -8,8 +8,8 @@ import android.support.v4.app.FragmentTransaction;
 
 public class AccountActivity extends FacebookActivity {
 	
-	private FacebookAccount mFacebookAccount;
-	private TwitterAccount mTwitterAccount;
+	private FacebookAccountFragment mFacebookAccount;
+	private TwitterAccountFragment mTwitterAccount;
 		
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -17,8 +17,8 @@ public class AccountActivity extends FacebookActivity {
 	    setContentView(R.layout.account_activity);
 	    
 	    //Find the fragments
-	    mTwitterAccount = (TwitterAccount) getSupportFragmentManager().findFragmentById(R.id.TwitterAccountFragment);
-	    mFacebookAccount = (FacebookAccount) getSupportFragmentManager().findFragmentById(R.id.FacebookAccountFragment);
+	    mTwitterAccount = (TwitterAccountFragment) getSupportFragmentManager().findFragmentById(R.id.TwitterAccountFragment);
+	    mFacebookAccount = (FacebookAccountFragment) getSupportFragmentManager().findFragmentById(R.id.FacebookAccountFragment);
 	    showAccounts();
 	}
 	

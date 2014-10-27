@@ -29,8 +29,8 @@ public abstract class PageFragment extends BaseFragment
 	public static final String USER_ID = TAG + "mUserId";
 	
 	protected transient ListView mListView;
-	protected List<FeedListElement> mListElements = new ArrayList<FeedListElement>();
-	protected transient FeedListAdapter mFeedListAdapter;
+	protected List<ListElement> mListElements = new ArrayList<ListElement>();
+	protected transient ListAdapter mListAdapter;
 	protected int mUserId;
 	
 	@Override
@@ -38,7 +38,7 @@ public abstract class PageFragment extends BaseFragment
 	        ViewGroup container, Bundle savedInstanceState) {
 	    
 		super.onCreateView(inflater, container, savedInstanceState);
-	    View view = inflater.inflate(R.layout.list_fragment, container, false);
+	    View view = inflater.inflate(R.layout.page_fragment, container, false);
 	    
 	    //get the user id of band member
     	Bundle args = getArguments();
@@ -57,16 +57,16 @@ public abstract class PageFragment extends BaseFragment
 		if (mIsAttached) {
 			mListElements = getListElements();
 			if (mActivity != null && mListView != null) {
-			    mFeedListAdapter = new FeedListAdapter(mActivity, R.id.listView, mListElements);
-			    mListView.setAdapter(mFeedListAdapter);
+			    mListAdapter = new ListAdapter(mActivity, R.id.listView, mListElements);
+			    mListView.setAdapter(mListAdapter);
 			}
-			if (mFeedListAdapter != null) {
-				mFeedListAdapter.notifyDataSetChanged();
+			if (mListAdapter != null) {
+				mListAdapter.notifyDataSetChanged();
 			}
 		}
 	}
 	
-	protected abstract List<FeedListElement> getListElements();
+	protected abstract List<ListElement> getListElements();
 		
 	protected class OnItemClickListener implements ListView.OnItemClickListener {	
         @Override
@@ -78,10 +78,10 @@ public abstract class PageFragment extends BaseFragment
         }
 	}
 		
-	protected class FeedListAdapter extends ArrayAdapter<FeedListElement> {
+	protected class ListAdapter extends ArrayAdapter<ListElement> {
 
-	    protected FeedListAdapter(Context context, int resourceId, 
-	                             List<FeedListElement> listElements) {
+	    protected ListAdapter(Context context, int resourceId, 
+	                             List<ListElement> listElements) {
 	        super(context, resourceId, listElements);
 	        //set list adapter for each element
 	        if (listElements != null && listElements.size() > 0){        

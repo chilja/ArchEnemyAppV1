@@ -7,6 +7,7 @@ import java.util.List;
 import net.archenemy.archenemyapp.R;
 import net.archenemy.archenemyapp.data.FacebookShareElement;
 import net.archenemy.archenemyapp.data.Show;
+import net.archenemy.archenemyapp.data.ShowShareElement;
 import net.archenemy.archenemyapp.data.Utility;
 
 import com.facebook.widget.FacebookDialog;

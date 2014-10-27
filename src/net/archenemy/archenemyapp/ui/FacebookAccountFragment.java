@@ -17,7 +17,7 @@ import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphUser;
 import android.support.v7.app.ActionBarActivity;
 
-public class FacebookAccount extends AccountFragment 
+public class FacebookAccountFragment extends AccountFragment 
 	implements FacebookAdapter.UserCallback {
 	
 	public static final String TAG = "FacebookAccount";
@@ -78,7 +78,7 @@ public class FacebookAccount extends AccountFragment
 			mUserNameView.setText(mName);
 		} else {		
 			if (Utility.isConnectedToNetwork(mActivity, false) && mProviderAdapter.isLoggedIn()) {
-			    mFacebookAdapter.makeUserRequest(this);
+			    mFacebookAdapter.makeMeRequest(this);
 			 }
 		}
 		
@@ -93,7 +93,7 @@ public class FacebookAccount extends AccountFragment
 	    	
 	        if (!state.equals(SessionState.OPENED_TOKEN_UPDATED)) {
 	            // Get the user's data.
-	        	mFacebookAdapter.makeUserRequest(this);
+	        	mFacebookAdapter.makeMeRequest(this);
 	        }   
 	        
 	        ((LoginCallback) mActivity).onLogin();

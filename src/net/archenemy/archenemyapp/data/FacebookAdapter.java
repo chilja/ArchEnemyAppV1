@@ -10,7 +10,8 @@ import java.util.List;
 import java.util.Locale;
 
 import net.archenemy.archenemyapp.R;
-import net.archenemy.archenemyapp.ui.FeedListElement;
+import net.archenemy.archenemyapp.ui.ListElement;
+import net.archenemy.archenemyapp.ui.Post;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,6 +33,8 @@ import com.facebook.Request;
 import com.facebook.RequestAsyncTask;
 import com.facebook.Response;
 import com.facebook.Session;
+import com.facebook.Request.Callback;
+import com.facebook.Request.GraphUserCallback;
 import com.facebook.model.GraphUser;
 
 public class FacebookAdapter 
@@ -110,9 +113,9 @@ public class FacebookAdapter
 	    return true;
 	}
 
-	private ArrayList<FeedListElement> parseJson (JSONObject jsonObj){
+	private ArrayList<ListElement> parseJson (JSONObject jsonObj){
 		
-		ArrayList<FeedListElement> feedElements = new ArrayList<FeedListElement>();
+		ArrayList<ListElement> feedElements = new ArrayList<ListElement>();
 		JSONArray posts = null;
 		Log.i(TAG, "Parse response...");
 		if (jsonObj != null) {    		                    
@@ -131,8 +134,8 @@ public class FacebookAdapter
 						String name = fromObj.getString(TAG_NAME);
 						String id = fromObj.getString(TAG_ID);
 	            
-						FeedListElement element = 
-								new FeedListElement.FacebookElement(mActivity,name, id, message, date, picture, link);
+						ListElement element = 
+								new Post(mActivity,name, id, message, date, picture, link);
 						feedElements.add(element);
 					} catch (JSONException e) {
 						//ignore objects with missing tags
@@ -157,31 +160,62 @@ public class FacebookAdapter
 	    }
 	}
 
-	public void makeUserRequest(UserCallback userCallback) {
+	public void makeMeRequest(UserCallback userCallback) {
 		if (Utility.isConnectedToNetwork(mActivity, false)){
-		final Session session = Session.getActiveSession();
-		final UserCallback callback = userCallback;
-		if (session != null && session.isOpened()) {
-
-	    // Make an API call to get user data and define a 
-	    // new callback to handle the response.
-		    Request request = Request.newMeRequest(session, 
-		            new Request.GraphUserCallback() {
-		        @Override
-		        public void onCompleted(GraphUser user, Response response) {
-		            // If the response is successful
-		        	Log.i(TAG, "User received");
-		            if (session == Session.getActiveSession()) {
-		                callback.onUserRequestCompleted(user);
-		            }
-		            if (response.getError() != null) {
-		            	handleError(response.getError());
-		            }
-		        }
-		    });
-			Log.i(TAG, "Make user request");
-		    request.executeAsync();
+			final Session session = Session.getActiveSession();
+			final UserCallback callback = userCallback;
+			if (session != null && session.isOpened()) {
+	
+		    // Make an API call to get user data and define a 
+		    // new callback to handle the response.
+			    Request request = Request.newMeRequest(session, 
+			            new Request.GraphUserCallback() {
+			        @Override
+			        public void onCompleted(GraphUser user, Response response) {
+			            // If the response is successful
+			        	Log.i(TAG, "User received");
+			            if (session == Session.getActiveSession()) {
+			                callback.onUserRequestCompleted(user);
+			            }
+			            if (response.getError() != null) {
+			            	handleError(response.getError());
+			            }
+			        }
+			    });
+				Log.i(TAG, "Make user request");
+			    request.executeAsync();
+			}
 		}
+	}
+	
+	public void makeUserRequest(final UserCallback callback, final BandMember member) {
+		if (Utility.isConnectedToNetwork(mActivity, false)){
+			final Session session = Session.getActiveSession();
+			if (session != null && session.isOpened()) {
+				
+		        Callback wrapper = new Callback() {
+		            @Override
+		            public void onCompleted(Response response) {
+		            	
+		            	Log.i(TAG, "user received");		        			        	
+			        	if (response.getError() != null) {
+			            	handleError(response.getError());
+			            	return;
+			            }
+			        	// If the response is successful
+			        	if (session == Session.getActiveSession()) {
+			        		//Evaluate response
+			                GraphUser graphUser = response.getGraphObjectAs(GraphUser.class);
+			                member.setGraphUser(graphUser);
+			                if (callback != null) {
+			                	callback.onUserRequestCompleted(graphUser);
+			                }
+			        	}
+		            }
+		        };
+		        Request request = new Request(session, member.getFacebookUserId(), null, null, wrapper);
+		        request.executeAsync();
+			}
 		}
 	}
 	
@@ -210,8 +244,8 @@ public class FacebookAdapter
 		                JSONObject graphResponse = response
 		                                           .getGraphObject()
 		                                           .getInnerJSONObject();
-		        		ArrayList<FeedListElement> elements = parseJson(graphResponse);
-		        		member.setFacebookFeedElements(elements);
+		        		ArrayList<ListElement> elements = parseJson(graphResponse);
+		        		member.setPosts(elements);
 		                callback.onFeedRequestCompleted(member);
 		            }
 		        }

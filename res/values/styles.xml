@@ -65,6 +65,7 @@
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">@android:color/white</item>
         <item name="android:maxLines">25</item>
+        <item name="android:gravity">center</item>
     </style>
     
     <style name="User">        
@@ -84,7 +85,6 @@
         <item name="android:textColor">@color/lightgrey</item>
         <item name="android:singleLine">true</item>
         <item name="android:paddingLeft">4dp</item>
-        <item name="android:layout_alignParentRight">true</item>
     	<item name="android:gravity">right</item>
     </style>
     

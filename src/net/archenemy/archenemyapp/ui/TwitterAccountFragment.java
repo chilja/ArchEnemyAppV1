@@ -15,7 +15,7 @@ import net.archenemy.archenemyapp.data.Constants;
 import net.archenemy.archenemyapp.data.TwitterAdapter;
 import net.archenemy.archenemyapp.data.Utility;
 
-public class TwitterAccount extends AccountFragment 
+public class TwitterAccountFragment extends AccountFragment 
 	implements TwitterAdapter.UserCallback {
 	
 	public static final int TITLE = R.string.title_twitter;	

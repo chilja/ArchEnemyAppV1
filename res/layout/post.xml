@@ -2,12 +2,14 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
-	android:padding="5dp">
+	android:padding="5dp"
+	android:background="@drawable/box">
 	 	
 	<ImageView 
         android:id="@+id/imageView"	 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="8dp"
         android:minHeight="100dp"
         android:minWidth="2000dp"
         android:layout_centerHorizontal="true"/>
@@ -15,7 +17,7 @@
 	<TextView
 	    android:id="@+id/messageView"
 	    style="@style/NewsContent"
-		android:layout_marginBottom="5dp"
+		android:layout_marginBottom="4dp"
 		android:layout_below="@+id/imageView">
 	</TextView>
 	
@@ -26,23 +28,10 @@
         android:layout_below="@+id/messageView"/>
 
 	<TextView
-		android:id="@+id/userView"
-	    style="@style/User"
-   		android:layout_below="@+id/messageView"
-   		android:layout_toRightOf="@+id/providerIconView">
-	</TextView>
-	
-	<ImageView 
-        android:id="@+id/iconView"
-        style="@style/ArchEnemyIcon"
-        android:layout_below="@+id/messageView"
-        android:layout_toRightOf="@+id/userView"/>
-	
-	<TextView
 		android:id="@+id/dateView"
 		style="@style/Timestamp"
    		android:layout_below="@+id/messageView"
-   		android:layout_toRightOf="@+id/iconView">
+   		android:layout_centerInParent="true">
 	</TextView>
 	
 	

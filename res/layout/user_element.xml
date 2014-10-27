@@ -1,0 +1,22 @@
+<RelativeLayout 
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:padding="12dp">
+	
+    <com.facebook.widget.ProfilePictureView
+        android:id="@+id/imageView"	 
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_margin="12dp" >       
+    </com.facebook.widget.ProfilePictureView>
+
+	
+	<TextView
+	    android:id="@+id/userNameView"
+	    style="@style/NewsContent"
+		android:layout_margin="12dp"
+        android:layout_toRightOf="@+id/imageView"
+        android:layout_centerInParent="true"/>
+
+</RelativeLayout>

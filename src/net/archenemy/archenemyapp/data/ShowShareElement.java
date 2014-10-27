@@ -1,4 +1,4 @@
-package net.archenemy.archenemyapp.ui;
+package net.archenemy.archenemyapp.data;
 
 import java.io.Serializable;
 
@@ -6,8 +6,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import net.archenemy.archenemyapp.R;
-import net.archenemy.archenemyapp.data.FacebookShareElement;
-import net.archenemy.archenemyapp.data.Show;
 
 public class ShowShareElement extends FacebookShareElement 
 	implements Serializable{

@@ -13,7 +13,7 @@ import com.facebook.UiLifecycleHelper;
 /*Background activity to handle Facebook interaction */
 
 public class FacebookActivity extends ActionBarActivity 
-implements FacebookAccount.LoginCallback{
+implements FacebookAccountFragment.LoginCallback{
 	
 	protected FacebookAdapter mFacebookAdapter;
 	protected boolean mPendingLogin = false;

@@ -3,37 +3,24 @@
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	android:padding="5dp"
-	android:background="@android:color/transparent">
+	android:background="@drawable/box">
 	 	
 	<TextView
 	    android:id="@+id/messageView"
 	    style="@style/NewsContent"
-		android:layout_marginBottom="5dp"/>	
+		android:layout_marginBottom="4dp"/>	
 		
     <ImageView 
         android:id="@+id/providerIconView"
         style="@style/Icon"
         android:src="@drawable/twitter"
         android:layout_below="@+id/messageView"/>
-	
-	<TextView
-		android:id="@+id/userView"
-	    style="@style/User"
-		android:layout_marginLeft="5dp"
-   		android:layout_below="@+id/messageView"
-   		android:layout_toRightOf="@+id/providerIconView"/>
-	
-	<ImageView 
-        android:id="@+id/iconView"
-        style="@style/ArchEnemyIcon"
-        android:layout_below="@+id/messageView"
-        android:layout_toRightOf="@+id/userView"/>
-	
+
 	<TextView
 		android:id="@+id/dateView"
 		style="@style/Timestamp"
    		android:layout_below="@+id/messageView"
-    	android:layout_toRightOf="@+id/iconView"/>
+    	android:layout_centerInParent="true"/>
 	
 </RelativeLayout>
 

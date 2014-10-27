@@ -20,7 +20,7 @@ public class TwitterPageFragment extends PageFragment
 	}
 
 	@Override
-	protected List<FeedListElement> getListElements() {
-		return DataAdapter.getBandMember(mUserId).getTwitterFeedElements();
+	protected List<ListElement> getListElements() {
+		return DataAdapter.getBandMember(mUserId).getTweets();
 	}
 }

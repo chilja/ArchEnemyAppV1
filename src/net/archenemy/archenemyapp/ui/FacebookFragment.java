@@ -47,11 +47,11 @@ public class FacebookFragment extends BaseFragment {
 		if (mFragmentManager != null && mViewPager != null) {
 			synchronized (mFragmentManager) {				
 			mPagerAdapter = new FacebookPagerAdapter(mFragmentManager);
-				if (mPagerAdapter != null) {
-					mViewPager.setOffscreenPageLimit(6);
-					mViewPager.setAdapter(mPagerAdapter);
-					mPagerAdapter.notifyDataSetChanged();
-				}
+			if (mPagerAdapter != null) {
+				mViewPager.setOffscreenPageLimit(6);
+				mViewPager.setAdapter(mPagerAdapter);
+				mPagerAdapter.notifyDataSetChanged();
+			}
 			}
 		}
 	}
