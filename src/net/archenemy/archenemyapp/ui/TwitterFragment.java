@@ -38,6 +38,8 @@ public class TwitterFragment extends BaseFragment {
 
         mViewPager = (ViewPager) mView.findViewById(R.id.pager);
         
+        mBandMembers = mDataAdapter.getEnabledBandMembers();
+        
         refresh();
 	    	
 	    return mView;
@@ -52,17 +54,14 @@ public class TwitterFragment extends BaseFragment {
 		return TAG;
 	}
 	
-	public void refresh(){
-		if (mIsAttached) {
-		 	mBandMembers = mDataAdapter.getEnabledBandMembers();
-			if (mFragmentManager != null && mViewPager != null) {
-				synchronized (mFragmentManager) {
-	
-			 	mPagerAdapter = new TwitterPagerAdapter(mFragmentManager);	        
-					if (mPagerAdapter != null) {
-						mViewPager.setOffscreenPageLimit(6);
-						mViewPager.setAdapter(mPagerAdapter);
-					}
+	public void refresh(){ 	
+		if (mFragmentManager != null && mViewPager != null) {
+			synchronized (mFragmentManager) {
+
+		 	mPagerAdapter = new TwitterPagerAdapter(mFragmentManager);	        
+				if (mPagerAdapter != null) {
+					mViewPager.setOffscreenPageLimit(6);
+					mViewPager.setAdapter(mPagerAdapter);
 				}
 			}
 		}

@@ -44,19 +44,16 @@ public class FacebookFragment extends BaseFragment {
 	}
 	
 	public void refresh(){
-//		if (mIsAttached) {
-
-			if (mFragmentManager != null && mViewPager != null) {
-				synchronized (mFragmentManager) {				
-				mPagerAdapter = new FacebookPagerAdapter(mFragmentManager);
-					if (mPagerAdapter != null) {
-						mViewPager.setOffscreenPageLimit(6);
-						mViewPager.setAdapter(mPagerAdapter);
-						mPagerAdapter.notifyDataSetChanged();
-					}
+		if (mFragmentManager != null && mViewPager != null) {
+			synchronized (mFragmentManager) {				
+			mPagerAdapter = new FacebookPagerAdapter(mFragmentManager);
+				if (mPagerAdapter != null) {
+					mViewPager.setOffscreenPageLimit(6);
+					mViewPager.setAdapter(mPagerAdapter);
+					mPagerAdapter.notifyDataSetChanged();
 				}
 			}
-//		}
+		}
 	}
 	
 	public int getTitle() {
