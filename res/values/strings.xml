@@ -6,8 +6,8 @@
     
     <string-array name="menu">
         <item>On Tour</item>
-        <item>On Twitter</item>
         <item>On Facebook</item>
+        <item>On Twitter</item>
     </string-array>
     
     <string name="navigation_drawer_open">Open</string>

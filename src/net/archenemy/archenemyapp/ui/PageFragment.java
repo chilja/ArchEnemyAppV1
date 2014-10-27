@@ -39,8 +39,6 @@ public abstract class PageFragment extends BaseFragment
 	    
 		super.onCreateView(inflater, container, savedInstanceState);
 	    View view = inflater.inflate(R.layout.list_fragment, container, false);
-	
-	    init();
 	    
 	    //get the user id of band member
     	Bundle args = getArguments();
@@ -56,13 +54,15 @@ public abstract class PageFragment extends BaseFragment
 	}
 		
 	public void refresh() {
-		mListElements = getListElements();
-		if (mActivity != null && mListView != null) {
-		    mFeedListAdapter = new FeedListAdapter(mActivity, R.id.listView, mListElements);
-		    mListView.setAdapter(mFeedListAdapter);
-		}
-		if (mFeedListAdapter != null) {
-			mFeedListAdapter.notifyDataSetChanged();
+		if (mIsAttached) {
+			mListElements = getListElements();
+			if (mActivity != null && mListView != null) {
+			    mFeedListAdapter = new FeedListAdapter(mActivity, R.id.listView, mListElements);
+			    mListView.setAdapter(mFeedListAdapter);
+			}
+			if (mFeedListAdapter != null) {
+				mFeedListAdapter.notifyDataSetChanged();
+			}
 		}
 	}
 	

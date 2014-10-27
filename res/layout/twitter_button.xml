@@ -24,6 +24,7 @@
      	android:layout_height="match_parent"
 		android:layout_gravity="center"  
 		android:gravity="center"
-		android:background="@android:color/transparent"/>
+		android:background="@color/twitter_blue"
+		android:text="@string/fb_share_button"/>
 	
 </LinearLayout>

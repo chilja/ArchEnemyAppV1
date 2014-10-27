@@ -1,7 +1,9 @@
 package net.archenemy.archenemyapp.ui;
 
 import net.archenemy.archenemyapp.R;
+import net.archenemy.archenemyapp.data.Constants;
 import net.archenemy.archenemyapp.data.FacebookAdapter;
+import net.archenemy.archenemyapp.data.Utility;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
@@ -42,6 +44,14 @@ public class FacebookLoginFragment extends AccountFragment {
 
 		// Find the facebook login button
 		mLoginButton = (Button) view.findViewById(R.id.loginButton);
+		if (!Utility.isConnectedToNetwork(mActivity, false)) {
+			mLoginButton.setOnClickListener(new View.OnClickListener() {
+			    @Override
+			    public void onClick(View v) {
+			    	Utility.isConnectedToNetwork(mActivity, true); 
+			    }
+			});
+		}
 			
 		return view;
 	}

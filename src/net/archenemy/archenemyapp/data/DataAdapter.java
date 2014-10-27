@@ -1,5 +1,7 @@
 package net.archenemy.archenemyapp.data;
 
+import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.ParseException;
@@ -12,27 +14,28 @@ import java.util.Set;
 import java.util.TreeMap;
 import net.archenemy.archenemyapp.R;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Rect;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.ImageView;
 
 public class DataAdapter {
 	
 	private Activity mActivity;
 	private static final String TAG = "DataAdapter";
-	private static final String PREF_KEY_MICHAEL = "pref_key_michael_amott";
-	private static final String PREF_KEY_ALYSSA = "pref_key_alyssa_white_gluz";
 	
 	private static TreeMap<Integer,BandMember> mBandMembers = createBandMembers();
 	
 	public DataAdapter(Activity activity) {
 		mActivity = activity;
-	}
-	
-	public static void getBitmap(String bitmapUrl, BitmapCallback callback) {
-		BitmapTask task = new DataAdapter.BitmapTask(callback);
-		task.execute(bitmapUrl);		
 	}
 	
 	public static Date formatTourDate(String tourDate){
@@ -66,12 +69,12 @@ public class DataAdapter {
 				});
 		
 		members.put(2,
-				new BandMember("Alyssa White-Gluz", PREF_KEY_ALYSSA,2, 
+				new BandMember("Alyssa White-Gluz", Constants.PREF_KEY_ALYSSA,2, 
 						"AWhiteGluz", "383472626",
 						"Alyssa White-Gluz's - Official Page", "49373264983"));
 		
 		members.put(3,
-				new BandMember("Michael Amott", PREF_KEY_MICHAEL, 3,
+				new BandMember("Michael Amott", Constants.PREF_KEY_MICHAEL, 3,
 						"Michael_Amott", "88349752",
 						"Official Michael Amott","116270908441437"));
 		
@@ -126,23 +129,53 @@ public class DataAdapter {
 		return shows;
 	}
 	
+	public static void loadBitmap(String bitmapUrl, ImageView imageView) {
+		BitmapTask task = new DataAdapter.BitmapTask(imageView);
+		task.execute(bitmapUrl);		
+	}
+	
+	public static void loadBitmap(String bitmapUrl, ImageView imageView, BitmapCallback callback) {
+		BitmapTask task = new DataAdapter.BitmapTask(imageView, callback);
+		task.execute(bitmapUrl);		
+	}
+
+
 	/**
 	 * AsyncTask to retrieve images
 	 */
 	private static class BitmapTask extends AsyncTask<String, Void, Bitmap> {
 
+		private final WeakReference<ImageView> mImageViewReference;
+		final int mReqWidth; 
+		final int mReqHeight;
 		BitmapCallback mCallback;
 
-		private BitmapTask(BitmapCallback callback) {
+		private BitmapTask(ImageView imageView) {
+			mImageViewReference = new WeakReference<ImageView>(imageView);
+			mReqWidth = 100;
+			mReqHeight = 100;
+		}
+		
+		private BitmapTask(ImageView imageView, BitmapCallback callback) {
+			mImageViewReference = new WeakReference<ImageView>(imageView);
+			mReqWidth = 100;
+			mReqHeight = 100;
 			mCallback = callback;
+		}
+		
+		private BitmapTask(ImageView imageView, BitmapCallback callback, int reqWidth, int reqHeight) {
+			mImageViewReference = new WeakReference<ImageView>(imageView);
+			mReqWidth = reqWidth;
+			mReqHeight = reqHeight;
 		}
 		
 		@Override
 		protected Bitmap doInBackground(String... urls) {
 			if (urls != null && urls.length > 0) {
 				try {
-					URL url = new URL(urls[0]);
+					URL url = new URL(urls[0].trim());
 					URLConnection uc = url.openConnection();
+//					return loadBitmap(uc, mReqWidth, mReqHeight);
 					uc.getInputStream();
 					return BitmapFactory.decodeStream(uc.getInputStream());
 				} catch(Exception ex) {
@@ -154,12 +187,59 @@ public class DataAdapter {
 
 		@Override
 		protected void onPostExecute(Bitmap bitmap) {
-			mCallback.onPostExecute(bitmap);
+			if (mImageViewReference != null && bitmap != null) {
+	            final ImageView imageView = mImageViewReference.get();
+	            if (imageView != null) {
+	                imageView.setImageBitmap(bitmap);
+	            }
+	        }
+			if (mCallback != null)
+				mCallback.onPostExecute(bitmap);
 		}
+	}
+	
+	
+	
+	private static Bitmap loadBitmap( URLConnection uc, int reqWidth, int reqHeight) throws IOException {
+		Rect rect = new Rect();
+		
+		// First decode with inJustDecodeBounds=true to check dimensions
+	    final BitmapFactory.Options options = new BitmapFactory.Options();
+	    options.inJustDecodeBounds = true;
+	    BitmapFactory.decodeStream(uc.getInputStream(), rect, options);
+
+	    // Calculate inSampleSize
+	    options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+	    // Decode bitmap with inSampleSize set
+	    options.inJustDecodeBounds = false;
+	    return BitmapFactory.decodeStream(uc.getInputStream(), rect, options);		
+	}
+	
+	
+	private static int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+	    // Raw height and width of image
+	    final int height = options.outHeight;
+	    final int width = options.outWidth;
+	    int inSampleSize = 1;
+	
+	    if (height > reqHeight || width > reqWidth) {
+	
+	        final int halfHeight = height / 2;
+	        final int halfWidth = width / 2;
+	
+	        // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+	        // height and width larger than the requested height and width.
+	        while ((halfHeight / inSampleSize) > reqHeight
+	                && (halfWidth / inSampleSize) > reqWidth) {
+	            inSampleSize *= 2;
+	        }
+	    }
+	    return inSampleSize;
 	}
 	
 	public interface BitmapCallback {
 		void onPostExecute(Bitmap bitmap);
 	}
-	
 }

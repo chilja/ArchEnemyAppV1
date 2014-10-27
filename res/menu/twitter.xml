@@ -6,11 +6,5 @@
           android:title="@string/action_twitter_refresh"
           android:icon="@drawable/ic_action_refresh"
           net.archenemy.archenemyapp:showAsAction="ifRoom"/>
-    
-    <item android:id="@+id/actionAccounts"
-          android:title="@string/action_accounts"/>
-        
-    <item android:id="@+id/actionSettings"
-          android:title="@string/action_settings"/>   
      
 </menu>

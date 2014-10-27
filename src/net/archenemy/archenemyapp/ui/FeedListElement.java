@@ -16,7 +16,9 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class FeedListElement implements Comparable<FeedListElement>,
+public class FeedListElement 
+implements 
+	Comparable<FeedListElement>,
 	Serializable{
 	
 	/**
@@ -148,7 +150,7 @@ public class FeedListElement implements Comparable<FeedListElement>,
 		
 	}
 	static public class FacebookElement extends FeedListElement 
-		implements DataAdapter.BitmapCallback{
+	implements DataAdapter.BitmapCallback{
 		
 		/**
 		 * 
@@ -206,7 +208,7 @@ public class FeedListElement implements Comparable<FeedListElement>,
 	    		mImageView.setImageBitmap(mPictureBitmap);	
 	    	// URL provided? -> load picture
 	    	} else if (getPicture() != null){
-	    		DataAdapter.getBitmap(getPicture(), this);
+	    		DataAdapter.loadBitmap(getPicture(), mImageView, this);
 	    		mImageView.setVisibility(View.VISIBLE);
 	    	// no picture -> hide image view	
 	    	} else {
@@ -237,8 +239,7 @@ public class FeedListElement implements Comparable<FeedListElement>,
 		
 		@Override
 		public void onPostExecute(Bitmap bitmap) {
-			mPictureBitmap = bitmap;
-			mImageView.setImageBitmap(bitmap);			
+			mPictureBitmap = bitmap;		
 		}		
 	}
 }

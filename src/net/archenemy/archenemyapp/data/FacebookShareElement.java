@@ -1,14 +1,15 @@
 package net.archenemy.archenemyapp.data;
 
 import java.io.Serializable;
+
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 
 public abstract class FacebookShareElement implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
-	
-	protected transient ActionBarActivity mActivity;
+
 	protected transient DataAdapter mDataAdapter;
 
 	//UI elements
@@ -18,7 +19,6 @@ public abstract class FacebookShareElement implements Serializable {
 	
 	public FacebookShareElement(ActionBarActivity activity) {
 		super();
-		mActivity = activity;
 		mDataAdapter = new DataAdapter(activity);
 	}
 	
@@ -34,7 +34,7 @@ public abstract class FacebookShareElement implements Serializable {
 		return mText2;
 	}
 	
-    public abstract Bundle getPostingParameters(); 
+    public abstract Bundle getPostingParameters(Activity activity); 
 }
 
 

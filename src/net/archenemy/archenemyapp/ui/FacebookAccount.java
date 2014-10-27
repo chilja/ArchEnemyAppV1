@@ -1,6 +1,7 @@
 package net.archenemy.archenemyapp.ui;
 
 import net.archenemy.archenemyapp.R;
+import net.archenemy.archenemyapp.data.Constants;
 import net.archenemy.archenemyapp.data.FacebookAdapter;
 import net.archenemy.archenemyapp.data.Utility;
 import android.content.Intent;
@@ -20,6 +21,7 @@ public class FacebookAccount extends AccountFragment
 	implements FacebookAdapter.UserCallback {
 	
 	public static final String TAG = "FacebookAccount";
+	protected static final int TITLE = R.string.title_facebook;
 
 	protected FacebookAdapter mFacebookAdapter;
 		
@@ -31,8 +33,6 @@ public class FacebookAccount extends AccountFragment
 	        onSessionStateChange(session, state, exception);
 	    }
 	};
-		
-	protected static final int TITLE = R.string.title_facebook;
 	
 	public int getTitle() {
 		return TITLE;
@@ -48,6 +48,7 @@ public class FacebookAccount extends AccountFragment
 	    super.onCreate(savedInstanceState);
 	    mActivity = (ActionBarActivity) getActivity();
 	    mFacebookAdapter = new FacebookAdapter(mActivity);
+	    mProviderAdapter = mFacebookAdapter;
 	    mUiHelper = new UiLifecycleHelper(mActivity, mCallback); 
 	    
 	    if (Utility.isConnectedToNetwork(mActivity, false)) {
@@ -68,49 +69,20 @@ public class FacebookAccount extends AccountFragment
 		// Find the facebook login button
 		mLoginButton = (Button) view.findViewById(R.id.loginButton);
 
+		init();
 		
-		if (Utility.isConnectedToNetwork(mActivity, false)) {
-			if(mFacebookAdapter.isLoggedIn()) {
-				// Get the user's data
-				mFacebookAdapter.makeUserRequest(this);
-				setLoggedIn();
-			} else {
-				setLoggedOut();
-			}
-		} else {
-			setOffline();
+		if (savedInstanceState != null)
+			mName = savedInstanceState.getString(Constants.FACEBOOK_USER_NAME, mName);
+		
+		if (mName != null) { 			
+			mUserNameView.setText(mName);
+		} else {		
+			if (Utility.isConnectedToNetwork(mActivity, false) && mProviderAdapter.isLoggedIn()) {
+			    mFacebookAdapter.makeUserRequest(this);
+			 }
 		}
+		
 		return view;
-	}
-
-	private void setLoggedOut(){
-		mLoginButton.setEnabled(true);
-		mSubtext.setText(R.string.facebook_login_header);
-		mUserNameView.setText(null);  	
-	}
-
-	private void setLoggedIn(){
-		mLoginButton.setEnabled(true);
-		mSubtext.setText(R.string.fb_subtext_in);
-	}
-	
-	private void setOffline() {
-		mLoginButton.setEnabled(false);
-		mSubtext.setText(R.string.fb_subtext_offline);
-	}
-
-	public void onUserRequestCompleted(GraphUser user) {
-		if (user != null) {
-            // Set the text to the user's name.
-            mUserNameView.setText(user.getName());
-            setLoggedIn();
-        }	
-	}
-	
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-	    super.onActivityResult(requestCode, resultCode, data);
-	    mUiHelper.onActivityResult(requestCode, resultCode, data);
 	}
 	
 	public void onSessionStateChange(final Session session, SessionState state, Exception exception) {
@@ -132,6 +104,20 @@ public class FacebookAccount extends AccountFragment
 	    }	    
 	}
 	
+	public void onUserRequestCompleted(GraphUser user) {
+		if (user != null) {
+            // Set the text to the user's name.
+			mName = user.getName();
+            mUserNameView.setText(mName);
+        }	
+	}
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+	    super.onActivityResult(requestCode, resultCode, data);
+	    mUiHelper.onActivityResult(requestCode, resultCode, data);
+	}
+	
 	@Override
 	public void onResume() {
 	    super.onResume();
@@ -142,6 +128,7 @@ public class FacebookAccount extends AccountFragment
 	public void onSaveInstanceState(Bundle bundle) {
 	    super.onSaveInstanceState(bundle);
 	    mUiHelper.onSaveInstanceState(bundle);
+	    bundle.putString(Constants.FACEBOOK_USER_NAME, mName);
 	}
 
 	@Override

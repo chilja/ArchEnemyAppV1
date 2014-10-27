@@ -4,6 +4,7 @@ import com.facebook.Session;
 import com.facebook.SessionState;
 import net.archenemy.archenemyapp.R;
 import net.archenemy.archenemyapp.data.BandMember;
+import net.archenemy.archenemyapp.data.Constants;
 import net.archenemy.archenemyapp.data.DataAdapter;
 import net.archenemy.archenemyapp.data.FacebookAdapter;
 import net.archenemy.archenemyapp.data.TwitterAdapter;
@@ -12,6 +13,7 @@ import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -42,15 +44,9 @@ public class MainActivity
 	
 	private static final String TAG = "MainActivity";
 	
-	//Keys for saving instance state
-	public static final String TWITTER_IS_REFRESHED = "mTwitterIsRefreshed";
-	public static final String FACEBOOK_IS_REFRESHED = "mFacebookIsRefreshed";
-	public static final String POPUP_VISIBLE = "net.archenemy.archenemyapp.popupVisible";
-	public static final String FRAGMENT_KEY = "net.archenemy.archenemyapp.fragment";
-	
 	//menu positions = main fragment index
-	private static final int FACEBOOK = 2;
-	private static final int TWITTER = 1;
+	private static final int FACEBOOK = 1;
+	private static final int TWITTER = 2;
 	private static final int TOUR = 0;
 	private static int mSelectedMenuItem = TOUR;// initial selection
 	
@@ -74,18 +70,28 @@ public class MainActivity
 	private FacebookAdapter mFacebookAdapter;		
 	private static boolean mFacebookIsRefreshed = false;
 	
+	private boolean mIsResumed = false;
+	
+	private boolean mAccountActivityVisible = false;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 		setContentView(R.layout.main_activity);
 		mDataAdapter = new DataAdapter(this);
 		                     
 		mFragmentManager = getSupportFragmentManager();
 		mMenuDrawer = new MenuDrawer();
 		    
-	    mTwitterAdapter = new TwitterAdapter(this);
 	    mFacebookAdapter = new FacebookAdapter(this);
+	    mTwitterAdapter = new TwitterAdapter(this);
+	    
+	  //redirection from twitter authorization web page?
+	    Uri uri = getIntent().getData();
+	    if (uri != null && uri.toString().startsWith(TwitterAdapter.TWITTER_CALLBACK_URL)) {
+	    	mTwitterAdapter.makeTokenRequest(uri, this); 
+	    } 
 	    	    
 	    //try to retrieve fragments
 	    if (savedInstanceState != null) {
@@ -95,7 +101,7 @@ public class MainActivity
 		    mFacebookLoginFragment = (FacebookLoginFragment) getSupportFragmentManager().findFragmentByTag(FacebookLoginFragment.TAG);
 	    	mTourFragment = (TourFragment) getSupportFragmentManager().findFragmentByTag(TourFragment.TAG);
 	    	
-	    	mFacebookIsRefreshed = savedInstanceState.getBoolean(FACEBOOK_IS_REFRESHED, false);
+	    	mFacebookIsRefreshed = savedInstanceState.getBoolean(Constants.FACEBOOK_IS_REFRESHED, false);
 	    } 
 	    
 	    if (mTwitterFragment == null)
@@ -115,30 +121,39 @@ public class MainActivity
 	    }
 		
 	    restoreActionBar();
-	    
-	  //redirection from twitter authorization web page?
-	    Uri uri = getIntent().getData();
-	    if (uri != null && uri.toString().startsWith(TwitterAdapter.TWITTER_CALLBACK_URL)) {
-	    	mTwitterAdapter.authorize(uri, this); 
-	    	showFragment(TWITTER, false);
+
+    	if (savedInstanceState != null) {	
+	    	mTwitterIsRefreshed = savedInstanceState.getBoolean(Constants.TWITTER_IS_REFRESHED, false);
+	    	restoreFragment(savedInstanceState);					
 	    } else {
-	    	if (savedInstanceState != null) {	
-		    	mTwitterIsRefreshed = savedInstanceState.getBoolean(TWITTER_IS_REFRESHED, false);
-		    	restoreFragment(savedInstanceState);					
-		    } else {
-		    	showFragment(mSelectedMenuItem, false);
-		    }
+	    	showFragment(mSelectedMenuItem, false);
 	    }
+
 	}
 
 	@Override
 	public void onSaveInstanceState(Bundle bundle) {
 	    super.onSaveInstanceState(bundle);
-		bundle.putInt(FRAGMENT_KEY, getVisibleFragmentIndex() );
-		bundle.putBoolean(TWITTER_IS_REFRESHED, mTwitterIsRefreshed);
-		bundle.putBoolean(FACEBOOK_IS_REFRESHED, mFacebookIsRefreshed);
+		bundle.putInt(Constants.FRAGMENT, getVisibleFragmentIndex() );
+		bundle.putBoolean(Constants.TWITTER_IS_REFRESHED, mTwitterIsRefreshed);
+		bundle.putBoolean(Constants.FACEBOOK_IS_REFRESHED, mFacebookIsRefreshed);
+		bundle.putBoolean(Constants.DRAWER_OPEN, mMenuDrawer.isOpen());
 	}
 	
+	@Override
+	public void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		mIsResumed = true;
+	}
+
+	@Override
+	public void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		mIsResumed = false;
+	}
+
 	@Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -148,19 +163,19 @@ public class MainActivity
 	public boolean onPrepareOptionsMenu (Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		menu.clear();
-		if (getVisibleFragment()==mTwitterFragment) {
-		    inflater.inflate(R.menu.twitter, menu);
+		if (mMenuDrawer.isOpen()) {
+			inflater.inflate(R.menu.settings, menu);
 		    return true;
+		} else {
+			if (getVisibleFragment()==mTwitterFragment) {
+			    inflater.inflate(R.menu.twitter, menu);
+			    return true;
+			}
+			if (getVisibleFragment()==mFacebookFragment) {
+			    inflater.inflate(R.menu.facebook, menu);
+			    return true;
+			}
 		}
-		if (getVisibleFragment()==mFacebookFragment) {
-		    inflater.inflate(R.menu.facebook, menu);
-		    return true;
-		}
-		if (getVisibleFragment()==mFacebookLoginFragment ||getVisibleFragment()==mTwitterLoginFragment) {
-		    inflater.inflate(R.menu.settings, menu);
-		    return true;
-		}
-		
 		return false;
 	}
 	
@@ -199,7 +214,8 @@ public class MainActivity
 	protected void onPostCreate(Bundle savedInstanceState) {
 	    super.onPostCreate(savedInstanceState);
 	    // Sync the toggle state after onRestoreInstanceState has occurred.
-	    mMenuDrawer.syncState();
+	    if (mMenuDrawer != null)
+	    	mMenuDrawer.syncState();
 	}
     
   //Facebook Callback
@@ -236,15 +252,10 @@ public class MainActivity
 
 	//Twitter Callback
 	@Override
-	public void onAuthorizationCompleted(Boolean isAuthorized) {
-		showFragment(TWITTER, false);
-		if(isAuthorized) mTwitterAdapter.getFeed(this);
-	}
-
-	//Twitter Callback
-	@Override
-	public void onLogoutCompleted(boolean isLoggedIn) {
-		// TODO Auto-generated method stub		
+	public void onTokenRequestCompleted() {
+		mTwitterAdapter.makeFeedRequest(this);
+		if (mIsResumed && getVisibleFragmentIndex()== TWITTER)
+			showFragment(TWITTER, false);
 	}
 	
 	//Twitter Callback
@@ -272,7 +283,7 @@ public class MainActivity
         if (Utility.isConnectedToNetwork(this, true)) { 	  	
 			if (!mTwitterIsRefreshed && mTwitterAdapter.isLoggedIn()) {
 				Toast.makeText(this,getResources().getString(R.string.twitter_loading), Toast.LENGTH_LONG).show();
-				mTwitterAdapter.getFeed(this);
+				mTwitterAdapter.makeFeedRequest(this);
 
 			}
         }
@@ -282,8 +293,9 @@ public class MainActivity
     }
 	
 	protected void restoreFragment(Bundle savedInstanceState){
-		int fragmentIndex = savedInstanceState.getInt(FRAGMENT_KEY);
+		int fragmentIndex = savedInstanceState.getInt(Constants.FRAGMENT);
 		showFragment(fragmentIndex, false);
+	    if (savedInstanceState.getBoolean(Constants.DRAWER_OPEN)) mMenuDrawer.openDrawer();
 	}
 	
 	protected void restoreActionBar() {

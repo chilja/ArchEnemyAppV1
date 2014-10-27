@@ -34,7 +34,8 @@ import twitter4j.auth.RequestToken;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 
-public class TwitterAdapter {
+public class TwitterAdapter 
+	implements ProviderAdapter{
 	
 	public static final String TAG = "TwitterAdapter";
 	
@@ -57,7 +58,6 @@ public class TwitterAdapter {
 
 	private String mConsumerKey;
 	private String mConsumerSecret;
-	private boolean mIsLoggedIn = false;
 	
     // Twitter
     private static Twitter mTwitter;
@@ -96,33 +96,33 @@ public class TwitterAdapter {
     	return mSharedPreferences.getBoolean(PREF_KEY_TWITTER_LOGIN, false);
     }
 	
-	public void logOut(ConnectionCallback callback) {
+	public void logOut() {
 	// Clear the shared preferences
 	    Editor editor = mSharedPreferences.edit();
 	    editor.remove(PREF_KEY_OAUTH_TOKEN);
 	    editor.remove(PREF_KEY_OAUTH_SECRET);
 	    editor.remove(PREF_KEY_TWITTER_LOGIN);
-	    editor.commit();
-	    mIsLoggedIn = false;
-		callback.onLogoutCompleted(mIsLoggedIn);
+	    editor.commit();    
 	}
 
-	public void authorize(Uri uri, ConnectionCallback callback) {
+	public void makeTokenRequest(Uri uri, TokenCallback callback) {
 		if (!isLoggedIn()) {
 	        if (uri != null && uri.toString().startsWith(TWITTER_CALLBACK_URL)) {	        	
-	        	AuthorizeTask task = new AuthorizeTask(callback);
+	        	TokenTask task = new TokenTask(callback);
 	        	task.execute(uri);
 	        }
 	    }
 	}
 	
-	public void getUserProfile(ProfileCallback callback) {
-		Log.d(TAG, "Get profile...");
-		new ProfileTask(callback).execute();
+	public void makeUserRequest(UserCallback callback) {
+		if (isLoggedIn()) {
+			Log.i(TAG, "Get user ...");
+			new UserTask(callback).execute();
+		}
 	}
 
-	public void getFeed(final FeedCallback callback) {
-		if (isEnabled()) {
+	public void makeFeedRequest(final FeedCallback callback) {
+		if (isEnabled() && isLoggedIn()) {
 			Log.d(TAG, "Get feeds...");
 			ArrayList<BandMember> members = mDataAdapter.getEnabledBandMembers();
 			BandMember[] memberArray = new BandMember[members.size()];
@@ -188,17 +188,16 @@ public class TwitterAdapter {
         return twitter;	
 	}
 	
-	public interface FeedCallback extends ConnectionCallback {
+	public interface FeedCallback extends TokenCallback {
 		void onFeedRequestCompleted();
 	}
     
-    public interface ProfileCallback extends ConnectionCallback {
-		void onProfileRequestCompleted(User user);
+    public interface UserCallback extends TokenCallback {
+		void onUserRequestCompleted(User user);
 	}
     
-    public interface ConnectionCallback {
-		void onLogoutCompleted(boolean isLoggedIn);
-		void onAuthorizationCompleted(Boolean isAuthorized);
+    public interface TokenCallback {
+		void onTokenRequestCompleted();
 	}
  	
 	private class FeedTask extends AsyncTask<BandMember, Void, Void> {
@@ -249,11 +248,11 @@ public class TwitterAdapter {
 		}
 	}
 	
-	private class ProfileTask extends AsyncTask<Void, Void, User> {
+	private class UserTask extends AsyncTask<Void, Void, User> {
 
-		ProfileCallback mCallback;
+		UserCallback mCallback;
 
-		private ProfileTask(ProfileCallback callback) {
+		private UserTask(UserCallback callback) {
 			mCallback = callback;
 		}
 
@@ -275,7 +274,7 @@ public class TwitterAdapter {
 
 		@Override
 		protected void onPostExecute(User user) {
-			mCallback.onProfileRequestCompleted(user);
+			mCallback.onUserRequestCompleted(user);
 		}
 	}
 	
@@ -302,15 +301,15 @@ public class TwitterAdapter {
 		}		
 	}
 	
-	private class AuthorizeTask extends AsyncTask<Uri, Void, Boolean> {
-		ConnectionCallback mCallback;
+	private class TokenTask extends AsyncTask<Uri, Void, Void> {
+		TokenCallback mCallback;
 
-		private AuthorizeTask(ConnectionCallback callback) {
+		private TokenTask(TokenCallback callback) {
 			mCallback = callback;
 		}
 
 		@Override
-		protected Boolean doInBackground(Uri... uris) {
+		protected Void doInBackground(Uri... uris) {
 			if (uris.length > 0) {
 				 // oAuth verifier
 	            String verifier = uris[0]
@@ -338,14 +337,15 @@ public class TwitterAdapter {
 			     } catch (Exception e) {
 			         // Check log for login errors
 			         Log.e("Twitter Login Error", "> " + e.getMessage());
-			         return false;
+			         return null;
 			     }
 			}
-			return true;
+			return null;
 		}
 		@Override
-		protected void onPostExecute(Boolean isAuthorized) {
-			mCallback.onAuthorizationCompleted(isAuthorized);		
+		protected void onPostExecute(Void v) {
+			if (mCallback != null)
+				mCallback.onTokenRequestCompleted();		
 		}
 	}
 }

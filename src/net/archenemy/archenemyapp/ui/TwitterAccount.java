@@ -11,10 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import net.archenemy.archenemyapp.data.Constants;
 import net.archenemy.archenemyapp.data.TwitterAdapter;
+import net.archenemy.archenemyapp.data.Utility;
 
 public class TwitterAccount extends AccountFragment 
-	implements TwitterAdapter.ProfileCallback {
+	implements TwitterAdapter.UserCallback {
 	
 	public static final int TITLE = R.string.title_twitter;	
 	public static final String TAG = "TwitterAccount";
@@ -35,7 +37,9 @@ public class TwitterAccount extends AccountFragment
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
-	    mActivity = (ActionBarActivity) getActivity();  
+	    mActivity = (ActionBarActivity) getActivity(); 
+	    mTwitterAdapter = new TwitterAdapter(mActivity);
+	    mProviderAdapter = mTwitterAdapter;
 	}
 	
 	@Override
@@ -50,75 +54,85 @@ public class TwitterAccount extends AccountFragment
 		mSubtext = (TextView) view.findViewById(R.id.subTextView);	
 		// Find the login button
 		mLoginButton = (Button) view.findViewById(R.id.twitterButton);
-		mLoginButton.setOnClickListener(new View.OnClickListener() {
-		    @Override
-		    public void onClick(View v) {
-		    	if (mTwitterAdapter.isLoggedIn()) {
-		    		String logout = getResources().getString(R.string.twitter_logout);
-                    String cancel = getResources().getString(R.string.twitter_cancel);
-                    String message;
-                    if (mUser != null) {
-                    	message = getResources().getString(R.string.twitter_logged_in) + " " + mUser.getName();
-                    } else {
-                    	message = getResources().getString(R.string.twitter_logged_in);
-                    }
-		    		AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-                    builder.setMessage(message)
-                           .setCancelable(true)
-                           .setPositiveButton(logout, new DialogInterface.OnClickListener() {
-                               public void onClick(DialogInterface dialog, int which) {
-                            	   mTwitterAdapter.logOut(TwitterAccount.this);
-                               }
-                           })
-                           .setNegativeButton(cancel, null);
-                    builder.create().show();
-		    		
-		    		
-		    		
-		    	}else{
-		    		mTwitterAdapter.logIn(); 
-		    	}
-		    }
-		});
+		mLoginButton.setOnClickListener(new OnClickListener());
 		
-	    mTwitterAdapter = new TwitterAdapter(mActivity);
-	    if (mTwitterAdapter.isLoggedIn()) {
-	    	mTwitterAdapter.getUserProfile(this);
-	    	setLoggedIn();
-	    } else {
-	    	setLoggedOut();
-	    }
-			
+		init();
+		
+		if (savedInstanceState != null)
+			mName = savedInstanceState.getString(Constants.TWITTER_USER_NAME, mName);
+		
+		if (mName != null) { 			
+			mUserNameView.setText(mName);
+		} else {		    
+		    if (Utility.isConnectedToNetwork(mActivity, false) && mTwitterAdapter.isLoggedIn()) {
+			    mTwitterAdapter.makeUserRequest(this);
+			 } 
+		}
+
 		return view;
 	}
 	
-	private void setLoggedIn(){
-    	mSubtext.setText(R.string.twitter_logged_in);
-    	mLoginButton.setText(R.string.twitter_logout);  	
+	protected void setLoggedOut(){
+		super.setLoggedOut();
+		mLoginButton.setText(R.string.twitter_login);		
 	}
 	
-	private void setLoggedOut(){
-    	mSubtext.setText(R.string.twitter_login_header);
-    	mUserNameView.setText(null);
-    	mLoginButton.setText(R.string.twitter_login);
+	protected void setLoggedIn() {
+		super.setLoggedIn();
+		mLoginButton.setText(R.string.twitter_logout);
 	}
 
 	@Override
-	public void onLogoutCompleted(boolean isLoggedIn) {
-		setLoggedOut();		
+	public void onTokenRequestCompleted() {
+		mTwitterAdapter.makeUserRequest(this);
 	}
 
 	@Override
-	public void onAuthorizationCompleted(Boolean isAuthorized) {
-		mTwitterAdapter.getUserProfile(this);
-	}
-
-	@Override
-	public void onProfileRequestCompleted(User user) {
+	public void onUserRequestCompleted(User user) {
 		mUser = user;
 		if (user != null) {	
-			mUserNameView.setText(user.getName());
-			setLoggedIn();
+			mName = user.getName();
+			mUserNameView.setText(mName);
 		}
-	}	
+	}
+	
+	@Override
+	public void onSaveInstanceState(Bundle bundle) {
+	    super.onSaveInstanceState(bundle);
+	    bundle.putString(Constants.TWITTER_USER_NAME, mName);
+	}
+	
+	final class OnClickListener implements View.OnClickListener {
+
+	    @Override
+	    public void onClick(View v) {
+	    	if (mTwitterAdapter.isLoggedIn()) {
+	    		String logout = getResources().getString(R.string.twitter_logout);
+                String cancel = getResources().getString(R.string.twitter_cancel);
+                String message;
+                if (mName != null) {
+                	message = getResources().getString(R.string.twitter_logged_in) + ": " + mName;
+                } else {
+                	message = getResources().getString(R.string.twitter_logged_in);
+                }
+	    		
+                AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+                
+                builder.setMessage(message)
+                       .setCancelable(true)
+                       .setPositiveButton(logout, new DialogInterface.OnClickListener() {
+                           public void onClick(DialogInterface dialog, int which) {
+                        	   mTwitterAdapter.logOut();
+                        	   setLoggedOut();		
+                       		}
+                           }
+                       )
+                       .setNegativeButton(cancel, null);
+                builder.create().show();
+	    		
+	    	}else{
+	    		mTwitterAdapter.logIn(); 
+	    	}
+	    }		
+	}
 }

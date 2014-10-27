@@ -23,14 +23,14 @@
 	<string name="fb_progress_dialog_text">Sharing...</string>
 	<string name="fb_result_dialog_button_text">Post has been shared</string>
 	
-	<string name="fb_subtext_in">You are logged in as</string>
-    <string name="fb_subtext_offline">You are offline</string>
-    
     <string name="pref_facebook_title">Facebook</string>
     <string name="pref_facebook_summary_off">Not receiving posts from the official accounts</string>
     <string name="pref_facebook_summary_on">Receiving posts from the official accounts</string>
     
     <string name="facebook_login_header">Log in with Facebook to receive posts from the official accounts</string>
     <string name="facebook_loading">Loading from Facebook...</string>
+    <string name="facebook_logged_in">Logged in as </string>
+    <string name="facebook_logged_out">Not logged in </string>
+    <string name="facebook_offline">You are offline</string>
 	
 </resources>

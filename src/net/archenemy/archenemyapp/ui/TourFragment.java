@@ -12,6 +12,7 @@ import net.archenemy.archenemyapp.data.Utility;
 import com.facebook.widget.FacebookDialog;
 import com.facebook.widget.FacebookDialog.PendingCall;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -62,23 +63,6 @@ public class TourFragment extends BaseFragment {
 			mSelectedShowIndex = savedInstanceState.getInt(SELECTED_SHOW_INDEX, -1);		
 		}
 		
-	    init();
-	 		
-	    return view;
-	}
-	
-	public int getTitle() {
-		return TITLE;
-	}
-	
-	@Override
-	public String getTAG() {
-		return TAG;
-	}
-	
-	protected void init() {
-		super.init();
-	
  		setTitle(R.string.title_tour);
  		
 	    mActivity = (ActionBarActivity) getActivity();
@@ -90,7 +74,18 @@ public class TourFragment extends BaseFragment {
  		}
  		mAdapter = new ShowListAdapter(mActivity, mListElements); 		
 	    mListView.setAdapter(mAdapter);		
- 		mListView.setOnItemClickListener(new OnItemClickListener());		
+ 		mListView.setOnItemClickListener(new OnItemClickListener());
+	 		
+	    return view;
+	}
+	
+	public int getTitle() {
+		return TITLE;
+	}
+	
+	@Override
+	public String getTAG() {
+		return TAG;
 	}
 	
 	public void onStart(){

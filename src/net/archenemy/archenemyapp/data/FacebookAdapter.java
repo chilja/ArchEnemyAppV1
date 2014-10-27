@@ -34,7 +34,8 @@ import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.model.GraphUser;
 
-public class FacebookAdapter {
+public class FacebookAdapter 
+	implements ProviderAdapter{
 	
 	protected static final String TAG = "FacebookAdapter";
 	
@@ -240,7 +241,7 @@ public class FacebookAdapter {
 	        }
 	        
 	
-	        Bundle postParams = shareElement.getPostingParameters();
+	        Bundle postParams = shareElement.getPostingParameters(mActivity);
 	
 	
 	        Request.Callback callback= new Request.Callback() {

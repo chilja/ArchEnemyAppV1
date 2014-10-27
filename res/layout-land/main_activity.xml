@@ -8,8 +8,7 @@
     android:layout_gravity="left"
     tools:context="net.archenemy.archenemyapp.ui.MainActivity"
     android:background="@drawable/symbol_land" 
-    android:adjustViewBounds="true"
-    >
+    android:adjustViewBounds="true">
     
     <FrameLayout
 		android:id="@+id/fragmentContainer"
@@ -25,7 +24,7 @@
 	    android:divider="@android:color/transparent"
 	    android:dividerHeight="8dp"
 	    android:background="@color/grey"
-	    android:listSelector="@color/lightgrey"
+	    android:listSelector="@android:color/transparent"
 	    android:paddingTop="12dp"
 	    android:paddingStart="12dp"/>
 

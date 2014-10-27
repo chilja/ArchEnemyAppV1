@@ -7,7 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import net.archenemy.archenemyapp.R;
+import net.archenemy.archenemyapp.data.Constants;
 import net.archenemy.archenemyapp.data.TwitterAdapter;
+import net.archenemy.archenemyapp.data.Utility;
 
 public class TwitterLoginFragment extends BaseFragment {
 	
@@ -33,7 +35,8 @@ public class TwitterLoginFragment extends BaseFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
-	    mActivity = (ActionBarActivity) getActivity();  
+	    mActivity = (ActionBarActivity) getActivity();
+	    mTwitterAdapter = new TwitterAdapter(mActivity);
 	}
 	
 	@Override
@@ -49,27 +52,14 @@ public class TwitterLoginFragment extends BaseFragment {
 		mLoginButton.setOnClickListener(new View.OnClickListener() {
 		    @Override
 		    public void onClick(View v) {
-		    	if (!mTwitterAdapter.isLoggedIn()) {
+		    	if (Utility.isConnectedToNetwork(mActivity, true))  {
 		    		mTwitterAdapter.logIn(); 
 		    	}
 		    }
 		});
 		
-	    mTwitterAdapter = new TwitterAdapter(mActivity);
-	    if (mTwitterAdapter.isLoggedIn()) {
-	    	setLoggedIn();
-	    } else {
-	    	setLoggedOut();
-	    }
-			
+		mLoginButton.setText(R.string.twitter_login);
+		
 		return view;
-	}
-	
-	private void setLoggedIn(){
-    	mLoginButton.setText(R.string.twitter_logout);  	
-	}
-	
-	private void setLoggedOut(){
-    	mLoginButton.setText(R.string.twitter_login);
 	}
 }

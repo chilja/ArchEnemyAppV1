@@ -2,6 +2,7 @@ package net.archenemy.archenemyapp.ui;
 
 import java.io.Serializable;
 import net.archenemy.archenemyapp.R;
+import net.archenemy.archenemyapp.data.Constants;
 import net.archenemy.archenemyapp.data.FacebookAdapter;
 import net.archenemy.archenemyapp.data.FacebookShareElement;
 import net.archenemy.archenemyapp.data.DataAdapter;
@@ -21,9 +22,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.support.v7.app.ActionBarActivity;
 
-public class FacebookShareFragment extends BaseFragment
-	implements FacebookAdapter.UserCallback,
-	DataAdapter.BitmapCallback{
+public class FacebookShareFragment extends BaseFragment {
 	
 	public static final String TAG = "FacebookShareFragment";
 	protected static final String PENDING_PUBLISH_KEY = "pendingPublishReauthorization";
@@ -72,27 +71,25 @@ public class FacebookShareFragment extends BaseFragment
 
 		mNameView.setText(mShareElement.getText1());
 		mDescriptionView.setText(mShareElement.getText2());
+		DataAdapter.loadBitmap(mShareElement.getImageUri(),mImageView);
 		
 		mShareButton.setOnClickListener(new View.OnClickListener() {
 		    @Override
 		    public void onClick(View v) {
-		        mFacebookAdapter.publishStory(mShareElement);  
+		    	if (Utility.isConnectedToNetwork(mActivity, true) && mFacebookAdapter.isLoggedIn()) {
+		    		setEnabled();
+		    		mFacebookAdapter.publishStory(mShareElement);  
+		    	} else {
+			    	setDisabled();
+		    	}
 		    }
 		});
 		
-		if (Utility.isConnectedToNetwork(mActivity, false)){
-			if(mFacebookAdapter.isLoggedIn()) {
-				// Get the user's data
-				mFacebookAdapter.makeUserRequest(this);
-				DataAdapter.getBitmap(mShareElement.getImageUri(), this);
-				setLoggedIn();
-			} else {
-				setLoggedOut();
-			}
-			
-		} else {
-			setOffline();
-		}
+		if (Utility.isConnectedToNetwork(mActivity, false) && mFacebookAdapter.isLoggedIn()) {
+    		setEnabled();
+	    } else {
+	    	setDisabled();
+    	}
 		
 		return view;
 	}
@@ -102,30 +99,18 @@ public class FacebookShareFragment extends BaseFragment
 		return TAG;
 	}
 	
-	private void setOffline() {
-		mShareButton.setEnabled(false);
-	}
-
-	private void setLoggedIn(){
-		mShareButton.setEnabled(true);
-	}
-
-	private void setLoggedOut(){
-		mShareButton.setEnabled(false);  	
+	private void setEnabled() {
+//		mShareButton.setEnabled(true);
+		mShareButton.setTextColor(getResources().getColor(Constants.WHITE));
 	}
 	
-	public void onUserRequestCompleted(GraphUser user) {
-		if (user != null) {
-            setLoggedIn();
-        }	
+	private void setDisabled() {
+//		mShareButton.setEnabled(false);
+		mShareButton.setTextColor(getResources().getColor(Constants.GREY));
 	}
 	
 	public void onSessionStateChange(final Session session, SessionState state, Exception exception) {
-	    if (session != null && session.isOpened()) {
-	    	
-	    	//set the logged in state
-	    	setLoggedIn();
-	    	
+	    if (session != null && session.isOpened()) {    	
 	        if (state.equals(SessionState.OPENED_TOKEN_UPDATED)) {
 	            // Session updated with new permissions
 	            // so try publishing once more.
@@ -134,10 +119,7 @@ public class FacebookShareFragment extends BaseFragment
 		        		mFacebookAdapter.publishStory(mShareElement);
 		        }
 	        }   
-	    } else {	    	
-	    	// set the logged out state
-	    	setLoggedOut();
-	    }	    
+	    }    
 	}
 
 	@Override
@@ -147,8 +129,8 @@ public class FacebookShareFragment extends BaseFragment
 	    bundle.putBoolean(PENDING_PUBLISH_KEY, mFacebookAdapter.isPendingPublish());
 	}
 
-	@Override
-	public void onPostExecute(Bitmap bitmap) {
-		mImageView.setImageBitmap(bitmap);		
-	}
+//	@Override
+//	public void onPostExecute(Bitmap bitmap) {
+//		mImageView.setImageBitmap(bitmap);		
+//	}
 }

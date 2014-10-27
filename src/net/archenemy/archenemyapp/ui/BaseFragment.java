@@ -2,6 +2,7 @@ package net.archenemy.archenemyapp.ui;
 
 import net.archenemy.archenemyapp.R;
 import net.archenemy.archenemyapp.data.DataAdapter;
+import android.app.Activity;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
@@ -14,6 +15,8 @@ public abstract class BaseFragment extends Fragment {
 	protected DataAdapter mDataAdapter;
 	protected ActionBarActivity mActivity;
 	protected FragmentManager mFragmentManager;
+	protected boolean mIsResumed = false;
+	protected boolean mIsAttached = false;
 	
 	public abstract String getTAG();
 	
@@ -39,9 +42,37 @@ public abstract class BaseFragment extends Fragment {
 		this.mTitleString = titleString;
 	}
 	
-	protected void init() {
-		mDataAdapter = new DataAdapter(getActivity());
-		mActivity = (ActionBarActivity)getActivity() ;
+	protected void init(Activity activity) {
+		mActivity = (ActionBarActivity)activity ;
+		mDataAdapter = new DataAdapter(mActivity);		
 		mFragmentManager = mActivity.getSupportFragmentManager();	
 	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		mIsResumed = false;
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		mIsResumed = true;
+	}	
+	
+	@Override
+	public void onAttach(Activity activity) {
+		// TODO Auto-generated method stub
+		super.onAttach(activity);
+		init(activity);
+		mIsAttached = true;
+	}
+
+	@Override
+	public void onDetach() {
+		// TODO Auto-generated method stub
+		super.onDetach();
+		mIsAttached = false;
+	}
+
 }

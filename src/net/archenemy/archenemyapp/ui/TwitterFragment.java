@@ -1,6 +1,8 @@
 package net.archenemy.archenemyapp.ui;
 
 import java.util.ArrayList;
+
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,10 +35,7 @@ public class TwitterFragment extends BaseFragment {
 	    
 		super.onCreateView(inflater, container, savedInstanceState);
 	    mView = inflater.inflate(R.layout.pager_fragment, container, false);
-	    
-	    init();
-	    
-	 	mBandMembers = mDataAdapter.getEnabledBandMembers();
+
         mViewPager = (ViewPager) mView.findViewById(R.id.pager);
         
         refresh();
@@ -54,13 +53,16 @@ public class TwitterFragment extends BaseFragment {
 	}
 	
 	public void refresh(){
-		if (mFragmentManager != null && mViewPager != null) {
-			synchronized (mFragmentManager) {
-
-		 	mPagerAdapter = new TwitterPagerAdapter(mFragmentManager);	        
-				if (mPagerAdapter != null) {
-					mViewPager.setOffscreenPageLimit(6);
-					mViewPager.setAdapter(mPagerAdapter);
+		if (mIsAttached) {
+		 	mBandMembers = mDataAdapter.getEnabledBandMembers();
+			if (mFragmentManager != null && mViewPager != null) {
+				synchronized (mFragmentManager) {
+	
+			 	mPagerAdapter = new TwitterPagerAdapter(mFragmentManager);	        
+					if (mPagerAdapter != null) {
+						mViewPager.setOffscreenPageLimit(6);
+						mViewPager.setAdapter(mPagerAdapter);
+					}
 				}
 			}
 		}

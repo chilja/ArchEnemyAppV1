@@ -34,8 +34,8 @@ public class FacebookFragment extends BaseFragment {
 	    
 		super.onCreateView(inflater, container, savedInstanceState);
 	    mView = inflater.inflate(R.layout.pager_fragment, container, false);
-	    init();
-	 	mBandMembers = mDataAdapter.getEnabledBandMembers();
+
+		mBandMembers = mDataAdapter.getEnabledBandMembers();
 	 	
         mViewPager = (ViewPager) mView.findViewById(R.id.pager);
         refresh();
@@ -44,16 +44,19 @@ public class FacebookFragment extends BaseFragment {
 	}
 	
 	public void refresh(){
-		if (mFragmentManager != null && mViewPager != null) {
-			synchronized (mFragmentManager) {				
-			mPagerAdapter = new FacebookPagerAdapter(mFragmentManager);
-				if (mPagerAdapter != null) {
-					mViewPager.setOffscreenPageLimit(6);
-					mViewPager.setAdapter(mPagerAdapter);
-					mPagerAdapter.notifyDataSetChanged();
+//		if (mIsAttached) {
+
+			if (mFragmentManager != null && mViewPager != null) {
+				synchronized (mFragmentManager) {				
+				mPagerAdapter = new FacebookPagerAdapter(mFragmentManager);
+					if (mPagerAdapter != null) {
+						mViewPager.setOffscreenPageLimit(6);
+						mViewPager.setAdapter(mPagerAdapter);
+						mPagerAdapter.notifyDataSetChanged();
+					}
 				}
 			}
-		}
+//		}
 	}
 	
 	public int getTitle() {
