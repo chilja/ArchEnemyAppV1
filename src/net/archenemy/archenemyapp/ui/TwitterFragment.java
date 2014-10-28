@@ -2,6 +2,8 @@ package net.archenemy.archenemyapp.ui;
 
 import java.util.ArrayList;
 
+import twitter4j.User;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,8 +15,10 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import net.archenemy.archenemyapp.R;
 import net.archenemy.archenemyapp.data.BandMember;
+import net.archenemy.archenemyapp.data.TwitterAdapter;
+import net.archenemy.archenemyapp.data.TwitterAdapter.UserCallback;
 
-public class TwitterFragment extends BaseFragment {
+public class TwitterFragment extends BaseFragment implements UserCallback {
 	
 	public static final int TITLE = R.string.title_twitter;
     public static final String TAG = "TwitterFragment";
@@ -24,7 +28,9 @@ public class TwitterFragment extends BaseFragment {
 	protected TwitterPagerAdapter mPagerAdapter;
 
 	//one page for each band member
-	protected static ArrayList<BandMember> mBandMembers;
+	private static ArrayList<BandMember> mBandMembers;
+	
+	private TwitterAdapter mTwitterAdapter;
 	
 	private View mView;
 	
@@ -39,6 +45,8 @@ public class TwitterFragment extends BaseFragment {
         mViewPager = (ViewPager) mView.findViewById(R.id.pager);
         
         mBandMembers = mDataAdapter.getEnabledBandMembers();
+        
+        mTwitterAdapter = new TwitterAdapter(mActivity);
         
         refresh();
 	    	
@@ -97,5 +105,18 @@ public class TwitterFragment extends BaseFragment {
 	        fragment.setArguments(args);
 	        return fragment;	
 		}
+	}
+
+
+	@Override
+	public void onTokenRequestCompleted() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onUserRequestCompleted(User user) {
+		// TODO Auto-generated method stub
+		
 	}
 }

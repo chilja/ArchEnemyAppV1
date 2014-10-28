@@ -25,8 +25,8 @@ public class FacebookPageFragment extends PageFragment
 	@Override
 	protected List<ListElement> getListElements() {
 		BandMember member = DataAdapter.getBandMember(mUserId);
-		member.getTwitterUser();
-		UserElement user = new UserElement(member.getFacebookUser(), member.getFacebookUserId());
+		member.getTwitterUserName();
+		FacebookUser user = new FacebookUser(member.getFacebookUserName(), member.getFacebookUserId());
 		List<ListElement> list = new ArrayList<ListElement>();
 		list.add(user);
 		list.addAll(member.getPosts());		

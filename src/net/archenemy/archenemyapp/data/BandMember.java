@@ -3,6 +3,8 @@ package net.archenemy.archenemyapp.data;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import twitter4j.User;
+
 import com.facebook.model.GraphUser;
 
 import net.archenemy.archenemyapp.ui.ListElement;
@@ -14,27 +16,28 @@ import android.preference.PreferenceManager;
 public class BandMember {
 	
 	private String mName;
-	private String mTwitterUser;
+	private String mTwitterUserName;
 	private String mTwitterUserId;
-	private String mFacebookUser;
+	private String mFacebookUserName;
 	private String mFacebookUserId;
 	private String mPrefKey;
 	private int mUserId;
 	private GraphUser mGraphUser;
+	private User mTwitterUser;
 
 	private ArrayList<ListElement> mPosts = new ArrayList<ListElement>();
 	private ArrayList<ListElement> mTweets = new ArrayList<ListElement>();
 	
 	public BandMember(String name, String prefKey, int userId,
-								String twitterUser, String twitterUserId, 
-								String facebookUser, String facebookUserId){
+								String twitterUserName, String twitterUserId, 
+								String facebookUserName, String facebookUserId){
 		mName = name;
 		mUserId = userId;
 		mPrefKey = prefKey;
-		mTwitterUser = twitterUser;
+		mTwitterUserName = twitterUserName;
 		mTwitterUserId = twitterUserId;
-		mFacebookUser = facebookUser;
-		mFacebookUserId = facebookUserId;		
+		mFacebookUserName = facebookUserName;
+		mFacebookUserId = facebookUserId;
 	}
 	
 	public boolean isEnabled(Activity activity) {
@@ -48,20 +51,20 @@ public class BandMember {
 		return mName;
 	}
 
-	public String getTwitterUser() {
-		return mTwitterUser;
+	public String getTwitterUserName() {
+		return mTwitterUserName;
 	}
 
-	public String getFacebookUser() {
-		return mFacebookUser;
+	public String getFacebookUserName() {
+		return mFacebookUserName;
 	}
 
 	public int getUserId() {
 		return mUserId;
 	}
 
-	public String getTwitterUserId() {
-		return mTwitterUserId;
+	public Long getTwitterUserId() {
+		return Long.valueOf(mTwitterUserId);
 	}
 
 	public String getFacebookUserId() {
@@ -86,12 +89,20 @@ public class BandMember {
 		Collections.sort(mPosts);
 	}
 
-	public GraphUser getGraphUser() {
-		return mGraphUser;
+	public User getTwitterUser() {
+		return mTwitterUser;
 	}
-	
-	public void setGraphUser(GraphUser graphUser) {
-		mGraphUser = graphUser;
+
+	public void setTwitterUser(User twitterUser) {
+		mTwitterUser = twitterUser;
 	}
+
+//	public GraphUser getGraphUser() {
+//		return mGraphUser;
+//	}
+//	
+//	public void setGraphUser(GraphUser graphUser) {
+//		mGraphUser = graphUser;
+//	}
 
 }

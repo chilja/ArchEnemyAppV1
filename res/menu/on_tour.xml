@@ -8,7 +8,7 @@
     
     <item android:id="@+id/actionFbShare"
           android:title="@string/action_fb_share"
-          android:icon="@drawable/facebook" />
+          android:icon="@drawable/facebook_small" />
     
     <item android:id="@+id/actionShare"
           android:showAsAction="ifRoom"

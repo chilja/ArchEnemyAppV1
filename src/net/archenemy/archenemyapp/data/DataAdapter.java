@@ -132,40 +132,102 @@ public class DataAdapter {
 	}
 	
 	public static void loadBitmap(String bitmapUrl, ImageView imageView) {
-		BitmapTask task = new DataAdapter.BitmapTask(imageView);
+		BitmapFromUrlTask task = new DataAdapter.BitmapFromUrlTask(imageView);
 		task.execute(bitmapUrl);		
 	}
 	
 	public static void loadBitmap(String bitmapUrl, ImageView imageView, BitmapCallback callback) {
-		BitmapTask task = new DataAdapter.BitmapTask(imageView, callback);
+		BitmapFromUrlTask task = new DataAdapter.BitmapFromUrlTask(imageView, callback);
 		task.execute(bitmapUrl);		
+	}
+
+
+	public void loadBitmap(int resId, ImageView imageView, int reqWidth, int reqHeight) {
+	    BitmapFromResourcesTask task = new BitmapFromResourcesTask(imageView, reqWidth, reqHeight);
+	    task.execute(resId);
+	}
+
+	private static Bitmap loadBitmap( URLConnection uc, int reqWidth, int reqHeight) throws IOException {
+		Rect rect = new Rect();
+		
+		// First decode with inJustDecodeBounds=true to check dimensions
+	    final BitmapFactory.Options options = new BitmapFactory.Options();
+	    options.inJustDecodeBounds = true;
+	    BitmapFactory.decodeStream(uc.getInputStream(), rect, options);
+	
+	    // Calculate inSampleSize
+	    options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+	
+	    // Decode bitmap with inSampleSize set
+	    options.inJustDecodeBounds = false;
+	    return BitmapFactory.decodeStream(uc.getInputStream(), rect, options);		
+	}
+
+
+	private static int calculateInSampleSize(
+	        BitmapFactory.Options options, int reqWidth, int reqHeight) {
+	    // Raw height and width of image
+	    final int height = options.outHeight;
+	    final int width = options.outWidth;
+	    int inSampleSize = 1;
+	
+	    if (height > reqHeight || width > reqWidth) {
+	
+	        final int halfHeight = height / 2;
+	        final int halfWidth = width / 2;
+	
+	        // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+	        // height and width larger than the requested height and width.
+	        while ((halfHeight / inSampleSize) > reqHeight
+	                && (halfWidth / inSampleSize) > reqWidth) {
+	            inSampleSize *= 2;
+	        }
+	    }
+	    return inSampleSize;
+	}
+
+
+	public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
+	        int reqWidth, int reqHeight) {
+	
+	    // First decode with inJustDecodeBounds=true to check dimensions
+	    final BitmapFactory.Options options = new BitmapFactory.Options();
+	    options.inJustDecodeBounds = true;
+	    BitmapFactory.decodeResource(res, resId, options);
+	
+	    // Calculate inSampleSize
+	    options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+	
+	    // Decode bitmap with inSampleSize set
+	    options.inJustDecodeBounds = false;
+	    return BitmapFactory.decodeResource(res, resId, options);
 	}
 
 
 	/**
 	 * AsyncTask to retrieve images
 	 */
-	private static class BitmapTask extends AsyncTask<String, Void, Bitmap> {
+	private static class BitmapFromUrlTask extends AsyncTask<String, Void, Bitmap> {
 
 		private final WeakReference<ImageView> mImageViewReference;
 		final int mReqWidth; 
 		final int mReqHeight;
 		BitmapCallback mCallback;
 
-		private BitmapTask(ImageView imageView) {
+		private BitmapFromUrlTask(ImageView imageView) {
 			mImageViewReference = new WeakReference<ImageView>(imageView);
 			mReqWidth = 100;
 			mReqHeight = 100;
 		}
 		
-		private BitmapTask(ImageView imageView, BitmapCallback callback) {
+		private BitmapFromUrlTask(ImageView imageView, BitmapCallback callback) {
 			mImageViewReference = new WeakReference<ImageView>(imageView);
 			mReqWidth = 100;
 			mReqHeight = 100;
 			mCallback = callback;
 		}
 		
-		private BitmapTask(ImageView imageView, BitmapCallback callback, int reqWidth, int reqHeight) {
+		private BitmapFromUrlTask(ImageView imageView, BitmapCallback callback, int reqWidth, int reqHeight) {
 			mImageViewReference = new WeakReference<ImageView>(imageView);
 			mReqWidth = reqWidth;
 			mReqHeight = reqHeight;
@@ -202,56 +264,49 @@ public class DataAdapter {
 	
 	
 	
-	private static Bitmap loadBitmap( URLConnection uc, int reqWidth, int reqHeight) throws IOException {
-		Rect rect = new Rect();
-		
-		// First decode with inJustDecodeBounds=true to check dimensions
-	    final BitmapFactory.Options options = new BitmapFactory.Options();
-	    options.inJustDecodeBounds = true;
-	    BitmapFactory.decodeStream(uc.getInputStream(), rect, options);
+	class BitmapFromResourcesTask extends AsyncTask<Integer, Void, Bitmap> {
+	    private final WeakReference<ImageView> mImageViewReference;
+	    private int mResId = 0;
+	    final int mReqWidth; 
+		final int mReqHeight;
 
-	    // Calculate inSampleSize
-	    options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+	    public BitmapFromResourcesTask(ImageView imageView, int reqWidth, int reqHeight) {
+	        // Use a WeakReference to ensure the ImageView can be garbage collected
+	        mImageViewReference = new WeakReference<ImageView>(imageView);
+	        mReqWidth = reqWidth;
+			mReqHeight = reqHeight;
+	    }
 
-	    // Decode bitmap with inSampleSize set
-	    options.inJustDecodeBounds = false;
-	    return BitmapFactory.decodeStream(uc.getInputStream(), rect, options);		
-	}
-	
-	
-	private static int calculateInSampleSize(
-            BitmapFactory.Options options, int reqWidth, int reqHeight) {
-	    // Raw height and width of image
-	    final int height = options.outHeight;
-	    final int width = options.outWidth;
-	    int inSampleSize = 1;
-	
-	    if (height > reqHeight || width > reqWidth) {
-	
-	        final int halfHeight = height / 2;
-	        final int halfWidth = width / 2;
-	
-	        // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-	        // height and width larger than the requested height and width.
-	        while ((halfHeight / inSampleSize) > reqHeight
-	                && (halfWidth / inSampleSize) > reqWidth) {
-	            inSampleSize *= 2;
+	    // Decode image in background.
+	    @Override
+	    protected Bitmap doInBackground(Integer... params) {
+	        mResId = params[0];
+	        return decodeSampledBitmapFromResource(mActivity.getResources(), mResId, mReqWidth, mReqHeight);
+	    }
+
+	    // Once complete, see if ImageView is still around and set bitmap.
+	    @Override
+	    protected void onPostExecute(Bitmap bitmap) {
+	        if (mImageViewReference != null && bitmap != null) {
+	            final ImageView imageView = mImageViewReference.get();
+	            if (imageView != null) {
+	                imageView.setImageBitmap(bitmap);
+	            }
 	        }
 	    }
-	    return inSampleSize;
 	}
 	
 	static class AsyncDrawable extends BitmapDrawable {
-	    private final WeakReference<BitmapTask> bitmapTaskReference;
+	    private final WeakReference<BitmapFromUrlTask> bitmapTaskReference;
     
 	    public AsyncDrawable(Resources res, Bitmap bitmap,
-	            BitmapTask bitmapWorkerTask) {
+	            BitmapFromUrlTask bitmapWorkerTask) {
 	        super(res,bitmap);
 	        bitmapTaskReference =
-	            new WeakReference<BitmapTask>(bitmapWorkerTask);
+	            new WeakReference<BitmapFromUrlTask>(bitmapWorkerTask);
 	    }
 
-	    public BitmapTask getBitmapWorkerTask() {
+	    public BitmapFromUrlTask getBitmapWorkerTask() {
 	        return bitmapTaskReference.get();
 	    }
 	}

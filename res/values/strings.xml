@@ -5,7 +5,6 @@
     <string name="app_id">264203197105222</string>
     
     <string-array name="menu">
-        <item>On Tour</item>
         <item>On Facebook</item>
         <item>On Twitter</item>
     </string-array>

@@ -10,8 +10,12 @@
         android:id="@+id/indicator"
         android:layout_width="5dp"
         android:layout_height="match_parent"
-        android:background="@color/red"
-        ></FrameLayout>
+        android:background="@color/red"/>
+    
+    <ImageView 
+        android:id="@+id/providerIconView"
+        style="@style/MenuIcon"
+        android:layout_margin="12dp"/>
          
 	<TextView 
 	    android:id="@+id/textView"

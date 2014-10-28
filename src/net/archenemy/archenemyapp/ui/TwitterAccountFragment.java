@@ -65,7 +65,7 @@ public class TwitterAccountFragment extends AccountFragment
 			mUserNameView.setText(mName);
 		} else {		    
 		    if (Utility.isConnectedToNetwork(mActivity, false) && mTwitterAdapter.isLoggedIn()) {
-			    mTwitterAdapter.makeUserRequest(this);
+			    mTwitterAdapter.makeMeRequest(this);
 			 } 
 		}
 
@@ -84,7 +84,7 @@ public class TwitterAccountFragment extends AccountFragment
 
 	@Override
 	public void onTokenRequestCompleted() {
-		mTwitterAdapter.makeUserRequest(this);
+		mTwitterAdapter.makeMeRequest(this);
 	}
 
 	@Override

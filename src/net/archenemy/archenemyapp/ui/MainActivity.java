@@ -1,5 +1,7 @@
 package net.archenemy.archenemyapp.ui;
 
+import twitter4j.User;
+
 import com.facebook.Session;
 import com.facebook.SessionState;
 import net.archenemy.archenemyapp.R;
@@ -8,6 +10,7 @@ import net.archenemy.archenemyapp.data.Constants;
 import net.archenemy.archenemyapp.data.DataAdapter;
 import net.archenemy.archenemyapp.data.FacebookAdapter;
 import net.archenemy.archenemyapp.data.TwitterAdapter;
+import net.archenemy.archenemyapp.data.TwitterAdapter.UserCallback;
 import net.archenemy.archenemyapp.data.Utility;
 import android.app.ActionBar;
 import android.content.Context;
@@ -31,6 +34,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,22 +44,21 @@ public class MainActivity
 		FacebookActivity 
 	implements 
 		TwitterAdapter.FeedCallback,
-		FacebookAdapter.FeedCallback {
+		FacebookAdapter.FeedCallback, UserCallback {
 	
 	private static final String TAG = "MainActivity";
 	
 	//menu positions = main fragment index
-	private static final int FACEBOOK = 1;
-	private static final int TWITTER = 2;
-	private static final int TOUR = 0;
-	private static int mSelectedMenuItem = TOUR;// initial selection
+	private static final int FACEBOOK = 0;
+	private static final int TWITTER = 1;
+	private static int mSelectedMenuItem = FACEBOOK;// initial selection
 	
 	//fragments
 	private FacebookFragment mFacebookFragment;
 	private FacebookLoginFragment mFacebookLoginFragment;	
 	private TwitterFragment mTwitterFragment;	
 	private TwitterLoginFragment mTwitterLoginFragment;
-	private TourFragment mTourFragment;
+//	private TourFragment mTourFragment;
 
 	private MenuDrawer mMenuDrawer;
 	private ActionBar mActionBar;
@@ -71,6 +74,8 @@ public class MainActivity
 	private static boolean mFacebookIsRefreshed = false;
 	
 	private boolean mIsResumed = false;
+	
+	private int mFacebookCallbackCount;
 	
 	private boolean mAccountActivityVisible = false;
 	
@@ -99,7 +104,7 @@ public class MainActivity
 	    	mFacebookFragment = (FacebookFragment) getSupportFragmentManager().findFragmentByTag(FacebookFragment.TAG);
 	    	mTwitterLoginFragment = (TwitterLoginFragment) getSupportFragmentManager().findFragmentByTag(TwitterLoginFragment.TAG);
 		    mFacebookLoginFragment = (FacebookLoginFragment) getSupportFragmentManager().findFragmentByTag(FacebookLoginFragment.TAG);
-	    	mTourFragment = (TourFragment) getSupportFragmentManager().findFragmentByTag(TourFragment.TAG);
+//	    	mTourFragment = (TourFragment) getSupportFragmentManager().findFragmentByTag(TourFragment.TAG);
 	    	
 	    	mFacebookIsRefreshed = savedInstanceState.getBoolean(Constants.FACEBOOK_IS_REFRESHED, false);
 	    } 
@@ -112,11 +117,11 @@ public class MainActivity
 		    mTwitterLoginFragment = new TwitterLoginFragment();
 		if (mFacebookLoginFragment == null)
 		    mFacebookLoginFragment = new FacebookLoginFragment();
-		if (mTourFragment == null)
-	    	mTourFragment = new TourFragment();
+//		if (mTourFragment == null)
+//	    	mTourFragment = new TourFragment();
 	    if (savedInstanceState == null) {	
 	    	FragmentTransaction transaction = mFragmentManager.beginTransaction();
-			transaction.add(R.id.fragmentContainer, mTourFragment, TourFragment.TAG );
+			transaction.add(R.id.fragmentContainer, mFacebookFragment, FacebookFragment.TAG );
 			transaction.commit();
 	    }
 		
@@ -246,7 +251,9 @@ public class MainActivity
 	//Facebook Callback
 	@Override
 	public void onFeedRequestCompleted(BandMember member) {
-		mFacebookFragment.refresh();
+		mFacebookCallbackCount -= 1;
+		if (mFacebookCallbackCount < 1)
+			mFacebookFragment.refresh();
 		Log.i(TAG, "Received facebook feed");
 	}
 
@@ -269,8 +276,11 @@ public class MainActivity
         if (Utility.isConnectedToNetwork(this, true)) { 	  				
 			if (!mFacebookIsRefreshed && mFacebookAdapter.isLoggedIn()) { 
 				Toast.makeText(this,getResources().getString(R.string.facebook_loading), Toast.LENGTH_LONG).show();
-				for (BandMember member: mDataAdapter.getEnabledBandMembers())
-					mFacebookAdapter.makeFeedRequest(this, member);		
+				mFacebookCallbackCount = 0;
+				for (BandMember member: mDataAdapter.getEnabledBandMembers()) {
+					mFacebookAdapter.makeFeedRequest(this, member);	
+					mFacebookCallbackCount += 1;
+				}
 			}
         }
 		//set flag
@@ -284,6 +294,11 @@ public class MainActivity
 			if (!mTwitterIsRefreshed && mTwitterAdapter.isLoggedIn()) {
 				Toast.makeText(this,getResources().getString(R.string.twitter_loading), Toast.LENGTH_LONG).show();
 				mTwitterAdapter.makeFeedRequest(this);
+		        for (BandMember member: mDataAdapter.getEnabledBandMembers()) {
+		        	if (member.getTwitterUser() == null) {
+		        		mTwitterAdapter.makeUserRequest(member.getTwitterUserId(), this);
+		        	}
+		        }
 
 			}
         }
@@ -325,8 +340,8 @@ public class MainActivity
 					showFragment(mTwitterLoginFragment, addToBackStack);
 				}				
 				break;
-			case TOUR:
-				showFragment(mTourFragment, addToBackStack); break;
+//			case TOUR:
+//				showFragment(mTourFragment, addToBackStack); break;
 		}
 	}
 	
@@ -357,7 +372,7 @@ public class MainActivity
 
 	protected void hideFragments() {
 		FragmentTransaction transaction = mFragmentManager.beginTransaction();
-		transaction.hide(mTourFragment);
+//		transaction.hide(mTourFragment);
 		transaction.hide(mTwitterFragment);
 		transaction.hide(mFacebookFragment);
 		transaction.hide(mTwitterLoginFragment);
@@ -377,7 +392,7 @@ public class MainActivity
 	}
 	
 	protected BaseFragment getVisibleFragment() {
-		if (mTourFragment.isVisible()) return mTourFragment;   
+//		if (mTourFragment.isVisible()) return mTourFragment;   
 		if (mTwitterFragment.isVisible()) return mTwitterFragment;
 		if (mTwitterLoginFragment.isVisible()) return mTwitterLoginFragment;
 		if (mFacebookFragment.isVisible()) return mFacebookFragment;
@@ -386,7 +401,7 @@ public class MainActivity
 	}
 	
 	protected int getVisibleFragmentIndex() {
-		if (mTourFragment.isVisible()) return TOUR;   
+//		if (mTourFragment.isVisible()) return TOUR;   
 		if (mTwitterFragment.isVisible() || mTwitterLoginFragment.isVisible()) return TWITTER;
 		if (mFacebookFragment.isVisible()|| mFacebookLoginFragment.isVisible()) return FACEBOOK;
 		return -1;
@@ -505,18 +520,42 @@ public class MainActivity
 				textView.setText(mMenuItems[position]);
 				
 				View indicator = (View) view.findViewById(R.id.indicator);
+				ImageView providerIcon = (ImageView) view.findViewById(R.id.providerIconView);
+				switch (position) {
+					case TWITTER: 
+						mDataAdapter.loadBitmap(R.drawable.twitter, providerIcon, 50, 50);
+						break;
+					case FACEBOOK: 
+						mDataAdapter.loadBitmap(R.drawable.facebook_medium, providerIcon, 50, 50); 
+						break;
+				}
+				
 				
 				if (mSelectedMenuItem == position) {
-					textView.setTextColor(getResources().getColor(android.R.color.white));
+					textView.setTextColor(getResources().getColor(Constants.WHITE));
+					providerIcon.clearColorFilter();
 					indicator.setVisibility(View.VISIBLE);
 				} else {
-					textView.setTextColor(getResources().getColor(R.color.lightgrey));
+					textView.setTextColor(getResources().getColor(Constants.GREY));
 					indicator.setVisibility(View.INVISIBLE);
+					providerIcon.setColorFilter(Constants.GREY);
 				}
 				
 				return view;				
 			}		   
 		}
+	}
+
+	@Override
+	public void onUserRequestCompleted(User user) {
+		Long userId = user.getId();
+		for (BandMember member : mDataAdapter.getEnabledBandMembers()) {
+			if (member.getTwitterUserId().equals(userId)) {
+				member.setTwitterUser(user);
+				break;
+			}
+		}
+		refreshTwitter();
 	}
 }
 

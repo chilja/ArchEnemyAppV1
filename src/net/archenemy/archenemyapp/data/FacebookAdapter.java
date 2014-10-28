@@ -206,7 +206,6 @@ public class FacebookAdapter
 			        	if (session == Session.getActiveSession()) {
 			        		//Evaluate response
 			                GraphUser graphUser = response.getGraphObjectAs(GraphUser.class);
-			                member.setGraphUser(graphUser);
 			                if (callback != null) {
 			                	callback.onUserRequestCompleted(graphUser);
 			                }
@@ -236,6 +235,7 @@ public class FacebookAdapter
 		        	Log.i(TAG, "Feeds received");		        			        	
 		        	if (response.getError() != null) {
 		            	handleError(response.getError());
+		            	callback.onFeedRequestCompleted(member);
 		            	return;
 		            }
 		        	// If the response is successful

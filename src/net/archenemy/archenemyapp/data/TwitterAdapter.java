@@ -116,10 +116,19 @@ public class TwitterAdapter
 	    }
 	}
 	
-	public void makeUserRequest(UserCallback callback) {
+	public void makeUserRequest(Long userId, UserCallback callback) {
 		if (isLoggedIn()) {
 			Log.i(TAG, "Get user ...");
-			new UserTask(callback).execute();
+			new UserTask(callback).execute(userId);
+		}
+	}
+	
+	public void makeMeRequest(UserCallback callback) {
+		if (isLoggedIn()) {
+			Log.i(TAG, "Get user ...");
+        	// Getting user details from twitter
+        	Long userId = mSharedPreferences.getLong(PREF_KEY_TWITTER_USER_ID,0l);
+			new UserTask(callback).execute(userId);
 		}
 	}
 
@@ -250,7 +259,7 @@ public class TwitterAdapter
 		}
 	}
 	
-	private class UserTask extends AsyncTask<Void, Void, User> {
+	private class UserTask extends AsyncTask<Long, Void, User> {
 
 		UserCallback mCallback;
 
@@ -259,12 +268,11 @@ public class TwitterAdapter
 		}
 
 		@Override
-		protected User doInBackground(Void... params) {
+		protected User doInBackground(Long... params) {
 	        
 	        try {
 		        Twitter twitter =  getAuthorizedTwitterInstance();
-	        	// Getting user details from twitter
-	        	Long userId = mSharedPreferences.getLong(PREF_KEY_TWITTER_USER_ID,0l);
+		        Long userId = params[0];
 	            User user = twitter.showUser(userId);
 	            return user;
 	            

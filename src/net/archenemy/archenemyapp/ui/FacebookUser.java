@@ -1,9 +1,7 @@
 package net.archenemy.archenemyapp.ui;
 
 import java.io.Serializable;
-
 import com.facebook.widget.ProfilePictureView;
-
 import net.archenemy.archenemyapp.R;
 import net.archenemy.archenemyapp.data.DataAdapter;
 import android.app.Activity;
@@ -12,10 +10,9 @@ import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-public class UserElement implements 
+public class FacebookUser implements 
 	ListElement,
 	Serializable, 
 	DataAdapter.BitmapCallback{
@@ -30,7 +27,7 @@ public class UserElement implements
 	private String mName;
 	private BaseAdapter mAdapter;
 	
-	public UserElement(String name, String profileId) {
+	public FacebookUser(String name, String profileId) {
 		mProfileId = profileId;
 		mName = name;
 	}
@@ -40,7 +37,7 @@ public class UserElement implements
         LayoutInflater inflater =
                 (LayoutInflater) activity
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        view = inflater.inflate(R.layout.user_element, null);
+        view = inflater.inflate(R.layout.facebook_user, null);
         
     	TextView userNameView = (TextView) view.findViewById(R.id.userNameView);
     	mImageView = (ProfilePictureView) view.findViewById(R.id.imageView);
@@ -48,8 +45,7 @@ public class UserElement implements
     	if(userNameView != null) {
     		userNameView.setText(mName);
     	}
-    	
-    	mImageView.setDefaultProfilePicture(null);
+
     	if (mImageView.getProfileId() != mProfileId)
     		mImageView.setProfileId(mProfileId);
        

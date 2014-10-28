@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.archenemy.archenemyapp.R;
+import net.archenemy.archenemyapp.data.BandMember;
 import net.archenemy.archenemyapp.data.Utility;
 
 import android.content.Context;
@@ -32,6 +33,7 @@ public abstract class PageFragment extends BaseFragment
 	protected List<ListElement> mListElements = new ArrayList<ListElement>();
 	protected transient ListAdapter mListAdapter;
 	protected int mUserId;
+	protected static ArrayList<BandMember> mBandMembers;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, 
@@ -43,6 +45,8 @@ public abstract class PageFragment extends BaseFragment
 	    //get the user id of band member
     	Bundle args = getArguments();
     	mUserId = args.getInt(FacebookPageFragment.USER_ID, 1);
+    	
+		mBandMembers = mDataAdapter.getEnabledBandMembers();
 	    
 	    // Find the list view
 	 	mListView = (ListView) view.findViewById(R.id.listView);

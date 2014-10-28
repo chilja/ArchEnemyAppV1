@@ -9,7 +9,7 @@
 	android:layout_alignParentBottom="true">
 
 	<ImageView
-		android:src="@drawable/facebook"
+		android:src="@drawable/facebook_small"
 		android:layout_width="20dp"
 		android:layout_height="20dp"
 		android:layout_gravity="center_vertical|left"/>
