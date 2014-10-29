@@ -26,6 +26,7 @@ import org.brickred.socialauth.SocialAuthConfig;
 import org.brickred.socialauth.android.SocialAuthAdapter.Provider;
 import org.brickred.socialauth.util.OAuthConfig;
 
+import twitter4j.MediaEntity;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
@@ -132,13 +133,10 @@ public class TwitterAdapter
 		}
 	}
 
-	public void makeFeedRequest(final FeedCallback callback) {
+	public void makeFeedRequest(Long id, final FeedCallback callback) {
 		if (isEnabled() && isLoggedIn()) {
 			Log.d(TAG, "Get feeds...");
-			ArrayList<BandMember> members = mDataAdapter.getEnabledBandMembers();
-			BandMember[] memberArray = new BandMember[members.size()];
-			members.toArray(memberArray);
-			new FeedTask(callback).execute(memberArray);
+			new FeedTask(callback, id).execute();
 		}
 	}
 
@@ -199,11 +197,11 @@ public class TwitterAdapter
         return twitter;	
 	}
 	
-	public interface FeedCallback extends TokenCallback {
-		void onFeedRequestCompleted();
+	public interface FeedCallback {
+		void onFeedRequestCompleted(ArrayList<ListElement> elements, Long id);
 	}
     
-    public interface UserCallback extends TokenCallback {
+    public interface UserCallback {
 		void onUserRequestCompleted(User user);
 	}
     
@@ -211,25 +209,22 @@ public class TwitterAdapter
 		void onTokenRequestCompleted();
 	}
  	
-	private class FeedTask extends AsyncTask<BandMember, Void, Void> {
+	private class FeedTask extends AsyncTask<Void, Void, ArrayList<ListElement>> {
 
-		FeedCallback mCallback;
+		private FeedCallback mCallback;
+		private Long mId;
 
-		private FeedTask(FeedCallback callback) {
+		private FeedTask(FeedCallback callback, Long id) {
 			mCallback = callback;
+			mId = id;
 		}
 
 		@Override
-		protected Void doInBackground(BandMember... members) {
+		protected ArrayList<ListElement> doInBackground(Void... params) {
 	        
 	        try {
 	            Twitter twitter = getAuthorizedTwitterInstance();
-	            for (int i = 0; i<members.length; i++){
-	            	members[i].setTweets(
-	            			getFeedElements(twitter.getUserTimeline(Long.valueOf(members[i].getTwitterUserId()))));	
-	            }	            
-	            return null;
-	            
+	            return getFeedElements(twitter.getUserTimeline(mId));		                        
 	        } catch (TwitterException te) {
 	            te.printStackTrace();
 	        }
@@ -245,17 +240,23 @@ public class TwitterAdapter
 					URLEntity url = urlEntities[0];
 					link = url.getExpandedURL();
 				}
+				String url = link;
+				MediaEntity[] media = status.getMediaEntities();
+				for (MediaEntity entity : media) {
+					url = entity.getMediaURL();
+					String type = entity.getType();
+				}
 				ListElement element = 
 						new Tweet(mActivity, 
-								status.getUser().getScreenName(), status.getText(), status.getCreatedAt(), link);
+								status.getUser().getScreenName(), status.getText(), status.getCreatedAt(), url);
 				listElements.add(element);
 	        }
 			return listElements;
 		}
 
 		@Override
-		protected void onPostExecute(Void v) {			
-			mCallback.onFeedRequestCompleted();
+		protected void onPostExecute(ArrayList<ListElement> elements) {			
+			mCallback.onFeedRequestCompleted(elements, mId);
 		}
 	}
 	

@@ -28,11 +28,13 @@ public class TwitterUser implements
 	protected transient ImageView mImageView;
 	protected Bitmap mBitmap;
 	private String mName;
+	private String mUserName;
 	private BaseAdapter mAdapter;
 	
-	public TwitterUser(String name, String imageUrl) {
+	public TwitterUser(String name, String userName, String imageUrl) {
 		mImageUrl = imageUrl;
 		mName = name;
+		mUserName = userName;
 	}
 	@Override
 	public View getView(Activity activity){
@@ -42,20 +44,23 @@ public class TwitterUser implements
 	            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	    view = inflater.inflate(R.layout.twitter_user, null);
 	    
+	    TextView nameView = (TextView) view.findViewById(R.id.nameView);
 		TextView userNameView = (TextView) view.findViewById(R.id.userNameView);
 		mImageView = (ImageView) view.findViewById(R.id.imageView);
-	
-		if(userNameView != null) {
-			userNameView.setText(mName);
-		}
 		
+		if(nameView != null) {
+			nameView.setText(mName);
+		}
+		if(userNameView != null) {
+			userNameView.setText("@"+mUserName);
+		}
+				
 		//Bitmap already loaded?
     	if (mBitmap != null) {
     		mImageView.setImageBitmap(mBitmap);	
     	// URL provided? -> load bitmap
     	} else if (mImageUrl != null){
     		DataAdapter.loadBitmap(mImageUrl, mImageView, this);
-//    		mImageView.setVisibility(View.VISIBLE);	
     	} 
 	   
 	    return view;

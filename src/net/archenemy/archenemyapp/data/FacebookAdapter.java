@@ -34,7 +34,6 @@ import com.facebook.RequestAsyncTask;
 import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.Request.Callback;
-import com.facebook.Request.GraphUserCallback;
 import com.facebook.model.GraphUser;
 
 public class FacebookAdapter 
@@ -79,6 +78,11 @@ public class FacebookAdapter
 	public boolean isLoggedIn() {
 		//check for open facebook session
         Session session = Session.getActiveSession();
+        String token = session.getAccessToken();
+        Date expDate = session.getExpirationDate();
+        Date date = new Date();
+//        if (token != null && (date.before(expDate)))
+//        	return true;
 		if (session != null && session.isOpened()) 
 			return true;
 		return false;
@@ -188,7 +192,7 @@ public class FacebookAdapter
 		}
 	}
 	
-	public void makeUserRequest(final UserCallback callback, final BandMember member) {
+	public void makeUserRequest(final UserCallback callback, final String id) {
 		if (Utility.isConnectedToNetwork(mActivity, false)){
 			final Session session = Session.getActiveSession();
 			if (session != null && session.isOpened()) {
@@ -212,17 +216,17 @@ public class FacebookAdapter
 			        	}
 		            }
 		        };
-		        Request request = new Request(session, member.getFacebookUserId(), null, null, wrapper);
+		        Request request = new Request(session, id, null, null, wrapper);
 		        request.executeAsync();
 			}
 		}
 	}
 	
-	public void makeFeedRequest(FeedCallback feedCallback, final BandMember member){
+	public void makeFeedRequest(FeedCallback feedCallback, final String id){
 		if (Utility.isConnectedToNetwork(mActivity, false)){
 		final Session session = Session.getActiveSession();
 		final FeedCallback callback = feedCallback;
-		StringBuffer query = new StringBuffer(member.getFacebookUserId());
+		StringBuffer query = new StringBuffer(id);
 		query.append("/feed");
 		// make the API call
 		Request request = new Request(
@@ -235,7 +239,7 @@ public class FacebookAdapter
 		        	Log.i(TAG, "Feeds received");		        			        	
 		        	if (response.getError() != null) {
 		            	handleError(response.getError());
-		            	callback.onFeedRequestCompleted(member);
+		            	callback.onFeedRequestCompleted(null, id);
 		            	return;
 		            }
 		        	// If the response is successful
@@ -245,8 +249,7 @@ public class FacebookAdapter
 		                                           .getGraphObject()
 		                                           .getInnerJSONObject();
 		        		ArrayList<ListElement> elements = parseJson(graphResponse);
-		        		member.setPosts(elements);
-		                callback.onFeedRequestCompleted(member);
+		                callback.onFeedRequestCompleted(elements, id);
 		            }
 		        }
 		    }
@@ -417,7 +420,7 @@ public class FacebookAdapter
 		void onUserRequestCompleted(GraphUser user);
 	}
 	public interface FeedCallback {
-		void onFeedRequestCompleted(BandMember member);
+		void onFeedRequestCompleted(ArrayList<ListElement> elements, String id);
 	}
 
 }

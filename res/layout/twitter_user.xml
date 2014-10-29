@@ -11,12 +11,22 @@
         android:layout_height="80dp"
         android:layout_margin="12dp" >       
     </ImageView>
+    
+    <LinearLayout
+        android:orientation="vertical" 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"
+        android:layout_centerInParent="true"
+        android:layout_toRightOf="@id/imageView">
+        
+	<TextView
+	    android:id="@+id/nameView"
+	    style="@style/NewsContent"/>
 	
 	<TextView
 	    android:id="@+id/userNameView"
-	    style="@style/NewsContent"
-		android:layout_margin="12dp"
-        android:layout_toRightOf="@+id/imageView"
-        android:layout_centerInParent="true"/>
+	    style="@style/NewsContent"/>
+	</LinearLayout>
 
 </RelativeLayout>

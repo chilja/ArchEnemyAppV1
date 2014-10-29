@@ -296,7 +296,7 @@ int drawable com_facebook_list_divider 0x7f020065
 int drawable com_facebook_list_section_header_background 0x7f020066
 int drawable com_facebook_loginbutton_silver 0x7f020067
 int drawable com_facebook_logo 0x7f020068
-int drawable com_facebook_picker_default_separator_color 0x7f02008e
+int drawable com_facebook_picker_default_separator_color 0x7f02008f
 int drawable com_facebook_picker_item_background 0x7f020069
 int drawable com_facebook_picker_list_focused 0x7f02006a
 int drawable com_facebook_picker_list_longpressed 0x7f02006b
@@ -329,11 +329,12 @@ int drawable ic_action_refresh 0x7f020085
 int drawable ic_drawer 0x7f020086
 int drawable ic_launcher 0x7f020087
 int drawable ic_menu 0x7f020088
-int drawable symbol_land 0x7f020089
-int drawable symbol_port 0x7f02008a
-int drawable tourposter 0x7f02008b
-int drawable twitter 0x7f02008c
-int drawable twitter_button 0x7f02008d
+int drawable progress_indicator 0x7f020089
+int drawable symbol_land 0x7f02008a
+int drawable symbol_port 0x7f02008b
+int drawable tourposter 0x7f02008c
+int drawable twitter 0x7f02008d
+int drawable twitter_button 0x7f02008e
 int id FacebookAccountFragment 0x7f06003e
 int id FacebookShareFragment 0x7f060060
 int id SettingsFragment 0x7f06006e

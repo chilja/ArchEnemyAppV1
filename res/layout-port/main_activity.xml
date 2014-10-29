@@ -8,11 +8,20 @@
     android:layout_gravity="center"
     tools:context="net.archenemy.archenemyapp.ui.MainActivity"
     android:background="@drawable/symbol_port" >
-         	
+    
+   <LinearLayout
+        android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:orientation="vertical">
+		
+
+             	
   	<FrameLayout
 		android:id="@+id/fragmentContainer"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent" />
+  	
+  	</LinearLayout>
 
     <ListView xmlns:android="http://schemas.android.com/apk/res/android"
 	    android:id="@+id/drawerListView"

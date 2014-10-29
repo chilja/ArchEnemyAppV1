@@ -13,10 +13,11 @@ import android.widget.Button;
 import android.widget.TextView;
 import net.archenemy.archenemyapp.data.Constants;
 import net.archenemy.archenemyapp.data.TwitterAdapter;
+import net.archenemy.archenemyapp.data.TwitterAdapter.TokenCallback;
 import net.archenemy.archenemyapp.data.Utility;
 
 public class TwitterAccountFragment extends AccountFragment 
-	implements TwitterAdapter.UserCallback {
+	implements TwitterAdapter.UserCallback, TokenCallback {
 	
 	public static final int TITLE = R.string.title_twitter;	
 	public static final String TAG = "TwitterAccount";

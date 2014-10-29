@@ -1,5 +1,7 @@
 package net.archenemy.archenemyapp.ui;
 
+import java.util.ArrayList;
+
 import twitter4j.User;
 
 import com.facebook.Session;
@@ -10,10 +12,13 @@ import net.archenemy.archenemyapp.data.Constants;
 import net.archenemy.archenemyapp.data.DataAdapter;
 import net.archenemy.archenemyapp.data.FacebookAdapter;
 import net.archenemy.archenemyapp.data.TwitterAdapter;
+import net.archenemy.archenemyapp.data.TwitterAdapter.TokenCallback;
 import net.archenemy.archenemyapp.data.TwitterAdapter.UserCallback;
 import net.archenemy.archenemyapp.data.Utility;
 import android.app.ActionBar;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -22,6 +27,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -38,13 +44,14 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ProgressBar;
 
 public class MainActivity 
 	extends 
 		FacebookActivity 
 	implements 
 		TwitterAdapter.FeedCallback,
-		FacebookAdapter.FeedCallback, UserCallback {
+		FacebookAdapter.FeedCallback, UserCallback, TokenCallback {
 	
 	private static final String TAG = "MainActivity";
 	
@@ -68,14 +75,17 @@ public class MainActivity
 	//Twitter
 	private TwitterAdapter mTwitterAdapter;
 	private static boolean mTwitterIsRefreshed = false;
+	private int mTwitterCallbackCount;
 	
 	//Facebook
 	private FacebookAdapter mFacebookAdapter;		
 	private static boolean mFacebookIsRefreshed = false;
+	private int mFacebookCallbackCount;
 	
 	private boolean mIsResumed = false;
 	
-	private int mFacebookCallbackCount;
+	private LoadingProgressDialog mFacebookProgressDialog;
+	private LoadingProgressDialog mTwitterProgressDialog;
 	
 	private boolean mAccountActivityVisible = false;
 	
@@ -126,6 +136,9 @@ public class MainActivity
 	    }
 		
 	    restoreActionBar();
+	    
+	    mFacebookProgressDialog = new LoadingProgressDialog(getResources().getString(R.string.facebook_loading));
+	    mTwitterProgressDialog = new LoadingProgressDialog(getResources().getString(R.string.twitter_loading));
 
     	if (savedInstanceState != null) {	
 	    	mTwitterIsRefreshed = savedInstanceState.getBoolean(Constants.TWITTER_IS_REFRESHED, false);
@@ -244,41 +257,81 @@ public class MainActivity
   				showFragment(FACEBOOK, false);    				
   			}
   		for (BandMember member: mDataAdapter.getEnabledBandMembers())
-  			mFacebookAdapter.makeFeedRequest(this, member);	
+  			mFacebookAdapter.makeFeedRequest(this, member.getFacebookUserId());	
   		}		
   	}
 	
 	//Facebook Callback
 	@Override
-	public void onFeedRequestCompleted(BandMember member) {
+	public void onFeedRequestCompleted(ArrayList<ListElement> elements, String id) {
+		if (elements != null && id != null && elements.size() >0) {
+			for (BandMember member: mDataAdapter.getEnabledBandMembers()) {
+				if (id.equals(member.getFacebookUserId())) {
+					member.setPosts(elements);
+					break;
+				}					
+			}
+		}
+		//all requests completed? : refresh fragment
 		mFacebookCallbackCount -= 1;
-		if (mFacebookCallbackCount < 1)
+		mFacebookProgressDialog.setProgress(50);
+		
+		if (mFacebookCallbackCount < 1) {
+			mFacebookProgressDialog.dismiss();
 			mFacebookFragment.refresh();
+		}
 		Log.i(TAG, "Received facebook feed");
 	}
 
 	//Twitter Callback
 	@Override
 	public void onTokenRequestCompleted() {
-		mTwitterAdapter.makeFeedRequest(this);
+		refreshTwitter();
 		if (mIsResumed && getVisibleFragmentIndex()== TWITTER)
 			showFragment(TWITTER, false);
 	}
 	
 	//Twitter Callback
-    public void onFeedRequestCompleted() { 
-		mTwitterFragment.refresh();
+    public void onFeedRequestCompleted(ArrayList<ListElement> elements, Long id) { 
+    	if (elements != null && id != null && elements.size() >0) {
+			for (BandMember member: mDataAdapter.getEnabledBandMembers()) {
+				if (id.equals(member.getTwitterUserId())) {
+					member.setTweets(elements);
+					break;
+				}					
+			}
+		}
+		mTwitterCallbackCount -= 1;
+		mTwitterProgressDialog.setProgress(50);
+		//all requests completed? : refresh fragment
+		if (mTwitterCallbackCount < 1) {
+			mTwitterProgressDialog.dismiss();
+			mTwitterFragment.refresh();
+		}
+			
 	    Log.i(TAG, "Received twitter feed");	
 	}
+    
+    private class LoadingProgressDialog extends ProgressDialog {
+    	LoadingProgressDialog (String message){
+    		super(MainActivity.this);
+    		setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+			setProgressDrawable(getResources().getDrawable(R.drawable.progress_indicator));
+			setMessage(message);
+    	}
+    	
+    }
     
     private void refreshFacebook() {
     	//check network connection
         if (Utility.isConnectedToNetwork(this, true)) { 	  				
 			if (!mFacebookIsRefreshed && mFacebookAdapter.isLoggedIn()) { 
-				Toast.makeText(this,getResources().getString(R.string.facebook_loading), Toast.LENGTH_LONG).show();
+				if (mFacebookProgressDialog != null) mFacebookProgressDialog.dismiss();
+				
+				mFacebookProgressDialog.show();
 				mFacebookCallbackCount = 0;
 				for (BandMember member: mDataAdapter.getEnabledBandMembers()) {
-					mFacebookAdapter.makeFeedRequest(this, member);	
+					mFacebookAdapter.makeFeedRequest(this, member.getFacebookUserId());	
 					mFacebookCallbackCount += 1;
 				}
 			}
@@ -292,8 +345,15 @@ public class MainActivity
     	//check network connection
         if (Utility.isConnectedToNetwork(this, true)) { 	  	
 			if (!mTwitterIsRefreshed && mTwitterAdapter.isLoggedIn()) {
-				Toast.makeText(this,getResources().getString(R.string.twitter_loading), Toast.LENGTH_LONG).show();
-				mTwitterAdapter.makeFeedRequest(this);
+				if (mTwitterProgressDialog != null) mTwitterProgressDialog.dismiss();
+				
+				mTwitterProgressDialog.show();
+				mTwitterCallbackCount = 0;
+				for (BandMember member: mDataAdapter.getEnabledBandMembers()) {
+					mTwitterAdapter.makeFeedRequest(member.getTwitterUserId(), this);
+					mTwitterCallbackCount += 1;
+				}
+				
 		        for (BandMember member: mDataAdapter.getEnabledBandMembers()) {
 		        	if (member.getTwitterUser() == null) {
 		        		mTwitterAdapter.makeUserRequest(member.getTwitterUserId(), this);

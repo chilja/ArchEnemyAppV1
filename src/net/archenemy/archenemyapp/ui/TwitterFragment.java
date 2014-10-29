@@ -18,7 +18,7 @@ import net.archenemy.archenemyapp.data.BandMember;
 import net.archenemy.archenemyapp.data.TwitterAdapter;
 import net.archenemy.archenemyapp.data.TwitterAdapter.UserCallback;
 
-public class TwitterFragment extends BaseFragment implements UserCallback {
+public class TwitterFragment extends BaseFragment{
 	
 	public static final int TITLE = R.string.title_twitter;
     public static final String TAG = "TwitterFragment";
@@ -105,18 +105,5 @@ public class TwitterFragment extends BaseFragment implements UserCallback {
 	        fragment.setArguments(args);
 	        return fragment;	
 		}
-	}
-
-
-	@Override
-	public void onTokenRequestCompleted() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onUserRequestCompleted(User user) {
-		// TODO Auto-generated method stub
-		
 	}
 }

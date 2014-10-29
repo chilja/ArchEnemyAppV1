@@ -29,8 +29,8 @@ public class TwitterPageFragment extends PageFragment
 		List<ListElement> list = new ArrayList<ListElement>();		
 		BandMember member = DataAdapter.getBandMember(mUserId);
 		User user = member.getTwitterUser();
-		if ( user != null ) {			
-			TwitterUser twitterUser = new TwitterUser(user.getName(), user.getOriginalProfileImageURL());	
+		if ( user != null ) {	
+			TwitterUser twitterUser = new TwitterUser(user.getName(), user.getScreenName(), user.getOriginalProfileImageURL());	
 			list.add(twitterUser);
 		}
 		list.addAll(member.getTweets());		
