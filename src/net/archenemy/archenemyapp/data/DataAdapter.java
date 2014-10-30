@@ -16,18 +16,11 @@ import java.util.Set;
 import java.util.TreeMap;
 import net.archenemy.archenemyapp.R;
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -61,11 +54,11 @@ public class DataAdapter {
 	public static TreeMap<Integer,BandMember> createBandMembers(){
 		TreeMap<Integer,BandMember> members = new TreeMap<Integer,BandMember>();
 		// String name, String prefKey, int userId,
-		// String twitterUser, String twitterUserId, 
+		// String twitterUserId, 
 		// String facebookUser, String facebookUserId)
 		members.put(1,
 				new BandMember("Arch Enemy", null, 1, 
-						"archenemymetal", "19564489",
+						 "19564489",
 						"Arch Enemy", "142695605765331") {
 					public boolean isEnabled(Activity activity) {
 						return true;
@@ -73,13 +66,13 @@ public class DataAdapter {
 				});
 		
 		members.put(2,
-				new BandMember("Alyssa White-Gluz", Constants.PREF_KEY_ALYSSA,2, 
-						"AWhiteGluz", "383472626",
+				new BandMember("Alyssa White-Gluz", Constants.PREF_KEY_ALYSSA, 2, 
+						"383472626",
 						"Alyssa White-Gluz's - Official Page", "49373264983"));
 		
 		members.put(3,
 				new BandMember("Michael Amott", Constants.PREF_KEY_MICHAEL, 3,
-						"Michael_Amott", "88349752",
+						 "88349752",
 						"Official Michael Amott","116270908441437"));
 		
 		return members;
@@ -133,20 +126,13 @@ public class DataAdapter {
 		return shows;
 	}
 	
-	public static void loadBitmap(String bitmapUrl, ImageView imageView) {
-		loadBitmap(bitmapUrl, imageView, null);		
-	}
-	
-	public static void loadBitmap(String bitmapUrl, ImageView imageView, BitmapCallback callback) {
-		int reqWidth = 200;
-		int reqHeight = 200;
+	public static void loadBitmap(
+			String bitmapUrl, ImageView imageView, BitmapCallback callback, int reqWidth, int reqHeight) {
 		BitmapFromUrlTask task = new DataAdapter.BitmapFromUrlTask(imageView, callback, reqWidth, reqHeight);
 		task.execute(bitmapUrl);		
 	}
 
-	public void loadBitmap(int resId, ImageView imageView) {
-		int reqWidth = 100;
-		int reqHeight = 100;		
+	public void loadBitmap(int resId, ImageView imageView, int reqWidth, int reqHeight) {		
 	    BitmapFromResourcesTask task = new BitmapFromResourcesTask(imageView, reqWidth, reqHeight);
 	    task.execute(resId);
 	}
@@ -210,9 +196,6 @@ public class DataAdapter {
 	    }
 	    return inSampleSize;
 	}
-
-
-	
 
 
 	/**

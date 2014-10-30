@@ -1480,14 +1480,13 @@ containing a value of this type.
         /**  Description of a share target (both in the list of such or the default share button) in a ShareActionProvider (share UI). [CHAR LIMIT=NONE] 
          */
         public static final int abc_shareactionprovider_share_with_application=0x7f090025;
-        public static final int action_accounts=0x7f090057;
-        public static final int action_buy_ticket=0x7f090055;
-        public static final int action_fb_share=0x7f090028;
-        public static final int action_settings=0x7f090056;
-        public static final int action_share_on_facebook=0x7f090058;
-        public static final int action_twitter_refresh=0x7f09005b;
-        public static final int app_id=0x7f09004c;
-        public static final int app_name=0x7f09004b;
+        public static final int action_accounts=0x7f090056;
+        public static final int action_buy_ticket=0x7f090054;
+        public static final int action_settings=0x7f090055;
+        public static final int action_share_on_facebook=0x7f090057;
+        public static final int action_twitter_refresh=0x7f09005a;
+        public static final int app_id=0x7f09004b;
+        public static final int app_name=0x7f09004a;
         public static final int com_facebook_choose_friends=0x7f09000f;
         public static final int com_facebook_dialogloginactivity_ok_button=0x7f090000;
         public static final int com_facebook_internet_permission_error_message=0x7f090013;
@@ -1515,68 +1514,68 @@ containing a value of this type.
         public static final int com_facebook_usersettingsfragment_logged_in=0x7f090009;
         public static final int com_facebook_usersettingsfragment_not_logged_in=0x7f09000a;
         public static final int facebook=0x7f090027;
-        public static final int facebook_loading=0x7f09003f;
-        public static final int facebook_logged_in=0x7f090040;
-        public static final int facebook_logged_out=0x7f090041;
-        public static final int facebook_login_header=0x7f09003e;
-        public static final int facebook_offline=0x7f090042;
-        public static final int fb_error_authentication_reopen=0x7f09002d;
-        public static final int fb_error_authentication_retry=0x7f09002c;
-        public static final int fb_error_bad_request=0x7f090030;
-        public static final int fb_error_dialog_button_text=0x7f09002a;
-        public static final int fb_error_dialog_default_text=0x7f09002b;
-        public static final int fb_error_dialog_title=0x7f090029;
-        public static final int fb_error_permission=0x7f09002e;
-        public static final int fb_error_server=0x7f09002f;
-        public static final int fb_error_unknown=0x7f090031;
-        public static final int fb_progress_dialog_text=0x7f090039;
-        public static final int fb_result_dialog_button_text=0x7f09003a;
-        public static final int fb_share_button=0x7f090034;
-        public static final int fb_share_caption=0x7f090033;
-        public static final int fb_share_description1=0x7f090035;
-        public static final int fb_share_description2=0x7f090036;
-        public static final int fb_share_description3=0x7f090037;
-        public static final int fb_share_description4=0x7f090038;
-        public static final int fb_share_name=0x7f090032;
-        public static final int navigation_drawer_close=0x7f09004e;
-        public static final int navigation_drawer_open=0x7f09004d;
-        public static final int pref_alyssa_white_gluz_title=0x7f090045;
-        public static final int pref_cat_band_members=0x7f090043;
-        public static final int pref_facebook_summary_off=0x7f09003c;
-        public static final int pref_facebook_summary_on=0x7f09003d;
-        public static final int pref_facebook_title=0x7f09003b;
-        public static final int pref_key_alyssa_white_gluz=0x7f090049;
-        public static final int pref_key_band_members=0x7f09004a;
-        public static final int pref_key_michael_amott=0x7f090048;
-        public static final int pref_member_summary_off=0x7f090047;
-        public static final int pref_member_summary_on=0x7f090046;
-        public static final int pref_michael_amott_title=0x7f090044;
-        public static final int pref_twitter_summary_off=0x7f090064;
-        public static final int pref_twitter_summary_on=0x7f090065;
-        public static final int pref_twitter_title=0x7f090063;
-        public static final int title_activity_facebook=0x7f090053;
-        public static final int title_activity_main=0x7f090052;
-        public static final int title_activity_settings=0x7f090054;
-        public static final int title_facebook=0x7f090050;
-        public static final int title_tour=0x7f090051;
-        public static final int title_twitter=0x7f09004f;
-        public static final int tour_image_url=0x7f090059;
-        public static final int twitter=0x7f09005a;
-        public static final int twitter_cancel=0x7f09005e;
-        public static final int twitter_loading=0x7f090062;
-        public static final int twitter_logged_in=0x7f09005f;
-        public static final int twitter_logged_out=0x7f090060;
-        public static final int twitter_login=0x7f09005c;
-        public static final int twitter_login_header=0x7f090066;
-        public static final int twitter_logout=0x7f09005d;
-        public static final int twitter_offline=0x7f090061;
+        public static final int facebook_loading=0x7f09003e;
+        public static final int facebook_logged_in=0x7f09003f;
+        public static final int facebook_logged_out=0x7f090040;
+        public static final int facebook_login_header=0x7f09003d;
+        public static final int facebook_offline=0x7f090041;
+        public static final int fb_error_authentication_reopen=0x7f09002c;
+        public static final int fb_error_authentication_retry=0x7f09002b;
+        public static final int fb_error_bad_request=0x7f09002f;
+        public static final int fb_error_dialog_button_text=0x7f090029;
+        public static final int fb_error_dialog_default_text=0x7f09002a;
+        public static final int fb_error_dialog_title=0x7f090028;
+        public static final int fb_error_permission=0x7f09002d;
+        public static final int fb_error_server=0x7f09002e;
+        public static final int fb_error_unknown=0x7f090030;
+        public static final int fb_progress_dialog_text=0x7f090038;
+        public static final int fb_result_dialog_button_text=0x7f090039;
+        public static final int fb_share_button=0x7f090033;
+        public static final int fb_share_caption=0x7f090032;
+        public static final int fb_share_description1=0x7f090034;
+        public static final int fb_share_description2=0x7f090035;
+        public static final int fb_share_description3=0x7f090036;
+        public static final int fb_share_description4=0x7f090037;
+        public static final int fb_share_name=0x7f090031;
+        public static final int navigation_drawer_close=0x7f09004d;
+        public static final int navigation_drawer_open=0x7f09004c;
+        public static final int pref_alyssa_white_gluz_title=0x7f090044;
+        public static final int pref_cat_band_members=0x7f090042;
+        public static final int pref_facebook_summary_off=0x7f09003b;
+        public static final int pref_facebook_summary_on=0x7f09003c;
+        public static final int pref_facebook_title=0x7f09003a;
+        public static final int pref_key_alyssa_white_gluz=0x7f090048;
+        public static final int pref_key_band_members=0x7f090049;
+        public static final int pref_key_michael_amott=0x7f090047;
+        public static final int pref_member_summary_off=0x7f090046;
+        public static final int pref_member_summary_on=0x7f090045;
+        public static final int pref_michael_amott_title=0x7f090043;
+        public static final int pref_twitter_summary_off=0x7f090063;
+        public static final int pref_twitter_summary_on=0x7f090064;
+        public static final int pref_twitter_title=0x7f090062;
+        public static final int title_activity_facebook=0x7f090052;
+        public static final int title_activity_main=0x7f090051;
+        public static final int title_activity_settings=0x7f090053;
+        public static final int title_facebook=0x7f09004f;
+        public static final int title_tour=0x7f090050;
+        public static final int title_twitter=0x7f09004e;
+        public static final int tour_image_url=0x7f090058;
+        public static final int twitter=0x7f090059;
+        public static final int twitter_cancel=0x7f09005d;
+        public static final int twitter_loading=0x7f090061;
+        public static final int twitter_logged_in=0x7f09005e;
+        public static final int twitter_logged_out=0x7f09005f;
+        public static final int twitter_login=0x7f09005b;
+        public static final int twitter_login_header=0x7f090065;
+        public static final int twitter_logout=0x7f09005c;
+        public static final int twitter_offline=0x7f090060;
     }
     public static final class style {
-        public static final int ActivityActionBar=0x7f0a0098;
+        public static final int ActivityActionBar=0x7f0a0099;
         /**  ActionBar title text 
          */
-        public static final int ActivityActionBarTitleText=0x7f0a009a;
-        public static final int ActivityActionMode=0x7f0a0099;
+        public static final int ActivityActionBarTitleText=0x7f0a009b;
+        public static final int ActivityActionMode=0x7f0a009a;
         /** 
         Base application theme for API 11+. This theme completely replaces
         AppBaseTheme from res/values/styles.xml on API 11+ devices.
@@ -1593,23 +1592,24 @@ containing a value of this type.
         /**  All customizations that are NOT specific to a particular API-level can go here. 
          */
         public static final int AppTheme=0x7f0a0087;
-        public static final int ArchEnemyIcon=0x7f0a008b;
+        public static final int ArchEnemyIcon=0x7f0a008c;
         /**  the theme applied to the application or activity 
          */
-        public static final int CustomActionBarTheme=0x7f0a0096;
+        public static final int CustomActionBarTheme=0x7f0a0097;
         /**  ActionBar styles 
          */
-        public static final int DrawerActionBar=0x7f0a0097;
-        public static final int Icon=0x7f0a0089;
+        public static final int DrawerActionBar=0x7f0a0098;
+        public static final int Icon=0x7f0a008a;
         public static final int Image=0x7f0a0088;
-        public static final int List=0x7f0a008c;
-        public static final int MediumText=0x7f0a008f;
-        public static final int MenuIcon=0x7f0a008a;
-        public static final int NewsContent=0x7f0a0092;
-        public static final int SmallText=0x7f0a0090;
-        public static final int SmallText_Lightgrey=0x7f0a0091;
-        public static final int Text=0x7f0a008d;
-        public static final int Text_Lightgrey=0x7f0a008e;
+        public static final int List=0x7f0a008d;
+        public static final int MediumText=0x7f0a0090;
+        public static final int MenuIcon=0x7f0a008b;
+        public static final int NewsContent=0x7f0a0093;
+        public static final int ProfilePicture=0x7f0a0089;
+        public static final int SmallText=0x7f0a0091;
+        public static final int SmallText_Lightgrey=0x7f0a0092;
+        public static final int Text=0x7f0a008e;
+        public static final int Text_Lightgrey=0x7f0a008f;
         /**  Mimic text appearance in select_dialog_item.xml 
          */
         public static final int TextAppearance_AppCompat_Base_CompactMenu_Dialog=0x7f0a0066;
@@ -1703,9 +1703,9 @@ containing a value of this type.
         /**  Base platform-dependent theme providing a light-themed activity. 
          */
         public static final int Theme_Base_Light=0x7f0a0080;
-        public static final int Timestamp=0x7f0a0094;
-        public static final int TitleStrip=0x7f0a0095;
-        public static final int User=0x7f0a0093;
+        public static final int Timestamp=0x7f0a0095;
+        public static final int TitleStrip=0x7f0a0096;
+        public static final int User=0x7f0a0094;
         /**  Styles in here can be extended for customisation in your application. Each utilises
          one of the Base styles. If Holo themes are available on the current platform version
          they will be used instead of the compat styles. 

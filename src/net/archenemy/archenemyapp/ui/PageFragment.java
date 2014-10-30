@@ -30,7 +30,7 @@ public abstract class PageFragment extends BaseFragment
 	public static final String USER_ID = TAG + "mUserId";
 	
 	protected transient ListView mListView;
-	protected List<ListElement> mListElements = new ArrayList<ListElement>();
+	protected List<FeedElement> mListElements = new ArrayList<FeedElement>();
 	protected transient ListAdapter mListAdapter;
 	protected int mUserId;
 	protected static ArrayList<BandMember> mBandMembers;
@@ -70,7 +70,7 @@ public abstract class PageFragment extends BaseFragment
 		}
 	}
 	
-	protected abstract List<ListElement> getListElements();
+	protected abstract List<FeedElement> getListElements();
 		
 	protected class OnItemClickListener implements ListView.OnItemClickListener {	
         @Override
@@ -82,15 +82,15 @@ public abstract class PageFragment extends BaseFragment
         }
 	}
 		
-	protected class ListAdapter extends ArrayAdapter<ListElement> {
+	protected class ListAdapter extends ArrayAdapter<FeedElement> {
 
 	    protected ListAdapter(Context context, int resourceId, 
-	                             List<ListElement> listElements) {
-	        super(context, resourceId, listElements);
+	                             List<FeedElement> feedElements) {
+	        super(context, resourceId, feedElements);
 	        //set list adapter for each element
-	        if (listElements != null && listElements.size() > 0){        
-		        for (int i = 0; i < listElements.size(); i++) {
-		            listElements.get(i).setAdapter(this);
+	        if (feedElements != null && feedElements.size() > 0){        
+		        for (int i = 0; i < feedElements.size(); i++) {
+		            feedElements.get(i).setAdapter(this);
 		        }
 	        }
 	    }

@@ -7,7 +7,7 @@ import twitter4j.User;
 
 import com.facebook.model.GraphUser;
 
-import net.archenemy.archenemyapp.ui.ListElement;
+import net.archenemy.archenemyapp.ui.FeedElement;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -25,16 +25,19 @@ public class BandMember {
 	private GraphUser mFacebookUser;
 	private User mTwitterUser;
 
-	private ArrayList<ListElement> mPosts = new ArrayList<ListElement>();
-	private ArrayList<ListElement> mTweets = new ArrayList<ListElement>();
+	private ArrayList<FeedElement> mPosts = new ArrayList<FeedElement>();
+	private ArrayList<FeedElement> mTweets = new ArrayList<FeedElement>();
 	
-	public BandMember(String name, String prefKey, int userId,
-								String twitterUserName, String twitterUserId, 
-								String facebookUserName, String facebookUserId){
+	public BandMember(String name, 
+			String prefKey, 
+			int userId,
+			String twitterUserId, 
+			String facebookUserName, 
+			String facebookUserId){
+		
 		mName = name;
 		mUserId = userId;
 		mPrefKey = prefKey;
-		mTwitterUserName = twitterUserName;
 		mTwitterUserId = twitterUserId;
 		mFacebookUserName = facebookUserName;
 		mFacebookUserId = facebookUserId;
@@ -49,10 +52,6 @@ public class BandMember {
 
 	public String getName() {
 		return mName;
-	}
-
-	public String getTwitterUserName() {
-		return mTwitterUserName;
 	}
 
 	public String getFacebookUserName() {
@@ -71,20 +70,20 @@ public class BandMember {
 		return mFacebookUserId;
 	}
 
-	public ArrayList<ListElement> getPosts() {
+	public ArrayList<FeedElement> getPosts() {
 		return mPosts;
 	}
 	
-	public ArrayList<ListElement> getTweets() {
+	public ArrayList<FeedElement> getTweets() {
 		return mTweets;
 	}
 
-	public void setPosts(ArrayList<ListElement> posts) {
+	public void setPosts(ArrayList<FeedElement> posts) {
 		mPosts = posts;
 		Collections.sort(mPosts);
 	}
 
-	public void setTweets(ArrayList<ListElement> tweets) {
+	public void setTweets(ArrayList<FeedElement> tweets) {
 		mTweets = tweets;
 		Collections.sort(mTweets);
 	}

@@ -76,18 +76,19 @@ public class MainActivity
 	private TwitterAdapter mTwitterAdapter;
 	//flag to prevent repeated automatic refresh
 	private static boolean mTwitterIsRefreshed = false;
-	private int mTwitterCallbackCount;
+	private Integer mTwitterCallbackCount;
+	private Integer mTwitterCallbackTotal;
+	private LoadingProgressDialog mTwitterProgressDialog;
 	
 	//Facebook
 	private FacebookAdapter mFacebookAdapter;	
 	//flag to prevent repeated automatic refresh
 	private static boolean mFacebookIsRefreshed = false;
-	private int mFacebookCallbackCount;
-	
-	private boolean mIsResumed = false;
-	
+	private Integer mFacebookCallbackCount;
+	private Integer mFacebookCallbackTotal;
 	private LoadingProgressDialog mFacebookProgressDialog;
-	private LoadingProgressDialog mTwitterProgressDialog;
+	
+	private boolean mIsResumed = false;	
 	
 	private boolean mAccountActivityVisible = false;
 	
@@ -246,13 +247,13 @@ public class MainActivity
     
   //Facebook Callback
   	protected void onSessionStateChange(final Session session, SessionState state, Exception exception) {
-  	    if (session != null && session.isOpened()) {
-  	    	Log.i(TAG, "Facebook session opened");
-  	    	if (mFacebookAdapter.isEnabled())
-  	    		if (getVisibleFragmentIndex() == FACEBOOK) {
-  	    			showFragment(FACEBOOK,false);
-  	    	}
-  	    }    
+    	Log.i(TAG, "Facebook session opened");
+    	if (mFacebookAdapter.isLoggedIn())
+    		if (getVisibleFragmentIndex() == FACEBOOK) {
+    			mFacebookIsRefreshed = false;
+    			showFragment(FACEBOOK,false);
+    			refreshFacebook();
+    	} 
   	}
   	
   	//Facebook Callback
@@ -271,7 +272,7 @@ public class MainActivity
 	
 	//Facebook Callback
 	@Override
-	public void onFeedRequestCompleted(ArrayList<ListElement> elements, String id) {
+	public void onFeedRequestCompleted(ArrayList<FeedElement> elements, String id) {
 		if (elements != null && id != null && elements.size() >0) {
 			for (BandMember member: mDataAdapter.getEnabledBandMembers()) {
 				if (id.equals(member.getFacebookUserId())) {
@@ -281,9 +282,12 @@ public class MainActivity
 			}
 		}
 		
-		mFacebookCallbackCount -= 1;
-		mFacebookProgressDialog.setProgress(50);
-		
+		synchronized (mFacebookCallbackCount) {
+			mFacebookCallbackCount -= 1;
+			int progress = (mFacebookCallbackTotal == 0) ? 100 :
+				(1 - (mFacebookCallbackCount / mFacebookCallbackTotal)) * 100;
+			mFacebookProgressDialog.setProgress(progress);
+		}
 		//all requests completed? refresh fragment
 		if (mFacebookCallbackCount < 1) {
 			mFacebookProgressDialog.dismiss();
@@ -303,7 +307,7 @@ public class MainActivity
 	}
 	
 	//Twitter Callback
-    public void onFeedRequestCompleted(ArrayList<ListElement> elements, Long id) { 
+    public void onFeedRequestCompleted(ArrayList<FeedElement> elements, Long id) { 
     	if (elements != null && id != null && elements.size() >0) {
 			for (BandMember member: mDataAdapter.getEnabledBandMembers()) {
 				if (id.equals(member.getTwitterUserId())) {
@@ -312,8 +316,12 @@ public class MainActivity
 				}					
 			}
 		}
-		mTwitterCallbackCount -= 1;
-		mTwitterProgressDialog.setProgress(50);
+    	synchronized (mTwitterCallbackCount) {
+			mTwitterCallbackCount -= 1;
+			int progress = (mTwitterCallbackTotal == 0) ? 100 : 
+				(1 - (mTwitterCallbackCount / mTwitterCallbackTotal)) * 100;
+			mTwitterProgressDialog.setProgress(progress);
+    	}
 		//all requests completed? refresh fragment
 		if (mTwitterCallbackCount < 1) {
 			mTwitterProgressDialog.dismiss();
@@ -345,11 +353,12 @@ public class MainActivity
 				
 				mFacebookProgressDialog.show();
 				
-				mFacebookCallbackCount = 0;
+				mFacebookCallbackCount = 0;				
 				for (BandMember member: mDataAdapter.getEnabledBandMembers()) {
 					mFacebookAdapter.makeFeedRequest(this, member.getFacebookUserId());	
 					mFacebookCallbackCount += 1;
 				}
+				mFacebookCallbackTotal = mFacebookCallbackCount;
 			}
         }
 		//set flag
@@ -375,7 +384,7 @@ public class MainActivity
 		        		mTwitterAdapter.makeUserRequest(member.getTwitterUserId(), this);
 		        	}
 		        }
-
+		        mTwitterCallbackTotal = mTwitterCallbackCount;
 			}
         }
 		//set flag
@@ -400,7 +409,7 @@ public class MainActivity
 		mSelectedMenuItem = menuIndex;
 		switch (menuIndex) {
 			case FACEBOOK:
-				if (mFacebookAdapter.isLoggedIn()) {
+				if (mFacebookAdapter.hasValidToken()) {
 					showFragment(mFacebookFragment, addToBackStack); 
 					refreshFacebook();
 				} else {
@@ -608,10 +617,10 @@ public class MainActivity
 				ImageView providerIcon = (ImageView) view.findViewById(R.id.providerIconView);
 				switch (position) {
 					case TWITTER: 
-						mDataAdapter.loadBitmap(R.drawable.twitter, providerIcon);
+						mDataAdapter.loadBitmap(R.drawable.twitter, providerIcon, 60, 60);
 						break;
 					case FACEBOOK: 
-						mDataAdapter.loadBitmap(R.drawable.facebook_medium, providerIcon); 
+						mDataAdapter.loadBitmap(R.drawable.facebook_medium, providerIcon, 60, 60); 
 						break;
 				}
 				
@@ -622,9 +631,9 @@ public class MainActivity
 					providerIcon.clearColorFilter();
 					indicator.setVisibility(View.VISIBLE);
 				} else {
-					textView.setTextColor(getResources().getColor(Constants.GREY));
+					textView.setTextColor(getResources().getColor(Constants.LIGHTGREY));
 					indicator.setVisibility(View.INVISIBLE);
-					providerIcon.setColorFilter(Constants.GREY);
+					providerIcon.setColorFilter(Constants.LIGHTGREY);
 				}
 				
 				return view;				

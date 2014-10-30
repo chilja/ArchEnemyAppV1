@@ -7,7 +7,7 @@
           net.archenemy.archenemyapp:showAsAction="ifRoom"/>
     
     <item android:id="@+id/actionFbShare"
-          android:title="@string/action_fb_share"
+          android:title="@string/action_share_on_facebook"
           android:icon="@drawable/facebook_small" />
     
     <item android:id="@+id/actionShare"

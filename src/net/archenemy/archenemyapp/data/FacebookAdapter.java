@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Locale;
 
 import net.archenemy.archenemyapp.R;
-import net.archenemy.archenemyapp.ui.ListElement;
+import net.archenemy.archenemyapp.ui.FeedElement;
 import net.archenemy.archenemyapp.ui.Post;
 
 import org.json.JSONArray;
@@ -77,14 +77,20 @@ public class FacebookAdapter
 	
 	public boolean isLoggedIn() {
 		//check for open facebook session
+		Session session = Session.getActiveSession();
+		if (session != null && session.isOpened()) 
+			return true;
+		return false;
+	}
+	
+	public boolean hasValidToken() {
+		//check for open facebook session
         Session session = Session.getActiveSession();
         String token = session.getAccessToken();
         Date expDate = session.getExpirationDate();
         Date date = new Date();
-//        if (token != null && (date.before(expDate)))
-//        	return true;
-		if (session != null && session.isOpened()) 
-			return true;
+        if (token != null && (date.before(expDate)))
+        	return true;
 		return false;
 	}
 	
@@ -117,9 +123,9 @@ public class FacebookAdapter
 	    return true;
 	}
 
-	private ArrayList<ListElement> parseJson (JSONObject jsonObj){
+	private ArrayList<FeedElement> parseJson (JSONObject jsonObj){
 		
-		ArrayList<ListElement> feedElements = new ArrayList<ListElement>();
+		ArrayList<FeedElement> feedElements = new ArrayList<FeedElement>();
 		JSONArray posts = null;
 		Log.i(TAG, "Parse response...");
 		if (jsonObj != null) {    		                    
@@ -138,7 +144,7 @@ public class FacebookAdapter
 						String name = fromObj.getString(TAG_NAME);
 						String id = fromObj.getString(TAG_ID);
 	            
-						ListElement element = 
+						FeedElement element = 
 								new Post(mActivity,name, id, message, date, picture, link);
 						feedElements.add(element);
 					} catch (JSONException e) {
@@ -248,7 +254,7 @@ public class FacebookAdapter
 		                JSONObject graphResponse = response
 		                                           .getGraphObject()
 		                                           .getInnerJSONObject();
-		        		ArrayList<ListElement> elements = parseJson(graphResponse);
+		        		ArrayList<FeedElement> elements = parseJson(graphResponse);
 		                callback.onFeedRequestCompleted(elements, id);
 		            }
 		        }
@@ -420,7 +426,7 @@ public class FacebookAdapter
 		void onUserRequestCompleted(GraphUser user);
 	}
 	public interface FeedCallback {
-		void onFeedRequestCompleted(ArrayList<ListElement> elements, String id);
+		void onFeedRequestCompleted(ArrayList<FeedElement> elements, String id);
 	}
 
 }

@@ -1,9 +1,7 @@
 package net.archenemy.archenemyapp.ui;
 
 import net.archenemy.archenemyapp.R;
-import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceFragment;
 import android.support.v4.app.FragmentTransaction;
 
 public class AccountActivity extends FacebookActivity {
@@ -19,10 +17,6 @@ public class AccountActivity extends FacebookActivity {
 	    //Find the fragments
 	    mTwitterAccount = (TwitterAccountFragment) getSupportFragmentManager().findFragmentById(R.id.TwitterAccountFragment);
 	    mFacebookAccount = (FacebookAccountFragment) getSupportFragmentManager().findFragmentById(R.id.FacebookAccountFragment);
-	    showAccounts();
-	}
-	
-	private void showAccounts(){
 	    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 	    transaction.show(mTwitterAccount);
 	    transaction.show(mFacebookAccount);

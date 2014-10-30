@@ -13,7 +13,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 public class FacebookUser implements 
-	ListElement,
+	FeedElement,
 	Serializable, 
 	DataAdapter.BitmapCallback{
 	/**
@@ -57,7 +57,7 @@ public class FacebookUser implements
 		mBitmap = bitmap;		
 	}
 	@Override
-	public int compareTo(ListElement element) {
+	public int compareTo(FeedElement element) {
 		return 1;
 	}
 	@Override

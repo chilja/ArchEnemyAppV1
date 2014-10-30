@@ -15,7 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class Post implements 
-	ListElement,
+	FeedElement,
 	DataAdapter.BitmapCallback{
 		
 		/**
@@ -63,7 +63,7 @@ public class Post implements
 	    		mImageView.setImageBitmap(mBitmap);	
 	    	// URL provided? -> load bitmap
 	    	} else if (mImageUrl != null){
-	    		DataAdapter.loadBitmap(mImageUrl, mImageView, this);
+	    		DataAdapter.loadBitmap(mImageUrl, mImageView, this, 200, 200);
 	    		mImageView.setVisibility(View.VISIBLE);
 	    	// no picture -> hide image view	
 	    	} else {
@@ -79,7 +79,7 @@ public class Post implements
 		}	
 		
 		@Override
-		public int compareTo(ListElement element) {
+		public int compareTo(FeedElement element) {
 			if (element instanceof Post) {
 				if ((mDate.getTime() - ((Post)element).mDate.getTime())<0) return 1;
 				if ((mDate.getTime() - ((Post)element).mDate.getTime())>0) return -1;

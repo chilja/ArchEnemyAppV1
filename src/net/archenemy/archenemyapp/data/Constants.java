@@ -6,7 +6,7 @@ public final class Constants {
 	
 	//colors
 	public static final int WHITE = android.R.color.white;
-	public static final int GREY = R.color.lightgrey;
+	public static final int LIGHTGREY = R.color.lightgrey;
 	public static final int RED = R.color.red;
 	
 	//Keys for saving instance state
@@ -21,17 +21,5 @@ public final class Constants {
 	//Preference keys
 	public static final String PREF_KEY_MICHAEL = "pref_key_michael_amott";
 	public static final String PREF_KEY_ALYSSA = "pref_key_alyssa_white_gluz";
-	
-
-    // Defines a custom Intent action
-    public static final String BROADCAST_ACTION =
-        "net.archenemy.archenemyapp.BROADCAST";
-    
-    public static final String FEED_ACTION =
-            "net.archenemy.archenemyapp.BROADCAST";
-
-    // Defines the key for the status "extra" in an Intent
-    public static final String EXTENDED_DATA_STATUS =
-        "net.archenemy.archenemyapp.STATUS";
 
 }

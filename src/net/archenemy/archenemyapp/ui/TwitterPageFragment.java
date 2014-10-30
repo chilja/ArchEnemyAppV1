@@ -25,8 +25,8 @@ public class TwitterPageFragment extends PageFragment
 	}
 
 	@Override
-	protected List<ListElement> getListElements() {		
-		List<ListElement> list = new ArrayList<ListElement>();		
+	protected List<FeedElement> getListElements() {		
+		List<FeedElement> list = new ArrayList<FeedElement>();		
 		BandMember member = DataAdapter.getBandMember(mUserId);
 		User user = member.getTwitterUser();
 		if ( user != null ) {	

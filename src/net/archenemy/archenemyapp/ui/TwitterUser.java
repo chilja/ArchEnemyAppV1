@@ -16,7 +16,7 @@ import android.widget.TextView;
 import com.facebook.widget.ProfilePictureView;
 
 public class TwitterUser implements 
-	ListElement,
+	FeedElement,
 	Serializable, 
 	DataAdapter.BitmapCallback{
 	/**
@@ -60,7 +60,7 @@ public class TwitterUser implements
     		mImageView.setImageBitmap(mBitmap);	
     	// URL provided? -> load bitmap
     	} else if (mImageUrl != null){
-    		DataAdapter.loadBitmap(mImageUrl, mImageView, this);
+    		DataAdapter.loadBitmap(mImageUrl, mImageView, this, 100, 100);
     	} 
 	   
 	    return view;
@@ -71,7 +71,7 @@ public class TwitterUser implements
 		mBitmap = bitmap;		
 	}
 	@Override
-	public int compareTo(ListElement element) {
+	public int compareTo(FeedElement element) {
 		return 1;
 	}
 	@Override

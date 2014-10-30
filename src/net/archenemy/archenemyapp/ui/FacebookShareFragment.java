@@ -71,7 +71,8 @@ public class FacebookShareFragment extends BaseFragment {
 
 		mNameView.setText(mShareElement.getText1());
 		mDescriptionView.setText(mShareElement.getText2());
-		DataAdapter.loadBitmap(mShareElement.getImageUri(),mImageView);
+		DataAdapter.loadBitmap(mShareElement.getImageUri(), 
+				mImageView, null, mImageView.getWidth(),mImageView.getHeight());
 		
 		mShareButton.setOnClickListener(new View.OnClickListener() {
 		    @Override
@@ -106,7 +107,7 @@ public class FacebookShareFragment extends BaseFragment {
 	
 	private void setDisabled() {
 //		mShareButton.setEnabled(false);
-		mShareButton.setTextColor(getResources().getColor(Constants.GREY));
+		mShareButton.setTextColor(getResources().getColor(Constants.LIGHTGREY));
 	}
 	
 	public void onSessionStateChange(final Session session, SessionState state, Exception exception) {

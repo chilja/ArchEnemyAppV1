@@ -19,7 +19,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import net.archenemy.archenemyapp.ui.ListElement;
+import net.archenemy.archenemyapp.ui.FeedElement;
 import net.archenemy.archenemyapp.ui.Tweet;
 
 import org.brickred.socialauth.SocialAuthConfig;
@@ -198,7 +198,7 @@ public class TwitterAdapter
 	}
 	
 	public interface FeedCallback {
-		void onFeedRequestCompleted(ArrayList<ListElement> elements, Long id);
+		void onFeedRequestCompleted(ArrayList<FeedElement> elements, Long id);
 	}
     
     public interface UserCallback {
@@ -209,7 +209,7 @@ public class TwitterAdapter
 		void onTokenRequestCompleted();
 	}
  	
-	private class FeedTask extends AsyncTask<Void, Void, ArrayList<ListElement>> {
+	private class FeedTask extends AsyncTask<Void, Void, ArrayList<FeedElement>> {
 
 		private FeedCallback mCallback;
 		private Long mId;
@@ -220,7 +220,7 @@ public class TwitterAdapter
 		}
 
 		@Override
-		protected ArrayList<ListElement> doInBackground(Void... params) {
+		protected ArrayList<FeedElement> doInBackground(Void... params) {
 	        
 	        try {
 	            Twitter twitter = getAuthorizedTwitterInstance();
@@ -231,8 +231,8 @@ public class TwitterAdapter
 	        return null;
 	    }
 		
-		private ArrayList<ListElement> getFeedElements(List<twitter4j.Status> statuses){
-			ArrayList<ListElement> listElements= new ArrayList<ListElement>();
+		private ArrayList<FeedElement> getFeedElements(List<twitter4j.Status> statuses){
+			ArrayList<FeedElement> feedElements= new ArrayList<FeedElement>();
 			for (twitter4j.Status status : statuses) {
 				URLEntity[] urlEntities = status.getURLEntities();
 				String link = null;
@@ -247,7 +247,11 @@ public class TwitterAdapter
 					String type = entity.getType();
 					break;
 				}
-				ListElement element;
+				//use media url as link if no other link is provided
+				if (link == null)
+					link = url;
+				
+				FeedElement element;
 				if (url == null) {				
 				element = 
 						new Tweet(mActivity, 
@@ -257,13 +261,13 @@ public class TwitterAdapter
 							new Tweet(mActivity, 
 									status.getUser().getScreenName(), status.getText(), status.getCreatedAt(), link, url);
 				}
-				listElements.add(element);
+				feedElements.add(element);
 	        }
-			return listElements;
+			return feedElements;
 		}
 
 		@Override
-		protected void onPostExecute(ArrayList<ListElement> elements) {			
+		protected void onPostExecute(ArrayList<FeedElement> elements) {			
 			mCallback.onFeedRequestCompleted(elements, mId);
 		}
 	}

@@ -74,5 +74,4 @@ public abstract class BaseFragment extends Fragment {
 		super.onDetach();
 		mIsAttached = false;
 	}
-
 }

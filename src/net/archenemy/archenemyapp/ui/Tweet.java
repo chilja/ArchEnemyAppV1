@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 public class Tweet 
 	implements 
-		ListElement, DataAdapter.BitmapCallback{
+		FeedElement, DataAdapter.BitmapCallback{
 
 	/**
 	 * 
@@ -44,7 +44,7 @@ public class Tweet
 	}
 	
 	@Override
-	public int compareTo(ListElement element) {
+	public int compareTo(FeedElement element) {
 		if (element instanceof Tweet) {
 			if ((mDate.getTime() - ((Tweet)element).mDate.getTime())<0) return 1;
 			if ((mDate.getTime() - ((Tweet)element).mDate.getTime())>0) return -1;
@@ -73,7 +73,7 @@ public class Tweet
     		mImageView.setImageBitmap(mBitmap);	
     	// URL provided? -> load bitmap
     	} else if (mImageUrl != null){
-    		DataAdapter.loadBitmap(mImageUrl, mImageView, this);
+    		DataAdapter.loadBitmap(mImageUrl, mImageView, this, 400, 400);
     		mImageView.setVisibility(View.VISIBLE);
     	// no picture -> hide image view	
     	} else {
@@ -100,6 +100,7 @@ public class Tweet
 	public BaseAdapter getAdapter() {
 		return mAdapter;
 	}
+	
 	@Override
 	public void setAdapter(BaseAdapter adapter) {
 		mAdapter = adapter;
