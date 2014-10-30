@@ -74,11 +74,13 @@ public class MainActivity
 	
 	//Twitter
 	private TwitterAdapter mTwitterAdapter;
+	//flag to prevent repeated automatic refresh
 	private static boolean mTwitterIsRefreshed = false;
 	private int mTwitterCallbackCount;
 	
 	//Facebook
-	private FacebookAdapter mFacebookAdapter;		
+	private FacebookAdapter mFacebookAdapter;	
+	//flag to prevent repeated automatic refresh
 	private static boolean mFacebookIsRefreshed = false;
 	private int mFacebookCallbackCount;
 	
@@ -94,6 +96,7 @@ public class MainActivity
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.main_activity);
+		
 		mDataAdapter = new DataAdapter(this);
 		                     
 		mFragmentManager = getSupportFragmentManager();
@@ -102,9 +105,13 @@ public class MainActivity
 	    mFacebookAdapter = new FacebookAdapter(this);
 	    mTwitterAdapter = new TwitterAdapter(this);
 	    
-	  //redirection from twitter authorization web page?
+	    mFacebookProgressDialog = new LoadingProgressDialog(getResources().getString(R.string.facebook_loading));
+	    mTwitterProgressDialog = new LoadingProgressDialog(getResources().getString(R.string.twitter_loading));
+	    
+	    //redirection from twitter authorization web page?
 	    Uri uri = getIntent().getData();
 	    if (uri != null && uri.toString().startsWith(TwitterAdapter.TWITTER_CALLBACK_URL)) {
+	    	//request access token from Twitter using provided url
 	    	mTwitterAdapter.makeTokenRequest(uri, this); 
 	    } 
 	    	    
@@ -116,9 +123,11 @@ public class MainActivity
 		    mFacebookLoginFragment = (FacebookLoginFragment) getSupportFragmentManager().findFragmentByTag(FacebookLoginFragment.TAG);
 //	    	mTourFragment = (TourFragment) getSupportFragmentManager().findFragmentByTag(TourFragment.TAG);
 	    	
+	    	mTwitterIsRefreshed = savedInstanceState.getBoolean(Constants.TWITTER_IS_REFRESHED, false);
 	    	mFacebookIsRefreshed = savedInstanceState.getBoolean(Constants.FACEBOOK_IS_REFRESHED, false);
 	    } 
 	    
+	    //create fragments which could not have been retrieved
 	    if (mTwitterFragment == null)
 	    	mTwitterFragment = new TwitterFragment();
 	    if (mFacebookFragment == null)
@@ -129,19 +138,18 @@ public class MainActivity
 		    mFacebookLoginFragment = new FacebookLoginFragment();
 //		if (mTourFragment == null)
 //	    	mTourFragment = new TourFragment();
+		
+		//add first fragment that will be replaced in showFragment()
 	    if (savedInstanceState == null) {	
 	    	FragmentTransaction transaction = mFragmentManager.beginTransaction();
 			transaction.add(R.id.fragmentContainer, mFacebookFragment, FacebookFragment.TAG );
 			transaction.commit();
 	    }
-		
+	    		
 	    restoreActionBar();
 	    
-	    mFacebookProgressDialog = new LoadingProgressDialog(getResources().getString(R.string.facebook_loading));
-	    mTwitterProgressDialog = new LoadingProgressDialog(getResources().getString(R.string.twitter_loading));
-
     	if (savedInstanceState != null) {	
-	    	mTwitterIsRefreshed = savedInstanceState.getBoolean(Constants.TWITTER_IS_REFRESHED, false);
+
 	    	restoreFragment(savedInstanceState);					
 	    } else {
 	    	showFragment(mSelectedMenuItem, false);
@@ -152,6 +160,7 @@ public class MainActivity
 	@Override
 	public void onSaveInstanceState(Bundle bundle) {
 	    super.onSaveInstanceState(bundle);
+	    //save current state
 		bundle.putInt(Constants.FRAGMENT, getVisibleFragmentIndex() );
 		bundle.putBoolean(Constants.TWITTER_IS_REFRESHED, mTwitterIsRefreshed);
 		bundle.putBoolean(Constants.FACEBOOK_IS_REFRESHED, mFacebookIsRefreshed);
@@ -160,14 +169,12 @@ public class MainActivity
 	
 	@Override
 	public void onResume() {
-		// TODO Auto-generated method stub
 		super.onResume();
 		mIsResumed = true;
 	}
 
 	@Override
 	public void onPause() {
-		// TODO Auto-generated method stub
 		super.onPause();
 		mIsResumed = false;
 	}
@@ -204,7 +211,7 @@ public class MainActivity
 	    if (mMenuDrawer.onOptionsItemSelected(item)) {
 	      return true;
 	    }
-	    //Action bar events
+	    //handle action bar events
 	    if (item.getItemId() == R.id.actionRefreshTwitter) {
 	    	mTwitterIsRefreshed = false;
 	    	refreshTwitter();
@@ -225,6 +232,7 @@ public class MainActivity
 			startActivity(intent);
 			return true;
 	    }
+	    //if event has not been handled, then pass it on
 	    return super.onOptionsItemSelected(item);
 	}    
  
@@ -272,10 +280,11 @@ public class MainActivity
 				}					
 			}
 		}
-		//all requests completed? : refresh fragment
+		
 		mFacebookCallbackCount -= 1;
 		mFacebookProgressDialog.setProgress(50);
 		
+		//all requests completed? refresh fragment
 		if (mFacebookCallbackCount < 1) {
 			mFacebookProgressDialog.dismiss();
 			mFacebookFragment.refresh();
@@ -286,7 +295,9 @@ public class MainActivity
 	//Twitter Callback
 	@Override
 	public void onTokenRequestCompleted() {
+		// user is now logged in with Twitter
 		refreshTwitter();
+		// show Twitter fragment
 		if (mIsResumed && getVisibleFragmentIndex()== TWITTER)
 			showFragment(TWITTER, false);
 	}
@@ -303,7 +314,7 @@ public class MainActivity
 		}
 		mTwitterCallbackCount -= 1;
 		mTwitterProgressDialog.setProgress(50);
-		//all requests completed? : refresh fragment
+		//all requests completed? refresh fragment
 		if (mTwitterCallbackCount < 1) {
 			mTwitterProgressDialog.dismiss();
 			mTwitterFragment.refresh();
@@ -312,23 +323,28 @@ public class MainActivity
 	    Log.i(TAG, "Received twitter feed");	
 	}
     
-    private class LoadingProgressDialog extends ProgressDialog {
-    	LoadingProgressDialog (String message){
-    		super(MainActivity.this);
-    		setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-			setProgressDrawable(getResources().getDrawable(R.drawable.progress_indicator));
-			setMessage(message);
-    	}
-    	
-    }
-    
-    private void refreshFacebook() {
+    @Override
+	public void onUserRequestCompleted(User user) {
+		Long userId = user.getId();
+		for (BandMember member : mDataAdapter.getEnabledBandMembers()) {
+			if (member.getTwitterUserId().equals(userId)) {
+				member.setTwitterUser(user);
+				break;
+			}
+		}
+		refreshTwitter();
+	}
+
+	private void refreshFacebook() {
     	//check network connection
         if (Utility.isConnectedToNetwork(this, true)) { 	  				
 			if (!mFacebookIsRefreshed && mFacebookAdapter.isLoggedIn()) { 
-				if (mFacebookProgressDialog != null) mFacebookProgressDialog.dismiss();
+				
+				if (mFacebookProgressDialog != null) 
+					mFacebookProgressDialog.dismiss();
 				
 				mFacebookProgressDialog.show();
+				
 				mFacebookCallbackCount = 0;
 				for (BandMember member: mDataAdapter.getEnabledBandMembers()) {
 					mFacebookAdapter.makeFeedRequest(this, member.getFacebookUserId());	
@@ -467,6 +483,15 @@ public class MainActivity
 		return -1;
 	}
 	
+	private class LoadingProgressDialog extends ProgressDialog {
+		LoadingProgressDialog (String message){
+			super(MainActivity.this);
+			setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+			setProgressDrawable(getResources().getDrawable(R.drawable.progress_indicator));
+			setMessage(message);
+		}		
+	}
+
 	class MenuDrawer {
 			
 		private MainActivity mActivity;
@@ -583,15 +608,16 @@ public class MainActivity
 				ImageView providerIcon = (ImageView) view.findViewById(R.id.providerIconView);
 				switch (position) {
 					case TWITTER: 
-						mDataAdapter.loadBitmap(R.drawable.twitter, providerIcon, 50, 50);
+						mDataAdapter.loadBitmap(R.drawable.twitter, providerIcon);
 						break;
 					case FACEBOOK: 
-						mDataAdapter.loadBitmap(R.drawable.facebook_medium, providerIcon, 50, 50); 
+						mDataAdapter.loadBitmap(R.drawable.facebook_medium, providerIcon); 
 						break;
 				}
 				
 				
 				if (mSelectedMenuItem == position) {
+					//highlight selected menu item
 					textView.setTextColor(getResources().getColor(Constants.WHITE));
 					providerIcon.clearColorFilter();
 					indicator.setVisibility(View.VISIBLE);
@@ -604,18 +630,6 @@ public class MainActivity
 				return view;				
 			}		   
 		}
-	}
-
-	@Override
-	public void onUserRequestCompleted(User user) {
-		Long userId = user.getId();
-		for (BandMember member : mDataAdapter.getEnabledBandMembers()) {
-			if (member.getTwitterUserId().equals(userId)) {
-				member.setTwitterUser(user);
-				break;
-			}
-		}
-		refreshTwitter();
 	}
 }
 

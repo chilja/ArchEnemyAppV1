@@ -3,15 +3,20 @@ package net.archenemy.archenemyapp.ui;
 import java.util.Date;
 
 import net.archenemy.archenemyapp.R;
+import net.archenemy.archenemyapp.data.DataAdapter;
 import net.archenemy.archenemyapp.data.FacebookAdapter;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-public class Tweet implements ListElement{
+public class Tweet 
+	implements 
+		ListElement, DataAdapter.BitmapCallback{
 
 	/**
 	 * 
@@ -21,11 +26,21 @@ public class Tweet implements ListElement{
 	private String mMessage;
 	private Date mDate;
 	private String mLink;
+	private String mImageUrl ;
+	private transient ImageView mImageView;
+	private Bitmap mBitmap;
 	
 	public Tweet(Activity activity, String name, String message, Date createdAt, String link) {
 		mDate = createdAt;
 		mLink = link;
 		mMessage = message;
+	}
+	
+	public Tweet(Activity activity, String name, String message, Date createdAt, String link, String imageUrl) {
+		mDate = createdAt;
+		mLink = link;
+		mMessage = message;
+		mImageUrl = imageUrl;
 	}
 	
 	@Override
@@ -50,6 +65,20 @@ public class Tweet implements ListElement{
 
     	TextView messageView = (TextView) view.findViewById(R.id.messageView);
     	TextView dateView = (TextView) view.findViewById(R.id.dateView);
+    	
+    	mImageView = (ImageView) view.findViewById(R.id.imageView);
+    	
+    	//Bitmap already loaded?
+    	if (mBitmap != null) {
+    		mImageView.setImageBitmap(mBitmap);	
+    	// URL provided? -> load bitmap
+    	} else if (mImageUrl != null){
+    		DataAdapter.loadBitmap(mImageUrl, mImageView, this);
+    		mImageView.setVisibility(View.VISIBLE);
+    	// no picture -> hide image view	
+    	} else {
+    		mImageView.setVisibility(View.GONE);
+    	}
 
     	if(messageView != null) {
     		messageView.setText(mMessage);
@@ -60,6 +89,11 @@ public class Tweet implements ListElement{
     	}		            
         
         return view;
+	}
+	
+	@Override
+	public void onPostExecute(Bitmap bitmap) {
+		mBitmap = bitmap;		
 	}
 
 	@Override

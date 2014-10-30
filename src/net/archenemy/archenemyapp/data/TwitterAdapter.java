@@ -240,15 +240,23 @@ public class TwitterAdapter
 					URLEntity url = urlEntities[0];
 					link = url.getExpandedURL();
 				}
-				String url = link;
+				String url = null;
 				MediaEntity[] media = status.getMediaEntities();
 				for (MediaEntity entity : media) {
 					url = entity.getMediaURL();
 					String type = entity.getType();
+					break;
 				}
-				ListElement element = 
+				ListElement element;
+				if (url == null) {				
+				element = 
 						new Tweet(mActivity, 
-								status.getUser().getScreenName(), status.getText(), status.getCreatedAt(), url);
+								status.getUser().getScreenName(), status.getText(), status.getCreatedAt(), link);
+				}else {
+					element = 
+							new Tweet(mActivity, 
+									status.getUser().getScreenName(), status.getText(), status.getCreatedAt(), link, url);
+				}
 				listElements.add(element);
 	        }
 			return listElements;

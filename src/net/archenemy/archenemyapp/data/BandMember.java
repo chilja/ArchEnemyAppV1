@@ -22,7 +22,7 @@ public class BandMember {
 	private String mFacebookUserId;
 	private String mPrefKey;
 	private int mUserId;
-	private GraphUser mGraphUser;
+	private GraphUser mFacebookUser;
 	private User mTwitterUser;
 
 	private ArrayList<ListElement> mPosts = new ArrayList<ListElement>();
@@ -86,7 +86,7 @@ public class BandMember {
 
 	public void setTweets(ArrayList<ListElement> tweets) {
 		mTweets = tweets;
-		Collections.sort(mPosts);
+		Collections.sort(mTweets);
 	}
 
 	public User getTwitterUser() {
@@ -96,13 +96,4 @@ public class BandMember {
 	public void setTwitterUser(User twitterUser) {
 		mTwitterUser = twitterUser;
 	}
-
-//	public GraphUser getGraphUser() {
-//		return mGraphUser;
-//	}
-//	
-//	public void setGraphUser(GraphUser graphUser) {
-//		mGraphUser = graphUser;
-//	}
-
 }

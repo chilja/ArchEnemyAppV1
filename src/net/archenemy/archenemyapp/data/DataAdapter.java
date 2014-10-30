@@ -1,6 +1,8 @@
 package net.archenemy.archenemyapp.data;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.net.URLConnection;
@@ -132,35 +134,58 @@ public class DataAdapter {
 	}
 	
 	public static void loadBitmap(String bitmapUrl, ImageView imageView) {
-		BitmapFromUrlTask task = new DataAdapter.BitmapFromUrlTask(imageView);
-		task.execute(bitmapUrl);		
+		loadBitmap(bitmapUrl, imageView, null);		
 	}
 	
 	public static void loadBitmap(String bitmapUrl, ImageView imageView, BitmapCallback callback) {
-		BitmapFromUrlTask task = new DataAdapter.BitmapFromUrlTask(imageView, callback);
+		int reqWidth = 200;
+		int reqHeight = 200;
+		BitmapFromUrlTask task = new DataAdapter.BitmapFromUrlTask(imageView, callback, reqWidth, reqHeight);
 		task.execute(bitmapUrl);		
 	}
 
-
-	public void loadBitmap(int resId, ImageView imageView, int reqWidth, int reqHeight) {
+	public void loadBitmap(int resId, ImageView imageView) {
+		int reqWidth = 100;
+		int reqHeight = 100;		
 	    BitmapFromResourcesTask task = new BitmapFromResourcesTask(imageView, reqWidth, reqHeight);
 	    task.execute(resId);
 	}
 
-	private static Bitmap loadBitmap( URLConnection uc, int reqWidth, int reqHeight) throws IOException {
-		Rect rect = new Rect();
+	private static Bitmap decodeSampledBitmapFromUrl(URL url, int reqWidth, int reqHeight) 
+			throws IOException {
+		URLConnection uc = url.openConnection();
+		InputStream is = new BufferedInputStream(uc.getInputStream());
 		
 		// First decode with inJustDecodeBounds=true to check dimensions
 	    final BitmapFactory.Options options = new BitmapFactory.Options();
 	    options.inJustDecodeBounds = true;
-	    BitmapFactory.decodeStream(uc.getInputStream(), rect, options);
+	    BitmapFactory.decodeStream(is, null, options);
+	    is.close();
 	
 	    // Calculate inSampleSize
 	    options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
 	
 	    // Decode bitmap with inSampleSize set
 	    options.inJustDecodeBounds = false;
-	    return BitmapFactory.decodeStream(uc.getInputStream(), rect, options);		
+	    uc = url.openConnection();
+	    is = new BufferedInputStream(uc.getInputStream());
+	    return BitmapFactory.decodeStream(uc.getInputStream(), null, options);		
+	}
+	
+	private static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
+	        int reqWidth, int reqHeight) {
+	
+	    // First decode with inJustDecodeBounds=true to check dimensions
+	    final BitmapFactory.Options options = new BitmapFactory.Options();
+	    options.inJustDecodeBounds = true;
+	    BitmapFactory.decodeResource(res, resId, options);
+	
+	    // Calculate inSampleSize
+	    options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+	
+	    // Decode bitmap with inSampleSize set
+	    options.inJustDecodeBounds = false;
+	    return BitmapFactory.decodeResource(res, resId, options);
 	}
 
 
@@ -187,21 +212,7 @@ public class DataAdapter {
 	}
 
 
-	public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
-	        int reqWidth, int reqHeight) {
 	
-	    // First decode with inJustDecodeBounds=true to check dimensions
-	    final BitmapFactory.Options options = new BitmapFactory.Options();
-	    options.inJustDecodeBounds = true;
-	    BitmapFactory.decodeResource(res, resId, options);
-	
-	    // Calculate inSampleSize
-	    options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-	
-	    // Decode bitmap with inSampleSize set
-	    options.inJustDecodeBounds = false;
-	    return BitmapFactory.decodeResource(res, resId, options);
-	}
 
 
 	/**
@@ -213,19 +224,6 @@ public class DataAdapter {
 		final int mReqWidth; 
 		final int mReqHeight;
 		BitmapCallback mCallback;
-
-		private BitmapFromUrlTask(ImageView imageView) {
-			mImageViewReference = new WeakReference<ImageView>(imageView);
-			mReqWidth = 100;
-			mReqHeight = 100;
-		}
-		
-		private BitmapFromUrlTask(ImageView imageView, BitmapCallback callback) {
-			mImageViewReference = new WeakReference<ImageView>(imageView);
-			mReqWidth = 100;
-			mReqHeight = 100;
-			mCallback = callback;
-		}
 		
 		private BitmapFromUrlTask(ImageView imageView, BitmapCallback callback, int reqWidth, int reqHeight) {
 			mImageViewReference = new WeakReference<ImageView>(imageView);
@@ -238,10 +236,7 @@ public class DataAdapter {
 			if (urls != null && urls.length > 0) {
 				try {
 					URL url = new URL(urls[0].trim());
-					URLConnection uc = url.openConnection();
-//					return loadBitmap(uc, mReqWidth, mReqHeight);
-					uc.getInputStream();
-					return BitmapFactory.decodeStream(uc.getInputStream());
+					return decodeSampledBitmapFromUrl(url, mReqWidth, mReqHeight);
 				} catch(Exception ex) {
 					return null;
 				}
@@ -262,9 +257,7 @@ public class DataAdapter {
 		}
 	}
 	
-	
-	
-	class BitmapFromResourcesTask extends AsyncTask<Integer, Void, Bitmap> {
+	private class BitmapFromResourcesTask extends AsyncTask<Integer, Void, Bitmap> {
 	    private final WeakReference<ImageView> mImageViewReference;
 	    private int mResId = 0;
 	    final int mReqWidth; 
@@ -296,7 +289,7 @@ public class DataAdapter {
 	    }
 	}
 	
-	static class AsyncDrawable extends BitmapDrawable {
+	public static class AsyncDrawable extends BitmapDrawable {
 	    private final WeakReference<BitmapFromUrlTask> bitmapTaskReference;
     
 	    public AsyncDrawable(Resources res, Bitmap bitmap,
