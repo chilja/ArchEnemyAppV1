@@ -5,7 +5,7 @@
     android:orientation="horizontal"   
     android:layout_gravity="center_vertical"
     android:padding="5dp" 
-    android:background="@color/grey_transparent">
+    android:background="@color/black_transparent">
     
     <LinearLayout
          android:orientation="vertical"

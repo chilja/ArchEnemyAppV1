@@ -14,7 +14,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import net.archenemy.archenemyapp.R;
-import net.archenemy.archenemyapp.data.BandMember;
+import net.archenemy.archenemyapp.data.SocialMediaUser;
 import net.archenemy.archenemyapp.data.TwitterAdapter;
 import net.archenemy.archenemyapp.data.TwitterAdapter.UserCallback;
 
@@ -28,7 +28,7 @@ public class TwitterFragment extends BaseFragment{
 	protected TwitterPagerAdapter mPagerAdapter;
 
 	//one page for each band member
-	private static ArrayList<BandMember> mBandMembers;
+	private static ArrayList<SocialMediaUser> mSocialMediaUsers;
 	
 	private TwitterAdapter mTwitterAdapter;
 	
@@ -44,7 +44,7 @@ public class TwitterFragment extends BaseFragment{
 
         mViewPager = (ViewPager) mView.findViewById(R.id.pager);
         
-        mBandMembers = mDataAdapter.getEnabledBandMembers();
+        mSocialMediaUsers = mDataAdapter.getEnabledSocialMediaUsers();
         
         mTwitterAdapter = new TwitterAdapter(mActivity);
         
@@ -90,12 +90,12 @@ public class TwitterFragment extends BaseFragment{
 	
 	    @Override
 	    public int getCount() {
-	        return mBandMembers.size();
+	        return mSocialMediaUsers.size();
 	    }
 	
 	    @Override
 	    public CharSequence getPageTitle(int position) {
-	        return mBandMembers.get(position).getName();
+	        return mSocialMediaUsers.get(position).getName();
 	    }  
 	    
 	    protected TwitterPageFragment getNewFragment(int i) {

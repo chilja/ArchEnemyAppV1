@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.archenemy.archenemyapp.data.BandMember;
+import net.archenemy.archenemyapp.data.SocialMediaUser;
 import net.archenemy.archenemyapp.data.DataAdapter;
 
 public class FacebookPageFragment extends PageFragment 
@@ -24,7 +24,7 @@ public class FacebookPageFragment extends PageFragment
 
 	@Override
 	protected List<FeedElement> getListElements() {
-		BandMember member = DataAdapter.getBandMember(mUserId);
+		SocialMediaUser member = DataAdapter.getSocialMediaUser(mUserId);
 		FacebookUser user = new FacebookUser(member.getFacebookUserName(), member.getFacebookUserId());
 		List<FeedElement> list = new ArrayList<FeedElement>();
 		list.add(user);

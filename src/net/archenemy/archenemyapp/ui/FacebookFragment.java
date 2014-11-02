@@ -3,7 +3,7 @@ package net.archenemy.archenemyapp.ui;
 import java.util.ArrayList;
 
 import net.archenemy.archenemyapp.R;
-import net.archenemy.archenemyapp.data.BandMember;
+import net.archenemy.archenemyapp.data.SocialMediaUser;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -24,7 +24,7 @@ public class FacebookFragment extends BaseFragment {
 	protected FacebookPagerAdapter mPagerAdapter;
 
 	//one page for each band member
-	protected static ArrayList<BandMember> mBandMembers;
+	protected static ArrayList<SocialMediaUser> mBandMembers;
 	
 	private View mView;
 	
@@ -35,7 +35,7 @@ public class FacebookFragment extends BaseFragment {
 		super.onCreateView(inflater, container, savedInstanceState);
 	    mView = inflater.inflate(R.layout.pager_fragment, container, false);
 
-		mBandMembers = mDataAdapter.getEnabledBandMembers();
+		mBandMembers = mDataAdapter.getEnabledSocialMediaUsers();
 	 	
         mViewPager = (ViewPager) mView.findViewById(R.id.pager);
         refresh();

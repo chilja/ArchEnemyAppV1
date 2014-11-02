@@ -4,7 +4,7 @@ import java.io.Serializable;
 import net.archenemy.archenemyapp.R;
 import net.archenemy.archenemyapp.data.Constants;
 import net.archenemy.archenemyapp.data.FacebookAdapter;
-import net.archenemy.archenemyapp.data.FacebookShareElement;
+import net.archenemy.archenemyapp.data.FacebookSharable;
 import net.archenemy.archenemyapp.data.DataAdapter;
 import net.archenemy.archenemyapp.data.Utility;
 
@@ -27,7 +27,7 @@ public class FacebookShareFragment extends BaseFragment {
 	public static final String TAG = "FacebookShareFragment";
 	protected static final String PENDING_PUBLISH_KEY = "pendingPublishReauthorization";
 	
-	private FacebookShareElement mShareElement;
+	private Bundle mShareParams;
 	protected FacebookAdapter mFacebookAdapter;
 	
 	private Button mShareButton;
@@ -50,12 +50,11 @@ public class FacebookShareFragment extends BaseFragment {
 	    View view = inflater.inflate(R.layout.facebook_share_fragment, container, false);
 	    
 	  //Get the content to be shared
-	    Bundle args = mActivity.getIntent().getBundleExtra(FacebookShareActivity.SHARE_ELEMENT);
-	    if (args != null) {
-	    	mShareElement = (FacebookShareElement) args.getSerializable(FacebookShareActivity.SHARE_ELEMENT); 
-	    } else if(savedInstanceState != null)  {
-	    	mShareElement = (FacebookShareElement) savedInstanceState.getSerializable(FacebookShareActivity.SHARE_ELEMENT);
-	    }  
+	    mShareParams = mActivity.getIntent().getBundleExtra(Constants.SHARE_PARAMS);
+	     
+	    if(savedInstanceState != null)  {
+	    	mShareParams = savedInstanceState.getBundle(Constants.SHARE_PARAMS);
+	    }
 	    
 		if (savedInstanceState != null) {
 		    mFacebookAdapter.setPendingPublish(
@@ -69,17 +68,22 @@ public class FacebookShareFragment extends BaseFragment {
 	    mNameView = (TextView) view.findViewById(R.id.nameView);
 	    mDescriptionView = (TextView) view.findViewById(R.id.descriptionView);
 
-		mNameView.setText(mShareElement.getText1());
-		mDescriptionView.setText(mShareElement.getText2());
-		DataAdapter.loadBitmap(mShareElement.getImageUri(), 
-				mImageView, null, mImageView.getWidth(),mImageView.getHeight());
-		
+		mNameView.setText(mShareParams.getString("name"));
+		mDescriptionView.setText(mShareParams.getString("description"));
+		String imageUrl = mShareParams.getString("picture");
+		if (imageUrl == null) {			
+			mImageView.setVisibility(View.GONE);
+		} else {
+			DataAdapter.loadBitmap(imageUrl, 
+				mImageView, null, 200, 200);
+			mImageView.setVisibility(View.VISIBLE);
+		}
 		mShareButton.setOnClickListener(new View.OnClickListener() {
 		    @Override
 		    public void onClick(View v) {
 		    	if (Utility.isConnectedToNetwork(mActivity, true) && mFacebookAdapter.isLoggedIn()) {
 		    		setEnabled();
-		    		mFacebookAdapter.publishStory(mShareElement);  
+		    		mFacebookAdapter.publishFeedDialog(mShareParams);  
 		    	} else {
 			    	setDisabled();
 		    	}
@@ -117,7 +121,7 @@ public class FacebookShareFragment extends BaseFragment {
 	            // so try publishing once more.
 		        if (mFacebookAdapter.isPendingPublish()) {
 		        	if (Utility.isConnectedToNetwork(mActivity, false))
-		        		mFacebookAdapter.publishStory(mShareElement);
+		        		mFacebookAdapter.publishStory(mShareParams);
 		        }
 	        }   
 	    }    
@@ -126,7 +130,7 @@ public class FacebookShareFragment extends BaseFragment {
 	@Override
 	public void onSaveInstanceState(Bundle bundle) {
 	    super.onSaveInstanceState(bundle);
-	    bundle.putSerializable(FacebookShareActivity.SHARE_ELEMENT,(Serializable) mShareElement);
+	    bundle.putBundle(Constants.SHARE_PARAMS, mShareParams);
 	    bundle.putBoolean(PENDING_PUBLISH_KEY, mFacebookAdapter.isPendingPublish());
 	}
 

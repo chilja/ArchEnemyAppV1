@@ -1,36 +1,40 @@
 <RelativeLayout 
 	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/container"	
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
-	android:padding="5dp"
-	android:background="@drawable/box">
+	android:padding="8dp"
+	android:background="@color/white_transparent">
 	
     <ImageView 
         android:id="@+id/imageView"	 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:minHeight="100dp"
-        android:minWidth="100dp"
-        android:layout_centerHorizontal="true"/>
-	 	
-	<TextView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="8dp"
+        android:scaleType="centerCrop"
+        android:saveEnabled="true"/>
+     
+    <TextView
 	    android:id="@+id/messageView"
 	    style="@style/NewsContent"
-		android:layout_marginBottom="4dp"
-		android:layout_below="@+id/imageView"/>	
-		
-    <ImageView 
-        android:id="@+id/providerIconView"
-        style="@style/Icon"
-        android:src="@drawable/twitter"
-        android:layout_below="@+id/messageView"/>
-
+		android:layout_below="@+id/imageView"
+		android:layout_marginBottom="8dp"/>	
+        
 	<TextView
 		android:id="@+id/dateView"
 		style="@style/Timestamp"
-   		android:layout_below="@+id/messageView"
-    	android:layout_centerInParent="true"/>
+		android:layout_gravity="bottom|center"
+		android:gravity="bottom|center"
+		android:layout_below="@+id/messageView"/>
 	
+	<ImageView
+        android:id="@+id/expandedImage"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_centerInParent="true"       
+        android:layout_marginBottom="8dp"
+        android:visibility="gone" />
+    	
 </RelativeLayout>
 

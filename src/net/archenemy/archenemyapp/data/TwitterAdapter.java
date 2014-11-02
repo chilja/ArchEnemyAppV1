@@ -254,11 +254,11 @@ public class TwitterAdapter
 				FeedElement element;
 				if (url == null) {				
 				element = 
-						new Tweet(mActivity, 
+						new Tweet( 
 								status.getUser().getScreenName(), status.getText(), status.getCreatedAt(), link);
 				}else {
 					element = 
-							new Tweet(mActivity, 
+							new Tweet( 
 									status.getUser().getScreenName(), status.getText(), status.getCreatedAt(), link, url);
 				}
 				feedElements.add(element);

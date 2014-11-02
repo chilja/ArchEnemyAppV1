@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- the theme applied to the application or activity -->
-    <style name="CustomActionBarTheme"
-           parent="@style/Theme.AppCompat">
+    <style name="CustomActionBarTheme" parent="style/Theme.AppCompat">
         <item name="android:actionBarStyle">@style/ActivityActionBar</item>
         <item name="android:actionModeStyle">@style/ActivityActionMode</item>
         <item name="android:textColor">@android:color/white</item>
-        <item name="android:background">@android:color/transparent</item> 
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:actionBarTabStyle">@style/MyActionBarTabs</item> 
     </style>
-
+    
     <!-- ActionBar styles -->
     <style name="DrawerActionBar"
            parent="@style/Widget.AppCompat.ActionBar">
@@ -30,5 +30,12 @@
     <style name="ActivityActionBarTitleText"
            parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
         <item name="android:textColor">@android:color/white</item>
+    </style>
+    
+    <!-- ActionBar tabs styles -->
+    <style name="MyActionBarTabs"
+           parent="@style/Widget.AppCompat.ActionBar.TabView">
+        <!-- tab indicator -->
+        <item name="android:background">@drawable/tab_indicator</item>
     </style>
 </resources>

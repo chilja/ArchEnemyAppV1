@@ -12,6 +12,7 @@
 	<string name="fb_error_bad_request">An error occurred, please contact the developer with the following message: %1$s</string>
 	<string name="fb_error_unknown">An unknown error occurred, please contact the developer with the following message: %1$s</string>
 	
+	<string name="fb_sharable_name">ARCH ENEMY</string>
 	<string name="fb_share_name">SEE ARCH ENEMY LIVE ON STAGE!</string>
 	<string name="fb_share_caption">BUY TICKETS NOW!</string>
 	<string name="fb_share_button">Share</string>
@@ -21,6 +22,8 @@
 	<string name="fb_share_description4">-</string>
 	<string name="fb_progress_dialog_text">Sharing...</string>
 	<string name="fb_result_dialog_button_text">Post has been shared</string>
+	
+	<string name="fb_share_error_log_in">Please log in with Facebook to share</string>
 	
     <string name="pref_facebook_title">Facebook</string>
     <string name="pref_facebook_summary_off">Not receiving posts from the official accounts</string>

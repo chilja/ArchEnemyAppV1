@@ -6,7 +6,7 @@ import java.util.List;
 
 import twitter4j.User;
 
-import net.archenemy.archenemyapp.data.BandMember;
+import net.archenemy.archenemyapp.data.SocialMediaUser;
 import net.archenemy.archenemyapp.data.DataAdapter;
 
 public class TwitterPageFragment extends PageFragment 
@@ -27,7 +27,7 @@ public class TwitterPageFragment extends PageFragment
 	@Override
 	protected List<FeedElement> getListElements() {		
 		List<FeedElement> list = new ArrayList<FeedElement>();		
-		BandMember member = DataAdapter.getBandMember(mUserId);
+		SocialMediaUser member = DataAdapter.getSocialMediaUser(mUserId);
 		User user = member.getTwitterUser();
 		if ( user != null ) {	
 			TwitterUser twitterUser = new TwitterUser(user.getName(), user.getScreenName(), user.getOriginalProfileImageURL());	

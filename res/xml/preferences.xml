@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">       
-    <PreferenceCategory 
-         android:title="@string/pref_cat_band_members"
-         android:key="@string/pref_key_band_members">   
+   
     <CheckBoxPreference
         android:key="@string/pref_key_alyssa_white_gluz"
         android:title="@string/pref_alyssa_white_gluz_title"
@@ -15,5 +13,13 @@
         android:summaryOff="@string/pref_member_summary_off"       
         android:summaryOn="@string/pref_member_summary_on" 
         android:defaultValue="true"/>
-    </PreferenceCategory>
+    
+    <ListPreference
+        android:key="pref_startMenuItem"
+        android:title="@string/pref_startMenuItem"
+        android:dialogTitle="@string/pref_startMenuItem_dialog"
+        android:entries="@array/pref_startMenuItem_entries"
+        android:entryValues="@array/pref_startMenuItem_values"
+        android:defaultValue="@string/pref_startMenuItem_default" />
+
 </PreferenceScreen>

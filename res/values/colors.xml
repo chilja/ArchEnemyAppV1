@@ -2,8 +2,13 @@
 <resources>
     <color name="red" >#800000</color>
     <color name="red_transparent">#80800000</color>
+    <color name="red_semi_transparent">#bb800000</color>
+    
     <color name="grey">#ff111111</color>
-    <color name="grey_transparent">#70000000</color>
+    <color name="black_transparent">#70000000</color>
+    
+    <color name="white_transparent">#10ffffff</color>
+    
     <color name="beige_transparent">#20ada075</color>
     <color name="beige">#ada075</color>
     <color name="lightgrey">#ffcccccc</color>

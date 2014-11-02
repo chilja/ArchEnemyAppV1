@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="180dp"
     android:layout_height="match_parent"
-    android:background="@drawable/box" >
+    android:background="@drawable/box_black_transparent" >
 
 	<ImageView
 	    android:src="@drawable/twitter"

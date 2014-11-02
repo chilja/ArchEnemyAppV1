@@ -27,6 +27,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.facebook.FacebookException;
+import com.facebook.FacebookOperationCanceledException;
 import com.facebook.FacebookRequestError;
 import com.facebook.HttpMethod;
 import com.facebook.Request;
@@ -35,6 +37,9 @@ import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.Request.Callback;
 import com.facebook.model.GraphUser;
+import com.facebook.widget.FacebookDialog;
+import com.facebook.widget.WebDialog;
+import com.facebook.widget.WebDialog.OnCompleteListener;
 
 public class FacebookAdapter 
 	implements ProviderAdapter{
@@ -169,6 +174,26 @@ public class FacebookAdapter
 	        session.requestNewPublishPermissions(newPermissionsRequest);
 	    }
 	}
+	
+	public void startShareDialog(Bundle shareParams) {	
+		if (FacebookDialog.canPresentShareDialog(mActivity.getApplicationContext(), 
+                FacebookDialog.ShareDialogFeature.SHARE_DIALOG)) {
+						
+			// Publish the post using the Native Facebook Share Dialog			
+			FacebookDialog.ShareDialogBuilder shareDialogBuilder = new FacebookDialog.ShareDialogBuilder(mActivity);
+			shareDialogBuilder.setName(shareParams.getString("name"));
+			shareDialogBuilder.setLink(shareParams.getString("link"));
+			shareDialogBuilder.setCaption(shareParams.getString("caption"));
+			shareDialogBuilder.setDescription(shareParams.getString("description"));
+			shareDialogBuilder.setPicture(shareParams.getString("picture"));
+			FacebookDialog shareDialog = shareDialogBuilder.build();
+			shareDialog.present();
+
+		} else {
+			//Publish the post using the custom share dialog
+			publishFeedDialog(shareParams);
+		}
+	}
 
 	public void makeMeRequest(UserCallback userCallback) {
 		if (Utility.isConnectedToNetwork(mActivity, false)){
@@ -265,7 +290,54 @@ public class FacebookAdapter
 		}
 	}
 	
-	public void publishStory(FacebookShareElement shareElement) {
+	public void publishFeedDialog(Bundle params) {
+		if (Utility.isConnectedToNetwork(mActivity, true) && isLoggedIn()){
+
+		    WebDialog feedDialog = (
+		        new WebDialog.FeedDialogBuilder(mActivity,
+		            Session.getActiveSession(),
+		            params))
+		        .setOnCompleteListener(new OnCompleteListener() {
+	
+		            @Override
+		            public void onComplete(Bundle values,
+		                FacebookException error) {
+		                if (error == null) {
+		                    // When the story is posted, echo the success
+		                    // and the post Id.
+		                    final String postId = values.getString("post_id");
+		                    if (postId != null) {
+		                        Toast.makeText(mActivity,
+		                            "Posted story, id: "+postId,
+		                            Toast.LENGTH_SHORT).show();
+		                    } else {
+		                        // User clicked the Cancel button
+		                        Toast.makeText(mActivity.getApplicationContext(), 
+		                            "Publish cancelled", 
+		                            Toast.LENGTH_SHORT).show();
+		                    }
+		                } else if (error instanceof FacebookOperationCanceledException) {
+		                    // User clicked the "x" button
+		                    Toast.makeText(mActivity.getApplicationContext(), 
+		                        "Publish cancelled", 
+		                        Toast.LENGTH_SHORT).show();
+		                } else {
+		                    // Generic, ex: network error
+		                    Toast.makeText(mActivity.getApplicationContext(), 
+		                        "Error posting story", 
+		                        Toast.LENGTH_SHORT).show();
+		                }
+		            }
+		        })
+		        .build();
+		    feedDialog.show();
+		}
+		if (!isLoggedIn()) {
+			Toast.makeText(mActivity, R.string.fb_share_error_log_in, Toast.LENGTH_LONG).show();
+		}
+	}
+	
+	public void publishStory(Bundle shareParams) {
 		if (Utility.isConnectedToNetwork(mActivity, true)){
 		setPendingPublish(false);
 		
@@ -282,10 +354,6 @@ public class FacebookAdapter
 	            session.requestNewPublishPermissions(newPermissionsRequest);
 	            return;
 	        }
-	        
-	
-	        Bundle postParams = shareElement.getPostingParameters(mActivity);
-	
 	
 	        Request.Callback callback= new Request.Callback() {
 	            public void onCompleted(Response response) {
@@ -314,7 +382,7 @@ public class FacebookAdapter
 	            }
 	        };
 	
-	        Request request = new Request(session, "me/feed", postParams, 
+	        Request request = new Request(session, "me/feed", shareParams, 
 	                              HttpMethod.POST, callback);
 	
 	        RequestAsyncTask requestTask = new RequestAsyncTask(request);
