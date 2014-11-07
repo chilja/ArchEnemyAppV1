@@ -8,13 +8,13 @@
     android:baselineAligned="false" 
     android:background="@drawable/symbol_land">
 
-	<fragment android:name="net.archenemy.archenemyapp.ui.FacebookAccountFragment"
+	<fragment android:name="net.archenemy.archenemyapp.presenter.FacebookAccountFragment"
          android:id="@+id/FacebookAccountFragment"
          android:layout_width="240dp"
          android:layout_height="match_parent" 
          android:layout_margin="10dp"/> 
 	    	   
-	<fragment android:name="net.archenemy.archenemyapp.ui.FacebookShareFragment"
+	<fragment android:name="net.archenemy.archenemyapp.presenter.FacebookShareFragment"
         android:id="@+id/FacebookShareFragment"
         android:layout_width="wrap_content"
         android:layout_height="match_parent" 

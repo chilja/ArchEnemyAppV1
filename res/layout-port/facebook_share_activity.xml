@@ -7,13 +7,13 @@
     android:orientation="vertical" 
     android:background="@drawable/symbol_port">
 
-<fragment android:name="net.archenemy.archenemyapp.ui.FacebookAccountFragment"
+<fragment android:name="net.archenemy.archenemyapp.presenter.FacebookAccountFragment"
 	         android:id="@+id/FacebookAccountFragment"
 	         android:layout_width="match_parent"
 	         android:layout_height="200dp" 
 	         android:layout_margin="10dp"/> 
 	    	   
-		<fragment android:name="net.archenemy.archenemyapp.ui.FacebookShareFragment"
+		<fragment android:name="net.archenemy.archenemyapp.presenter.FacebookShareFragment"
 	         android:id="@+id/FacebookShareFragment"
 	         android:layout_width="match_parent"
 	         android:layout_height="0dp" 

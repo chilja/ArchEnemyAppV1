@@ -15,60 +15,53 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/CustomActionBarTheme">
-        
+        android:theme="@style/CustomActionBarTheme"
+        android:name="net.archenemy.archenemyapp.model.SocialMediaApplication" > 
+              
         <meta-data android:value="@string/app_id" android:name="com.facebook.sdk.ApplicationId"/>
         
         <activity
-	        android:name="net.archenemy.archenemyapp.ui.MainActivity"
-	        android:label="@string/app_name"
+	        android:name="net.archenemy.archenemyapp.presenter.MainActivity"
+	        android:label="@string/title_activity_main"
 	        android:configChanges="keyboardHidden|orientation|screenSize"
 	        android:screenOrientation="portrait">
 	        <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="oauth" android:host="ArchEnemyApp"/>
-            </intent-filter>            
+            </intent-filter>           
     	</activity>
          	
         <activity
-	        android:name="net.archenemy.archenemyapp.ui.SettingsActivity"
-	        android:label="@string/app_name"
-	        android:parentActivityName="net.archenemy.archenemyapp.ui.MainActivity">	        
+	        android:name="net.archenemy.archenemyapp.presenter.SettingsActivity"
+	        android:label="@string/title_activity_settings"
+	        android:parentActivityName="net.archenemy.archenemyapp.presenter.MainActivity">	        
     	</activity>
     	
         <activity
-	        android:name="net.archenemy.archenemyapp.ui.FacebookShareActivity"
-	        android:label="@string/app_name"
-	        android:parentActivityName="net.archenemy.archenemyapp.ui.MainActivity">	        
+	        android:name="net.archenemy.archenemyapp.presenter.FacebookShareActivity"
+	        android:label="@string/title_activity_share_on_facebook"
+	        android:parentActivityName="net.archenemy.archenemyapp.presenter.MainActivity">	        
     	</activity>
     	
         <activity
-	        android:name="net.archenemy.archenemyapp.ui.AccountActivity"
-	        android:label="@string/app_name"
-	        android:parentActivityName="net.archenemy.archenemyapp.ui.MainActivity">	        
+	        android:name="net.archenemy.archenemyapp.presenter.AccountActivity"
+	        android:label="@string/title_activity_accounts"
+	        android:parentActivityName="net.archenemy.archenemyapp.presenter.MainActivity">	        
     	</activity>
     	   	
     	<activity 
     	    android:name="com.facebook.LoginActivity"
-    	    android:label="@string/app_name"  
-    	    android:parentActivityName="net.archenemy.archenemyapp.ui.MainActivity">
+    	    android:label="@string/title_activity_facebook_login"  
+    	    android:parentActivityName="net.archenemy.archenemyapp.presenter.MainActivity">
     	</activity>
     	
-    	<provider
-            android:name="android.support.v4.content.FileProvider"
-            android:authorities="net.archenemy.archenemyapp.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-		        android:name="android.support.FILE_PROVIDER_PATHS"
-		        android:resource="@xml/file_paths" />
-        </provider>
+    	<activity 
+    	    android:name="com.twitter.sdk.android.core.identity.OAuthActivity"
+    	    android:label="@string/title_activity_twitter_login"  
+    	    android:parentActivityName="net.archenemy.archenemyapp.presenter.MainActivity">
+    	</activity>
+        
+        <meta-data android:name="com.crashlytics.ApiKey" android:value="600cf7df012ba5ed8b079fcf5d4e3eef25840f23"/>
     	   	
     </application>
 

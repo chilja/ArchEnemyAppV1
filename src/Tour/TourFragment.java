@@ -5,11 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.archenemy.archenemyapp.R;
-import net.archenemy.archenemyapp.data.Constants;
-import net.archenemy.archenemyapp.data.FacebookAdapter;
-import net.archenemy.archenemyapp.data.FacebookSharable;
-import net.archenemy.archenemyapp.data.Utility;
-import net.archenemy.archenemyapp.ui.BaseFragment;
+import net.archenemy.archenemyapp.model.Constants;
+import net.archenemy.archenemyapp.model.FacebookAdapter;
+import net.archenemy.archenemyapp.model.FacebookSharable;
+import net.archenemy.archenemyapp.model.Utility;
+import net.archenemy.archenemyapp.presenter.BaseFragment;
 
 import com.facebook.widget.FacebookDialog;
 import com.facebook.widget.FacebookDialog.PendingCall;

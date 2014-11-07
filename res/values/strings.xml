@@ -5,20 +5,24 @@
     <string name="app_id">264203197105222</string>
     
     <string-array name="menu">
-        <item>On Facebook</item>
-        <item>On Twitter</item>
+        <item>Facebook</item>
+        <item>Twitter</item>
     </string-array>
     
     <string name="navigation_drawer_open">Open</string>
     <string name="navigation_drawer_close">Close</string>
     
-    <string name="title_twitter">On Twitter</string>
-    <string name="title_facebook">On Facebook</string>
+    <string name="title_twitter">Twitter</string>
+    <string name="title_facebook">Facebook</string>
     <string name="title_tour">On Tour</string>
 
     <string name="title_activity_main">ARCH ENEMY</string>
     <string name="title_activity_facebook">Share on Facebook</string>
     <string name="title_activity_settings">Settings</string>
+    <string name="title_activity_twitter_login">Log in with Twitter</string>
+    <string name="title_activity_facebook_login">Log in with Facebook</string>
+    <string name="title_activity_accounts">Accounts</string>
+    <string name="title_activity_share_on_facebook">Share on Facebook</string>
     
     <string name="action_buy_ticket">Buy ticket</string>
     <string name="action_settings">Settings</string>
@@ -28,10 +32,12 @@
     <string name="pref_startMenuItem">Start screen</string>
     <string name="pref_startMenuItem_dialog">Select start screen</string>
     <string name="pref_startMenuItem_default">FACEBOOK</string>
+    
     <string-array name="pref_startMenuItem_entries">
-        <item>On Facebook</item>
-        <item>On Twitter</item>
+        <item>Facebook</item>
+        <item>Twitter</item>
     </string-array>
+    
     <string-array name="pref_startMenuItem_values">
         <item>FACEBOOK</item>
         <item>TWITTER</item>

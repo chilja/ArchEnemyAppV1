@@ -6,7 +6,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import net.archenemy.archenemyapp.R;
-import net.archenemy.archenemyapp.data.FacebookSharable;
+import net.archenemy.archenemyapp.model.FacebookSharable;
 
 public class ShowShareElement 
 	implements 

@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.Date;
 import net.archenemy.archenemyapp.R;
-import net.archenemy.archenemyapp.data.DataAdapter;
+import net.archenemy.archenemyapp.model.DataAdapter;
 import android.app.Activity;
 
 public class Show 

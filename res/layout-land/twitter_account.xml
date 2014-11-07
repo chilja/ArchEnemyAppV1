@@ -15,10 +15,11 @@
     
 	<include layout="@layout/account_user_element"
     android:layout_centerInParent="true"/>	
-
-	<include layout="@layout/twitter_button"
-    android:layout_centerHorizontal="true"/>    
-
+    
+	<include layout="@layout/twitter_button" 
+	    android:id="@+id/loginButton"
+	    android:layout_centerHorizontal="true"/>
+	
 </RelativeLayout>
 
 

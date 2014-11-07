@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy/sdk/kits/digits/src/main/res/values-v11/themes.xml -->
+    <eat-comment/>
+    <style name="dgts__LightTheme" parent="android:Theme.Holo.Light">
+        <item name="dgts__StateButtonStyle">@style/tw__Button</item>
+    </style>
+</resources>

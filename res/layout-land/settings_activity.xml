@@ -7,7 +7,7 @@
     android:orientation="vertical" 
     android:background="@drawable/symbol_land">
 
-    <fragment android:name="net.archenemy.archenemyapp.ui.SettingsFragment"
+    <fragment android:name="net.archenemy.archenemyapp.presenter.SettingsFragment"
          android:id="@+id/SettingsFragment"
          android:layout_width="wrap_content"
          android:layout_height="match_parent" />

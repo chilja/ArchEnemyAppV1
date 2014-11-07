@@ -6,14 +6,14 @@
     android:orientation="vertical" 
     android:background="@drawable/symbol_port">
     
-    <fragment android:name="net.archenemy.archenemyapp.ui.FacebookAccountFragment"
+    <fragment android:name="net.archenemy.archenemyapp.presenter.FacebookAccountFragment"
       	android:id="@+id/FacebookAccountFragment"
       	android:layout_width="match_parent"
       	android:layout_height="wrap_content"
       	android:layout_weight="1"
       	android:layout_margin="10dp" />
     
-    <fragment android:name="net.archenemy.archenemyapp.ui.TwitterAccountFragment"
+    <fragment android:name="net.archenemy.archenemyapp.presenter.TwitterAccountFragment"
 		android:id="@+id/TwitterAccountFragment"
  		android:layout_width="match_parent"
   		android:layout_height="wrap_content"

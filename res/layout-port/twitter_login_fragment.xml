@@ -5,6 +5,7 @@
     
      <ImageView 
         android:src="@drawable/twitter"
+        android:id="@+id/providerIcon"
         android:layout_width="100dp"
     	android:layout_height="100dp"       
         android:layout_gravity="top|center_horizontal"
@@ -21,12 +22,11 @@
     	android:gravity="center"
     	android:textStyle="bold"/>
     
-    <include 
-        layout="@layout/twitter_button"
+    <include layout="@layout/twitter_button" 
+        android:layout_width="220dp"
+    	android:layout_height="wrap_content"
     	android:layout_gravity="bottom|center_horizontal"
     	android:gravity="bottom|center_horizontal"
-    	android:layout_width="220dp"
-    	android:layout_height="wrap_content"
-    	android:layout_margin="60dp"/>
+    	android:layout_margin="60dp" />
 
 </LinearLayout>
