@@ -32,7 +32,7 @@ public class FacebookLoginFragment extends AccountFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
-	    mFacebookAdapter = new FacebookAdapter(getActivity());
+	    mFacebookAdapter = FacebookAdapter.getInstance();
 	}
 
 	@Override

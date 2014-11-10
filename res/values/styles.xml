@@ -1,9 +1,76 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <style name="Text" >        
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+    
+    <style name="Text.Micro" >        
+        <item name="android:textSize">12sp</item>
+    </style>
+       
+    <style name="Text.Small" >        
+        <item name="android:textSize">14sp</item>
+    </style>
+    
+    <style name="Text.Medium" >        
+        <item name="android:textSize">16sp</item>
+    </style>
+    
+    <style name="ShareText" parent="Text.Small">        
+        <item name="android:layout_margin">4dp</item>
+    </style>
+    
+    <style name="LoginHeader" parent="Text.Medium">        
+        <item name="android:gravity">center</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+      
+    <style name="NewsContent" parent="Text.Medium">        
+        <item name="android:maxLines">25</item>
+        <item name="android:gravity">center</item>
+    </style>
+    
+    <style name="UserName" parent="Text.Medium">        
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">center</item>
+    </style>
+    
+    <style name="SubText" parent="Text.Small">        
+        <item name="android:gravity">center</item>
+    </style>
+    
+    <style name="Timestamp" parent="Text.Small">        
+        <item name="android:textColor">@color/lightgrey</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:gravity">bottom|center</item>
+    </style> 
+    
+    <style name="TitleStrip" parent="Text.Medium">        
+        <item name="android:singleLine">true</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">8dp</item>
+    </style>
+    
     <style name="Image">
         <item name="android:layout_width">150dp</item>
         <item name="android:layout_height">150dp</item>
         <item name="android:gravity">center</item>
+    </style>
+    
+    <style name="FacebookLogo">
+        <item name="android:src">@drawable/com_facebook_logo</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>       
+        <item name="android:layout_gravity">top|center_horizontal</item>
+        <item name="android:gravity">top|center_horizontal</item>
+    </style>
+    
+    <style name="FacebookLogo.Small">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">60dp</item>
     </style>
     
     <style name="ProfilePicture">
@@ -40,75 +107,7 @@
         <item name="android:divider">@color/red</item>
         <item name="android:dividerHeight">1sp</item>
         <item name="android:choiceMode">singleChoice</item>
-    </style>   
-    
-    <style name="Text" >        
-    	<item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">18sp</item>
-        <item name="android:textColor">@android:color/white</item>
-    </style>
-    
-    <style name="Text.Lightgrey" >        
-        <item name="android:textColor">@color/lightgrey</item>
-    </style>
-    
-    <style name="MediumText" parent="Text">        
-        <item name="android:textSize">16sp</item>
-    </style>
-    
-    <style name="SmallText" parent="Text">        
-        <item name="android:textSize">14sp</item>
-    </style>
-    
-    <style name="SmallText.Lightgrey">
-        <item name="android:textColor">@color/lightgrey</item>
-    </style>
-    
-    <style name="ShareText" parent="Text"> 
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>       
-        <item name="android:textSize">14sp</item>
-        <item name="android:textColor">@color/lightgrey</item>
-        <item name="android:layout_margin">4dp</item>
-    </style>
-      
-    <style name="NewsContent">        
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:maxLines">25</item>
-        <item name="android:gravity">center</item>
-    </style>
-    
-    <style name="User">        
-    	<item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">18sp</item>
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:paddingLeft">4dp</item>
-        <item name="android:paddingRight">4dp</item>
-    </style>
-    
-    <style name="Timestamp">        
-    	<item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">12sp</item>
-        <item name="android:textColor">@color/lightgrey</item>
-        <item name="android:singleLine">true</item>
-    </style>
-    
-    <style name="TitleStrip">        
-    	<item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">18sp</item>
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:singleLine">true</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:paddingTop">0dp</item>
-        <item name="android:paddingBottom">8dp</item>
-    </style>
+    </style>  
     
     <style name="LoginButton">
     	<item name="android:layout_width">220dp</item>
@@ -121,4 +120,5 @@
     	<item name="android:textSize">16sp</item>
     	<item name="android:textStyle">bold</item>
     </style>
+         
 </resources>

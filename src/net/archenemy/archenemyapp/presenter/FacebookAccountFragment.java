@@ -29,12 +29,17 @@ public class FacebookAccountFragment extends AccountFragment
 	public String getTAG() {
 		return TAG;
 	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		init();
+	}
 		
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
-	    mActivity = (ActionBarActivity) getActivity();
-	    mFacebookAdapter = new FacebookAdapter(mActivity);
+	    mFacebookAdapter = FacebookAdapter.getInstance();
 	    mProviderAdapter = mFacebookAdapter;
 	}
 
@@ -50,8 +55,6 @@ public class FacebookAccountFragment extends AccountFragment
 		mSubtext = (TextView) view.findViewById(R.id.subTextView);	
 		// Find the facebook login button
 		mLoginButton = (Button) view.findViewById(R.id.loginButton);
-
-		init();
 		
 		if (savedInstanceState != null)
 			mName = savedInstanceState.getString(Constants.FACEBOOK_USER_NAME, mName);
@@ -59,8 +62,8 @@ public class FacebookAccountFragment extends AccountFragment
 		if (mName != null) { 			
 			mUserNameView.setText(mName);
 		} else {		
-			if (Utility.isConnectedToNetwork(mActivity, false) && mProviderAdapter.isLoggedIn()) {
-			    mFacebookAdapter.makeMeRequest(this);
+			if (Utility.isConnectedToNetwork(getActivity(), false) && mProviderAdapter.isLoggedIn()) {
+			    mFacebookAdapter.makeMeRequest(this, getActivity());
 			 }
 		}
 		
@@ -72,7 +75,7 @@ public class FacebookAccountFragment extends AccountFragment
 	    	
 	    	//set the logged in state
 	    	setLoggedIn();
-	        mFacebookAdapter.makeMeRequest(this); 
+	        mFacebookAdapter.makeMeRequest(this, getActivity()); 
 	        
 	    } else {	    	
 	    	// set the logged out state

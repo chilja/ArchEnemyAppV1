@@ -66,14 +66,21 @@ public class FacebookAdapter
 	private static final String TAG_DATE = "created_time";
 	private static final String TAG_FROM = "from";
 	
-	private Activity mActivity;
 	private ProgressDialog mProgressDialog;
 	
 	// flag for pending reauthorization request
 	private boolean mPendingPublishReauthorization = false;
 	
-	public FacebookAdapter(Activity activity){
-		mActivity = activity;
+	private static FacebookAdapter mFacebookAdapter;
+		
+	public static FacebookAdapter getInstance() {
+		if (mFacebookAdapter == null) {
+			mFacebookAdapter = new FacebookAdapter();
+		}		
+		return mFacebookAdapter;
+	}
+	
+	private FacebookAdapter(){
 	}
 	
 	public boolean isEnabled() {
@@ -130,7 +137,7 @@ public class FacebookAdapter
 	    return true;
 	}
 
-	private ArrayList<FeedElement> parseJson (JSONObject jsonObj){
+	private ArrayList<FeedElement> parseJson (JSONObject jsonObj, Activity activity){
 		
 		ArrayList<FeedElement> feedElements = new ArrayList<FeedElement>();
 		JSONArray posts = null;
@@ -152,7 +159,7 @@ public class FacebookAdapter
 						String id = fromObj.getString(TAG_ID);
 	            
 						FeedElement element = 
-								new Post(mActivity,name, id, message, date, picture, link);
+								new Post(activity,name, id, message, date, picture, link);
 						feedElements.add(element);
 					} catch (JSONException e) {
 						//ignore objects with missing tags
@@ -168,21 +175,21 @@ public class FacebookAdapter
 	    return feedElements;
 	}
 
-	private void requestPublishPermissions(Session session) {
+	private void requestPublishPermissions(Session session, Activity activity) {
 	    if (session != null) {
 	        Session.NewPermissionsRequest newPermissionsRequest = 
-	            new Session.NewPermissionsRequest(mActivity, PERMISSIONS).
+	            new Session.NewPermissionsRequest(activity, PERMISSIONS).
 	                setRequestCode(REAUTH_ACTIVITY_CODE);
 	        session.requestNewPublishPermissions(newPermissionsRequest);
 	    }
 	}
 	
-	public void startShareDialog(Bundle shareParams) {	
-		if (FacebookDialog.canPresentShareDialog(mActivity.getApplicationContext(), 
+	public void startShareDialog(Bundle shareParams, Activity activity) {	
+		if (FacebookDialog.canPresentShareDialog(activity.getApplicationContext(), 
                 FacebookDialog.ShareDialogFeature.SHARE_DIALOG)) {
 						
 			// Publish the post using the Native Facebook Share Dialog			
-			FacebookDialog.ShareDialogBuilder shareDialogBuilder = new FacebookDialog.ShareDialogBuilder(mActivity);
+			FacebookDialog.ShareDialogBuilder shareDialogBuilder = new FacebookDialog.ShareDialogBuilder(activity);
 			shareDialogBuilder.setName(shareParams.getString("name"));
 			shareDialogBuilder.setLink(shareParams.getString("link"));
 			shareDialogBuilder.setCaption(shareParams.getString("caption"));
@@ -193,12 +200,12 @@ public class FacebookAdapter
 
 		} else {
 			//Publish the post using the custom share dialog
-			publishFeedDialog(shareParams);
+			publishFeedDialog(shareParams, activity);
 		}
 	}
 
-	public void makeMeRequest(UserCallback userCallback) {
-		if (Utility.isConnectedToNetwork(mActivity, false)){
+	public void makeMeRequest(UserCallback userCallback, final Activity activity) {
+		if (Utility.isConnectedToNetwork(activity, false)){
 			final Session session = Session.getActiveSession();
 			final UserCallback callback = userCallback;
 			if (session != null && session.isOpened()) {
@@ -215,7 +222,7 @@ public class FacebookAdapter
 			                callback.onUserRequestCompleted(user);
 			            }
 			            if (response.getError() != null) {
-			            	handleError(response.getError());
+			            	handleError(response.getError(), activity);
 			            }
 			        }
 			    });
@@ -225,8 +232,8 @@ public class FacebookAdapter
 		}
 	}
 	
-	public void makeUserRequest(final UserCallback callback, final String id) {
-		if (Utility.isConnectedToNetwork(mActivity, false)){
+	public void makeUserRequest(final UserCallback callback, final String id, final Activity activity) {
+		if (Utility.isConnectedToNetwork(activity, false)){
 			final Session session = Session.getActiveSession();
 			if (session != null && session.isOpened()) {
 				
@@ -236,7 +243,7 @@ public class FacebookAdapter
 		            	
 		            	Log.i(TAG, "user received");		        			        	
 			        	if (response.getError() != null) {
-			            	handleError(response.getError());
+			            	handleError(response.getError(), activity);
 			            	return;
 			            }
 			        	// If the response is successful
@@ -255,10 +262,9 @@ public class FacebookAdapter
 		}
 	}
 	
-	public void makeFeedRequest(FeedCallback feedCallback, final String id){
-		if (Utility.isConnectedToNetwork(mActivity, false)){
+	public void makeFeedRequest(final FeedCallback callback, final String id, final Activity activity){
+		if (Utility.isConnectedToNetwork(activity, false)){
 		final Session session = Session.getActiveSession();
-		final FeedCallback callback = feedCallback;
 		StringBuffer query = new StringBuffer(id);
 		query.append("/feed");
 		// make the API call
@@ -271,7 +277,7 @@ public class FacebookAdapter
 		        public void onCompleted(Response response) {
 		        	Log.i(TAG, "Feeds received");		        			        	
 		        	if (response.getError() != null) {
-		            	handleError(response.getError());
+		            	handleError(response.getError(), activity);
 		            	callback.onFeedRequestCompleted(null, id);
 		            	return;
 		            }
@@ -281,7 +287,7 @@ public class FacebookAdapter
 		                JSONObject graphResponse = response
 		                                           .getGraphObject()
 		                                           .getInnerJSONObject();
-		        		ArrayList<FeedElement> elements = parseJson(graphResponse);
+		        		ArrayList<FeedElement> elements = parseJson(graphResponse, activity);
 		                callback.onFeedRequestCompleted(elements, id);
 		            }
 		        }
@@ -292,11 +298,11 @@ public class FacebookAdapter
 		}
 	}
 	
-	public void publishFeedDialog(Bundle params) {
-		if (Utility.isConnectedToNetwork(mActivity, true) && isLoggedIn()){
+	public void publishFeedDialog(Bundle params, final Activity activity) {
+		if (Utility.isConnectedToNetwork(activity, true) && isLoggedIn()){
 
 		    WebDialog feedDialog = (
-		        new WebDialog.FeedDialogBuilder(mActivity,
+		        new WebDialog.FeedDialogBuilder(activity,
 		            Session.getActiveSession(),
 		            params))
 		        .setOnCompleteListener(new OnCompleteListener() {
@@ -309,23 +315,23 @@ public class FacebookAdapter
 		                    // and the post Id.
 		                    final String postId = values.getString("post_id");
 		                    if (postId != null) {
-		                        Toast.makeText(mActivity,
+		                        Toast.makeText(activity,
 		                            "Posted story, id: "+postId,
 		                            Toast.LENGTH_SHORT).show();
 		                    } else {
 		                        // User clicked the Cancel button
-		                        Toast.makeText(mActivity.getApplicationContext(), 
+		                        Toast.makeText(activity.getApplicationContext(), 
 		                            "Publish cancelled", 
 		                            Toast.LENGTH_SHORT).show();
 		                    }
 		                } else if (error instanceof FacebookOperationCanceledException) {
 		                    // User clicked the "x" button
-		                    Toast.makeText(mActivity.getApplicationContext(), 
+		                    Toast.makeText(activity.getApplicationContext(), 
 		                        "Publish cancelled", 
 		                        Toast.LENGTH_SHORT).show();
 		                } else {
 		                    // Generic, ex: network error
-		                    Toast.makeText(mActivity.getApplicationContext(), 
+		                    Toast.makeText(activity.getApplicationContext(), 
 		                        "Error posting story", 
 		                        Toast.LENGTH_SHORT).show();
 		                }
@@ -335,12 +341,12 @@ public class FacebookAdapter
 		    feedDialog.show();
 		}
 		if (!isLoggedIn()) {
-			Toast.makeText(mActivity, R.string.fb_share_error_log_in, Toast.LENGTH_LONG).show();
+			Toast.makeText(activity, R.string.fb_share_error_log_in, Toast.LENGTH_LONG).show();
 		}
 	}
 	
-	public void publishStory(Bundle shareParams) {
-		if (Utility.isConnectedToNetwork(mActivity, true)){
+	public void publishStory(Bundle shareParams, final Activity activity) {
+		if (Utility.isConnectedToNetwork(activity, true)){
 		setPendingPublish(false);
 		
 	    Session session = Session.getActiveSession();
@@ -352,7 +358,7 @@ public class FacebookAdapter
 	        if (!isSubsetOf(PERMISSIONS, permissions)) {
 	            setPendingPublish(true);
 	            Session.NewPermissionsRequest newPermissionsRequest = new Session
-	                    .NewPermissionsRequest(mActivity, PERMISSIONS);
+	                    .NewPermissionsRequest(activity, PERMISSIONS);
 	            session.requestNewPublishPermissions(newPermissionsRequest);
 	            return;
 	        }
@@ -366,17 +372,17 @@ public class FacebookAdapter
 	                    mProgressDialog = null;
 	                }
 	                
-	                String successMessage = mActivity.getString(R.string.fb_result_dialog_button_text);	               
+	                String successMessage = activity.getString(R.string.fb_result_dialog_button_text);	               
 	                FacebookRequestError error = response.getError();
 	                
 	                //Show result toast
 	                if (error != null) {
-	                    Toast.makeText(mActivity
+	                    Toast.makeText(activity
 	                         .getApplicationContext(),
 	                         error.getErrorMessage(),
 	                         Toast.LENGTH_SHORT).show();
 	                    } else {
-	                        Toast.makeText(mActivity
+	                        Toast.makeText(activity
 	                             .getApplicationContext(), 
 	                             successMessage,
 	                             Toast.LENGTH_SHORT).show();
@@ -390,8 +396,8 @@ public class FacebookAdapter
 	        RequestAsyncTask requestTask = new RequestAsyncTask(request);
 	        
 	        //Show progress dialog
-	        mProgressDialog = ProgressDialog.show(mActivity, "", 
-	                mActivity.getResources()
+	        mProgressDialog = ProgressDialog.show(activity, "", 
+	                activity.getResources()
 	                .getString(R.string.fb_progress_dialog_text), true);
 			Log.i(TAG, "Publish story");
 	        requestTask.execute();	
@@ -399,21 +405,21 @@ public class FacebookAdapter
 		}
 	}
 
-	private void handleError(FacebookRequestError error) {
+	private void handleError(FacebookRequestError error, final Activity activity) {
 	    DialogInterface.OnClickListener listener = null;
 	    String dialogBody = null;
 
 	    if (error == null) {
 	        // There was no response from the server.
-	        dialogBody = mActivity.getString(R.string.fb_error_dialog_default_text);
+	        dialogBody = activity.getString(R.string.fb_error_dialog_default_text);
 	    } else {
 	        switch (error.getCategory()) {
 	            case AUTHENTICATION_RETRY:
 	                // Tell the user what happened by getting the
 	                // message id, and retry the operation later.
 	                String userAction = (error.shouldNotifyUser()) ? "" :
-	                	mActivity.getString(error.getUserActionMessageId());
-	                dialogBody = mActivity.getString(R.string.fb_error_authentication_retry, 
+	                	activity.getString(error.getUserActionMessageId());
+	                dialogBody = activity.getString(R.string.fb_error_authentication_retry, 
 	                                       userAction);
 	                listener = new DialogInterface.OnClickListener() {
 	                    @Override
@@ -422,7 +428,7 @@ public class FacebookAdapter
 	                        // Take the user to the mobile site.
 	                        Intent intent = new Intent(Intent.ACTION_VIEW, 
 	                                                   FACEBOOK_URL);
-	                        mActivity.startActivity(intent);
+	                        activity.startActivity(intent);
 	                    }
 	                };
 	                break;
@@ -430,7 +436,7 @@ public class FacebookAdapter
 	            case AUTHENTICATION_REOPEN_SESSION:
 	                // Close the session and reopen it.
 	                dialogBody = 
-	                		mActivity.getString(R.string.fb_error_authentication_reopen);
+	                		activity.getString(R.string.fb_error_authentication_reopen);
 	                listener = new DialogInterface.OnClickListener() {
 	                    @Override
 	                    public void onClick(DialogInterface dialogInterface, 
@@ -445,7 +451,7 @@ public class FacebookAdapter
 
 	            case PERMISSION:
 	                // A permissions-related error
-	                dialogBody = mActivity.getString(R.string.fb_error_permission);
+	                dialogBody = activity.getString(R.string.fb_error_permission);
 	                listener = new DialogInterface.OnClickListener() {
 	                    @Override
 	                    public void onClick(DialogInterface dialogInterface, 
@@ -453,7 +459,7 @@ public class FacebookAdapter
 	                    	//new
 	                        setPendingPublish(true);
 	                        // Request publish permission
-	                        requestPublishPermissions(Session.getActiveSession());
+	                        requestPublishPermissions(Session.getActiveSession(), activity);
 	                    }
 	                };
 	                break;
@@ -462,12 +468,12 @@ public class FacebookAdapter
 	            case THROTTLING:
 	                // This is usually temporary, don't clear the fields, and
 	                // ask the user to try again.
-	                dialogBody = mActivity.getString(R.string.fb_error_server);
+	                dialogBody = activity.getString(R.string.fb_error_server);
 	                break;
 
 	            case BAD_REQUEST:
 	                // This is likely a coding error, ask the user to file a bug.
-	                dialogBody = mActivity.getString(R.string.fb_error_bad_request, 
+	                dialogBody = activity.getString(R.string.fb_error_bad_request, 
 	                                       error.getErrorMessage());
 	                break;
 
@@ -477,7 +483,7 @@ public class FacebookAdapter
 	                // An unknown issue occurred, this could be a code error, or
 	                // a server side issue, log the issue, and either ask the
 	                // user to retry, or file a bug.
-	                dialogBody = mActivity.getString(R.string.fb_error_unknown, 
+	                dialogBody = activity.getString(R.string.fb_error_unknown, 
 	                                       error.getErrorMessage());
 	                break;
 	        }
@@ -485,7 +491,7 @@ public class FacebookAdapter
 
 	    // Show the error and pass in the listener so action
 	    // can be taken, if necessary.
-	    new AlertDialog.Builder(mActivity)
+	    new AlertDialog.Builder(activity)
 	            .setPositiveButton(R.string.fb_error_dialog_button_text, listener)
 	            .setTitle(R.string.fb_error_dialog_title)
 	            .setMessage(dialogBody)

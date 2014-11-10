@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBarActivity;
 import net.archenemy.archenemyapp.R;
 import net.archenemy.archenemyapp.model.FacebookSharable;
@@ -16,7 +17,7 @@ public class ShowShareElement
 	private static final long serialVersionUID = 1L;
 	private Show mShow;
 
-	public ShowShareElement(ActionBarActivity activity, Show show) {
+	public ShowShareElement(Show show) {
 	    mShow = show;	
 	}
     

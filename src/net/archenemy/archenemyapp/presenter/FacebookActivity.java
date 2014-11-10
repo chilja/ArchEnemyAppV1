@@ -13,8 +13,7 @@ import com.facebook.UiLifecycleHelper;
 /*Background activity to handle Facebook interaction */
 
 public abstract class FacebookActivity extends ActionBarActivity 
-	implements FacebookLoginFragment.OnFacebookLoginListener
-	{
+	implements FacebookLoginFragment.OnFacebookLoginListener {
 	
 	protected FacebookAdapter mFacebookAdapter;
 	protected boolean mPendingLogin = false;
@@ -30,7 +29,6 @@ public abstract class FacebookActivity extends ActionBarActivity
 	    	onFacebookLogin();
 	    }
 	};
-
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

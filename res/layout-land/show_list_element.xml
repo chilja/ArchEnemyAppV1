@@ -16,11 +16,11 @@
 
 	   <TextView
 	       	android:id="@+id/locationView" 
-	       	style="@style/MediumText"/>
+	       	style="@style/Text.Small"/>
 	   
         <TextView
 			android:id="@+id/countryView"
-           	style="@style/SmallText.Lightgrey"/>
+           	style="@style/Text.Small"/>
 		   
 	</LinearLayout>
   
@@ -33,13 +33,13 @@
             
         <TextView
            android:id="@+id/dateView" 
-           style="@style/MediumText"
+           style="@style/Text.Medium"
            android:layout_gravity="right"/>
         
         
 	   <TextView
 	       android:id="@+id/venueView"
-	       	style="@style/SmallText.Lightgrey"
+	       	style="@style/Text.Small"
            	android:layout_gravity="right"
             />
 

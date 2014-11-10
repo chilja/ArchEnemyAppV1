@@ -6,6 +6,7 @@ import java.util.List;
 
 import net.archenemy.archenemyapp.R;
 import net.archenemy.archenemyapp.model.Constants;
+import net.archenemy.archenemyapp.model.DataAdapter;
 import net.archenemy.archenemyapp.model.FacebookAdapter;
 import net.archenemy.archenemyapp.model.FacebookSharable;
 import net.archenemy.archenemyapp.model.Utility;
@@ -48,8 +49,6 @@ public class TourFragment extends BaseFragment {
 	private ShowListAdapter mAdapter;
 	private int mSelectedShowIndex = -1;
 	
-	private ActionBarActivity mActivity;
-	
 	private ShareActionProvider mShareActionProvider;
 	
 	@Override
@@ -66,15 +65,13 @@ public class TourFragment extends BaseFragment {
 		}
 		
  		setTitle(R.string.title_tour);
- 		
-	    mActivity = (ActionBarActivity) getActivity();
 	    
  		// Set up the show list
  		mListElements = new ArrayList<ShowListElement>();
- 		for (Show show: mDataAdapter.getShowList()){
+ 		for (Show show: DataAdapter.getShowList(getActivity())){
  			mListElements.add(new ShowListElement(show));
  		}
- 		mAdapter = new ShowListAdapter(mActivity, mListElements); 		
+ 		mAdapter = new ShowListAdapter(getActivity(), mListElements); 		
 	    mListView.setAdapter(mAdapter);		
  		mListView.setOnItemClickListener(new OnItemClickListener());
 	 		
@@ -102,7 +99,7 @@ public class TourFragment extends BaseFragment {
 	}
 	
 	private void startBrowserActivity(ShowListElement element) {
-		Utility.startBrowserActivity(mActivity, element.getShow().getTicketUri());
+		Utility.startBrowserActivity(getActivity(), element.getShow().getTicketUri());
 	}
 	
 	private void makeShareIntent(){
@@ -134,7 +131,7 @@ public class TourFragment extends BaseFragment {
 	
 	public void showPopup(View view) {
 		//Set up the popup menu
-	    final PopupMenu popup = new PopupMenu(mActivity, view);
+	    final PopupMenu popup = new PopupMenu(getActivity(), view);
 	    
 	    PopupMenu.OnMenuItemClickListener clickListener = new PopupMenu.OnMenuItemClickListener() {
 	    	@Override
@@ -144,10 +141,10 @@ public class TourFragment extends BaseFragment {
 	            	startBrowserActivity(mListElements.get(mSelectedShowIndex));
 	            	return true;
 	            case R.id.actionFbShare:
-	            	new FacebookAdapter(mActivity)
+	            	FacebookAdapter.getInstance()
 	            		.startShareDialog(
-	            			new ShowShareElement(mActivity, mListElements.get(mSelectedShowIndex).getShow())
-	            				.getPostingParameters(mActivity));
+	            			new ShowShareElement(mListElements.get(mSelectedShowIndex).getShow())
+	            				.getPostingParameters(getActivity()), getActivity());
 	            	return true;
 	            }
 		    	popup.dismiss();
@@ -193,7 +190,7 @@ public class TourFragment extends BaseFragment {
 	    		}
 	    	}
 	    };
-	    mShareActionProvider = new MyShareActionProvider(mActivity);
+	    mShareActionProvider = new MyShareActionProvider(getActivity());
 	    item.setActionProvider(mShareActionProvider);
 	    mShareActionProvider.setOnShareTargetSelectedListener(new OnShareTargetSelectedListener() {
 
@@ -232,7 +229,7 @@ public class TourFragment extends BaseFragment {
 	        View view = convertView;
 	        if (view == null) {
 	            LayoutInflater inflater =
-	                    (LayoutInflater) mActivity
+	                    (LayoutInflater) getActivity()
 	                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	            view = inflater.inflate(R.layout.show_list_element, null);
 	        }

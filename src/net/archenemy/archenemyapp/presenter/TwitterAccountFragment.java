@@ -42,9 +42,14 @@ public class TwitterAccountFragment extends AccountFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
-	    mActivity = (ActionBarActivity) getActivity(); 
-	    mTwitterAdapter = new TwitterAdapter(mActivity);
+	    mTwitterAdapter = TwitterAdapter.getInstance();
 	    mProviderAdapter = mTwitterAdapter;
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		init();
 	}
 	
 	@Override
@@ -63,8 +68,8 @@ public class TwitterAccountFragment extends AccountFragment {
 		mLoginButton.setText(R.string.twitter_logout);
 		mLoginButton.setOnClickListener(new OnClickListener());
 		
-		//invisible widget to perform login
-		mTwitterLoginButton = new TwitterLoginButton(mActivity);	
+		// widget to perform login
+		mTwitterLoginButton = new TwitterLoginButton(getActivity());	
 		mTwitterLoginButton.setCallback(new Callback<TwitterSession>() {
 			@Override
 			public void success(Result<TwitterSession> result) {
@@ -77,18 +82,9 @@ public class TwitterAccountFragment extends AccountFragment {
 			}
 		});		
 		
-		init();
-		
-		if (savedInstanceState != null)
+		if (savedInstanceState != null) {
 			mName = savedInstanceState.getString(Constants.TWITTER_USER_NAME, mName);
-		
-		if (mName != null) { 			
 			mUserNameView.setText(mName);
-		} else {		    
-		    if (Utility.isConnectedToNetwork(mActivity, false) && mTwitterAdapter.isLoggedIn()) {
-		    	mName = mTwitterAdapter.getUserName();
-		    	mUserNameView.setText(mName);
-			 } 
 		}
 
 		return view;
@@ -108,7 +104,11 @@ public class TwitterAccountFragment extends AccountFragment {
 	}
 	
 	protected void setLoggedIn() {
-		super.setLoggedIn();	
+		super.setLoggedIn();		    
+	    if (Utility.isConnectedToNetwork(getActivity(), false) && mTwitterAdapter.isLoggedIn()) {
+	    	mName = mTwitterAdapter.getUserName();
+	    	mUserNameView.setText(mName);
+		 } 
 		mLoginButton.setText(R.string.twitter_logout);
 	}
 	
@@ -127,12 +127,12 @@ public class TwitterAccountFragment extends AccountFragment {
                 String cancel = getResources().getString(R.string.twitter_cancel);
                 String message;
                 if (mName != null) {
-                	message = getResources().getString(R.string.twitter_logged_in) + ": " + mName;
+                	message = getResources().getString(R.string.account_logged_in) + ": " + mName;
                 } else {
-                	message = getResources().getString(R.string.twitter_logged_in);
+                	message = getResources().getString(R.string.account_logged_in);
                 }
 	    		
-                AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 
                 builder.setMessage(message)
                        .setCancelable(true)

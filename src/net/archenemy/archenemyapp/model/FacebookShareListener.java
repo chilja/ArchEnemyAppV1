@@ -12,11 +12,11 @@ public class FacebookShareListener implements View.OnClickListener {
 	public FacebookShareListener(Activity activity, FacebookSharable sharable) {
 		mActivity = activity;
 		mSharable = sharable;
-		mFacebookAdapter = new FacebookAdapter(activity);
+		mFacebookAdapter = FacebookAdapter.getInstance();
 	}
 	
 	@Override
 	public void onClick(View arg0) {
-		mFacebookAdapter.startShareDialog(mSharable.getPostingParameters(mActivity));			
+		mFacebookAdapter.startShareDialog(mSharable.getPostingParameters(mActivity), mActivity);			
 	}		
 }

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="200dp"
     android:layout_gravity="center"
-    android:background="@drawable/box_black_transparent" >
+    android:background="@color/white_transparent" >
 	
  	<ImageView 
         android:src="@drawable/twitter"

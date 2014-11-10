@@ -12,9 +12,6 @@ public abstract class BaseFragment extends Fragment {
 	
 	protected int mTitle = R.string.app_name;//default
 	protected String mTitleString = "";
-	protected DataAdapter mDataAdapter;
-	protected ActionBarActivity mActivity;
-	protected FragmentManager mFragmentManager;
 	protected boolean mIsResumed = false;
 	protected boolean mIsAttached = false;
 	
@@ -43,9 +40,7 @@ public abstract class BaseFragment extends Fragment {
 	}
 	
 	protected void init(Activity activity) {
-		mActivity = (ActionBarActivity)activity ;
-		mDataAdapter = new DataAdapter(mActivity);		
-		mFragmentManager = mActivity.getSupportFragmentManager();	
+	
 	}
 
 	@Override

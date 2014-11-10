@@ -22,9 +22,7 @@
         
         <activity
 	        android:name="net.archenemy.archenemyapp.presenter.MainActivity"
-	        android:label="@string/title_activity_main"
-	        android:configChanges="keyboardHidden|orientation|screenSize"
-	        android:screenOrientation="portrait">
+	        android:label="@string/title_activity_main">
 	        <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

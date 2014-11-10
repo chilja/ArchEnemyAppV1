@@ -57,8 +57,8 @@ public class MainActivity
 	private TwitterAdapter mTwitterAdapter;
 	//flag to prevent repeated automatic refresh
 	private static boolean mTwitterIsRefreshed = false;
-	private Integer mTwitterCallbackCount;
-	private Integer mTwitterCallbackTotal;
+	private static Integer mTwitterCallbackCount = 0;
+	private static Integer mTwitterCallbackTotal = 0;
 	private LoadingProgressDialog mTwitterProgressDialog;
 	private ImageView mTwitterButton;
 	
@@ -67,8 +67,8 @@ public class MainActivity
 	private FacebookAdapter mFacebookAdapter;	
 	//flag to prevent repeated automatic refresh
 	private static boolean mFacebookIsRefreshed = false;
-	private Integer mFacebookCallbackCount;
-	private Integer mFacebookCallbackTotal;
+	private static Integer mFacebookCallbackCount = 0;
+	private static Integer mFacebookCallbackTotal = 0;
 	private LoadingProgressDialog mFacebookProgressDialog;
 	private ImageView mFacebookButton;
 	
@@ -93,13 +93,11 @@ public class MainActivity
 				showMenuItem(FACEBOOK, false);				
 			}
 		});
-				
-		mDataAdapter = new DataAdapter(this);
 		                     
 		mFragmentManager = getSupportFragmentManager();
 		    
-	    mFacebookAdapter = new FacebookAdapter(this);
-	    mTwitterAdapter = new TwitterAdapter(this);
+	    mFacebookAdapter = FacebookAdapter.getInstance();
+	    mTwitterAdapter = TwitterAdapter.getInstance();
 	    
 	    mFacebookProgressDialog = new LoadingProgressDialog(getResources().getString(R.string.facebook_loading));
 	    mTwitterProgressDialog = new LoadingProgressDialog(getResources().getString(R.string.twitter_loading));
@@ -113,6 +111,10 @@ public class MainActivity
 	    	
 		    mTwitterIsRefreshed = savedInstanceState.getBoolean(Constants.TWITTER_IS_REFRESHED, false);
 	    	mFacebookIsRefreshed = savedInstanceState.getBoolean(Constants.FACEBOOK_IS_REFRESHED, false);
+	    	mTwitterCallbackCount = savedInstanceState.getInt(Constants.TWITTER_CALLBACK_COUNT, 0);
+	    	mFacebookCallbackCount = savedInstanceState.getInt(Constants.FACEBOOK_CALLBACK_COUNT, 0);
+	    	mTwitterCallbackTotal = savedInstanceState.getInt(Constants.TWITTER_CALLBACK_TOTAL, 0);
+	    	mFacebookCallbackTotal = savedInstanceState.getInt(Constants.FACEBOOK_CALLBACK_TOTAL, 0);
 	    } 
 	    
 	    //create fragments
@@ -124,14 +126,7 @@ public class MainActivity
 		    mTwitterLoginFragment = new TwitterLoginFragment();
 		if (mFacebookLoginFragment == null)
 		    mFacebookLoginFragment = new FacebookLoginFragment();
-		
-		//add first fragment that will be replaced in showFragment()
-	    if (savedInstanceState == null) {	
-	    	FragmentTransaction transaction = mFragmentManager.beginTransaction();
-			transaction.add(R.id.fragmentContainer, mFacebookFragment, FacebookFragment.TAG );
-			transaction.commit();
-	    }
-	    		
+			
 	    restoreActionBar();  
 	    
     	if (savedInstanceState != null) {	
@@ -150,19 +145,27 @@ public class MainActivity
 	public void onSaveInstanceState(Bundle bundle) {
 	    super.onSaveInstanceState(bundle);
 	    //save current state
-		bundle.putInt(Constants.FRAGMENT, getVisibleFragmentIndex() );
+		bundle.putInt(Constants.FRAGMENT, getVisibleFragmentIndex());
+		bundle.putInt(Constants.TWITTER_CALLBACK_COUNT, mTwitterCallbackCount);
+		bundle.putInt(Constants.FACEBOOK_CALLBACK_COUNT, mFacebookCallbackCount);
+		bundle.putInt(Constants.TWITTER_CALLBACK_TOTAL, mTwitterCallbackTotal);
+		bundle.putInt(Constants.FACEBOOK_CALLBACK_TOTAL, mFacebookCallbackTotal);
 		bundle.putBoolean(Constants.TWITTER_IS_REFRESHED, mTwitterIsRefreshed);
-		bundle.putBoolean(Constants.FACEBOOK_IS_REFRESHED, mFacebookIsRefreshed);
+		bundle.putBoolean(Constants.FACEBOOK_IS_REFRESHED, mFacebookIsRefreshed);		
 	}
 	
 	@Override
 	public void onResume() {
 		super.onResume();
+		if (getVisibleFragment()!=null)
+			getVisibleFragment().refresh();
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
+		dismissTwitterProgressDialog();
+		dismissFacebookProgressDialog();
 	} 
 	
 	@Override
@@ -181,6 +184,7 @@ public class MainActivity
 		super.onDestroy();
 		//cancel background threads
 		BitmapUtility.onDestroy();
+		mTwitterAdapter.onDestroy();
 	}
 
 	public boolean onPrepareOptionsMenu (Menu menu) {
@@ -256,47 +260,43 @@ public class MainActivity
 	@Override
 	public void onFeedRequestCompleted(ArrayList<FeedElement> elements, String id) {
 		if (elements != null && id != null && elements.size() >0) {
-			for (SocialMediaUser user: mDataAdapter.getEnabledSocialMediaUsers()) {
+			for (SocialMediaUser user: DataAdapter.getEnabledSocialMediaUsers(this)) {
 				if (id.equals(user.getFacebookUserId())) {
 					user.setPosts(elements);
 					break;
 				}					
 			}
 		}
-		
-		synchronized (mFacebookCallbackCount) {
-			mFacebookCallbackCount -= 1;
-			int progress = (mFacebookCallbackTotal == 0) ? 100 :
-				(1 - (mFacebookCallbackCount / mFacebookCallbackTotal)) * 100;
-			mFacebookProgressDialog.setProgress(progress);
-		}
 		//all requests completed? refresh fragment
 		if (mFacebookCallbackCount < 1) {
-			mFacebookProgressDialog.dismiss();
+			dismissFacebookProgressDialog();
 			mFacebookFragment.refresh();
 		}
 		Log.i(TAG, "Received facebook feed");
 	}
 	
+	private void dismissFacebookProgressDialog() {
+		if (mFacebookProgressDialog != null) mFacebookProgressDialog.dismiss();
+	}
+	
+	private void dismissTwitterProgressDialog() {
+		if (mTwitterProgressDialog != null) mTwitterProgressDialog.dismiss();
+	}
+	
 	//Twitter Callback
     public void onFeedRequestCompleted(ArrayList<FeedElement> elements, Long id) { 
     	if (elements != null && id != null && elements.size() >0) {
-			for (SocialMediaUser member: mDataAdapter.getEnabledSocialMediaUsers()) {
+			for (SocialMediaUser member: DataAdapter.getEnabledSocialMediaUsers(this)) {
 				if (id.equals(member.getTwitterUserId())) {
 					member.setTweets(elements);
 					break;
 				}					
 			}
 		}
-    	synchronized (mTwitterCallbackCount) {
-			mTwitterCallbackCount -= 1;
-			int progress = (mTwitterCallbackTotal == 0) ? 100 : 
-				(1 - (mTwitterCallbackCount / mTwitterCallbackTotal)) * 100;
-			mTwitterProgressDialog.setProgress(progress);
-    	}
+
 		//all requests completed? refresh fragment
 		if (mTwitterCallbackCount < 1) {
-			mTwitterProgressDialog.dismiss();
+			dismissTwitterProgressDialog();
 			mTwitterFragment.refresh();
 		}
 			
@@ -306,7 +306,7 @@ public class MainActivity
     @Override
 	public void onUserRequestCompleted(User user) {
 		Long userId = user.getId();
-		for (SocialMediaUser member : mDataAdapter.getEnabledSocialMediaUsers()) {
+		for (SocialMediaUser member : DataAdapter.getEnabledSocialMediaUsers(this)) {
 			if (member.getTwitterUserId().equals(userId)) {
 				member.setTwitterUser(user);
 				break;
@@ -326,8 +326,8 @@ public class MainActivity
 				mFacebookProgressDialog.show();
 				
 				mFacebookCallbackCount = 0;				
-				for (SocialMediaUser member: mDataAdapter.getEnabledSocialMediaUsers()) {
-					mFacebookAdapter.makeFeedRequest(this, member.getFacebookUserId());	
+				for (SocialMediaUser member: DataAdapter.getEnabledSocialMediaUsers(this)) {
+					mFacebookAdapter.makeFeedRequest(this, member.getFacebookUserId(), this);	
 					mFacebookCallbackCount += 1;
 				}
 				mFacebookCallbackTotal = mFacebookCallbackCount;
@@ -347,12 +347,12 @@ public class MainActivity
 				
 				mTwitterProgressDialog.show();
 				mTwitterCallbackCount = 0;
-				for (SocialMediaUser member: mDataAdapter.getEnabledSocialMediaUsers()) {
+				for (SocialMediaUser member: DataAdapter.getEnabledSocialMediaUsers(this)) {
 					mTwitterAdapter.makeFeedRequest(member.getTwitterUserId(), this);
 					mTwitterCallbackCount += 1;
 				}
 				
-		        for (SocialMediaUser member: mDataAdapter.getEnabledSocialMediaUsers()) {
+		        for (SocialMediaUser member: DataAdapter.getEnabledSocialMediaUsers(this)) {
 		        	if (member.getTwitterUser() == null) {
 		        		mTwitterAdapter.makeUserRequest(member.getTwitterUserId(), this);
 		        	}
@@ -469,7 +469,6 @@ public class MainActivity
 		LoadingProgressDialog (String message){
 			super(MainActivity.this);
 			setProgressStyle(ProgressDialog.STYLE_SPINNER);
-//			setProgressDrawable(getResources().getDrawable(R.drawable.loader));
 			setIndeterminateDrawable(getResources().getDrawable(R.drawable.loader));
 			setMessage(message);
 		}		

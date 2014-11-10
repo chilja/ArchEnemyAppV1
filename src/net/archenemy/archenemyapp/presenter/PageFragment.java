@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.archenemy.archenemyapp.R;
+import net.archenemy.archenemyapp.model.DataAdapter;
 import net.archenemy.archenemyapp.model.SocialMediaUser;
 import net.archenemy.archenemyapp.model.Utility;
 
@@ -46,7 +47,7 @@ public abstract class PageFragment extends BaseFragment
     	Bundle args = getArguments();
     	mUserId = args.getInt(FacebookPageFragment.USER_ID, 1);
     	
-		mBandMembers = mDataAdapter.getEnabledSocialMediaUsers();
+		mBandMembers = DataAdapter.getEnabledSocialMediaUsers(getActivity());
 	    
 	    // Find the list view
 	 	mListView = (ListView) view.findViewById(R.id.listView);
@@ -60,8 +61,8 @@ public abstract class PageFragment extends BaseFragment
 	public void refresh() {
 		if (mIsAttached) {
 			mListElements = getListElements();
-			if (mActivity != null && mListView != null) {
-			    mListAdapter = new ListAdapter(mActivity, R.id.listView, mListElements);
+			if (getActivity() != null && mListView != null) {
+			    mListAdapter = new ListAdapter(getActivity(), R.id.listView, mListElements);
 			    mListView.setAdapter(mListAdapter);
 			}
 			if (mListAdapter != null) {
@@ -77,7 +78,7 @@ public abstract class PageFragment extends BaseFragment
         public void onItemClick(AdapterView parent, View view, int position, long id) {
         	String link = mListElements.get(position).getLink();
         	if (link != null)  {
-        		Utility.startBrowserActivity(mActivity, link);
+        		Utility.startBrowserActivity(getActivity(), link);
         	}
         }
 	}
@@ -98,7 +99,7 @@ public abstract class PageFragment extends BaseFragment
 	    @Override
 	    public View getView(int position, View convertView, ViewGroup parent) {	    	
 	    	if (mListElements != null && mListElements.size() > 0){
-		         return mListElements.get(position).getView(mActivity);
+		         return mListElements.get(position).getView(getActivity());
 	    	}
 	    	return null;
 	    }

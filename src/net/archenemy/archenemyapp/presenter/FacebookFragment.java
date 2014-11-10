@@ -3,6 +3,7 @@ package net.archenemy.archenemyapp.presenter;
 import java.util.ArrayList;
 
 import net.archenemy.archenemyapp.R;
+import net.archenemy.archenemyapp.model.DataAdapter;
 import net.archenemy.archenemyapp.model.SocialMediaUser;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -24,7 +25,7 @@ public class FacebookFragment extends BaseFragment {
 	protected FacebookPagerAdapter mPagerAdapter;
 
 	//one page for each band member
-	protected static ArrayList<SocialMediaUser> mBandMembers;
+	protected static ArrayList<SocialMediaUser> mSocialMediaUsers;
 	
 	private View mView;
 	
@@ -35,7 +36,7 @@ public class FacebookFragment extends BaseFragment {
 		super.onCreateView(inflater, container, savedInstanceState);
 	    mView = inflater.inflate(R.layout.pager_fragment, container, false);
 
-		mBandMembers = mDataAdapter.getEnabledSocialMediaUsers();
+	    mSocialMediaUsers = DataAdapter.getEnabledSocialMediaUsers(getActivity());
 	 	
         mViewPager = (ViewPager) mView.findViewById(R.id.pager);
         refresh();
@@ -44,14 +45,12 @@ public class FacebookFragment extends BaseFragment {
 	}
 	
 	public void refresh(){
-		if (mFragmentManager != null && mViewPager != null) {
-			synchronized (mFragmentManager) {				
-			mPagerAdapter = new FacebookPagerAdapter(mFragmentManager);
+		if (getFragmentManager() != null && mViewPager != null) {				
+			mPagerAdapter = new FacebookPagerAdapter(getFragmentManager());
 			if (mPagerAdapter != null) {
 				mViewPager.setOffscreenPageLimit(6);
 				mViewPager.setAdapter(mPagerAdapter);
 				mPagerAdapter.notifyDataSetChanged();
-			}
 			}
 		}
 	}
@@ -94,22 +93,22 @@ public class FacebookFragment extends BaseFragment {
 	
 	    @Override
 	    public int getCount() {
-	        return mBandMembers.size();
+	        return mSocialMediaUsers.size();
 	    }
 	
 	    @Override
 	    public CharSequence getPageTitle(int position) {
 	    	if (position > getCount()-1) {
-	    		return mBandMembers.get(position-getCount()).getName();
+	    		return mSocialMediaUsers.get(position-getCount()).getName();
 	    	} else {
-	    		return mBandMembers.get(position).getName();
+	    		return mSocialMediaUsers.get(position).getName();
 	    	}
 	    }  
 	    
 	    protected FacebookPageFragment getNewFragment(int i) {
 			FacebookPageFragment fragment = new FacebookPageFragment();
 		    Bundle args = new Bundle();
-	        args.putInt(FacebookPageFragment.USER_ID, i+1);
+	        args.putInt(FacebookPageFragment.USER_ID, mSocialMediaUsers.get(i).getUserId());
 	        fragment.setArguments(args);
 	        return fragment;	
 		}

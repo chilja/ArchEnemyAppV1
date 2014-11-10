@@ -33,8 +33,7 @@ public class FacebookShareFragment extends BaseFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
-	    mActivity = (ActionBarActivity) getActivity();
-	    mFacebookAdapter = new FacebookAdapter(mActivity);  
+	    mFacebookAdapter = FacebookAdapter.getInstance();  
 	}
 
 	@Override
@@ -45,7 +44,7 @@ public class FacebookShareFragment extends BaseFragment {
 	    View view = inflater.inflate(R.layout.facebook_share_fragment, container, false);
 	    
 	  //Get the content to be shared
-	    mShareParams = mActivity.getIntent().getBundleExtra(Constants.SHARE_PARAMS);
+	    mShareParams = getActivity().getIntent().getBundleExtra(Constants.SHARE_PARAMS);
 	     
 	    if(savedInstanceState != null)  {
 	    	mShareParams = savedInstanceState.getBundle(Constants.SHARE_PARAMS);
@@ -76,16 +75,16 @@ public class FacebookShareFragment extends BaseFragment {
 		mShareButton.setOnClickListener(new View.OnClickListener() {
 		    @Override
 		    public void onClick(View v) {
-		    	if (Utility.isConnectedToNetwork(mActivity, true) && mFacebookAdapter.isLoggedIn()) {
+		    	if (Utility.isConnectedToNetwork(getActivity(), true) && mFacebookAdapter.isLoggedIn()) {
 		    		setEnabled();
-		    		mFacebookAdapter.publishFeedDialog(mShareParams);  
+		    		mFacebookAdapter.publishFeedDialog(mShareParams, getActivity());  
 		    	} else {
 			    	setDisabled();
 		    	}
 		    }
 		});
 		
-		if (Utility.isConnectedToNetwork(mActivity, false) && mFacebookAdapter.isLoggedIn()) {
+		if (Utility.isConnectedToNetwork(getActivity(), false) && mFacebookAdapter.isLoggedIn()) {
     		setEnabled();
 	    } else {
 	    	setDisabled();
@@ -115,8 +114,8 @@ public class FacebookShareFragment extends BaseFragment {
 	            // Session updated with new permissions
 	            // so try publishing once more.
 		        if (mFacebookAdapter.isPendingPublish()) {
-		        	if (Utility.isConnectedToNetwork(mActivity, false))
-		        		mFacebookAdapter.publishStory(mShareParams);
+		        	if (Utility.isConnectedToNetwork(getActivity(), false))
+		        		mFacebookAdapter.publishStory(mShareParams, getActivity());
 		        }
 	        }   
 	    }    
@@ -129,8 +128,4 @@ public class FacebookShareFragment extends BaseFragment {
 	    bundle.putBoolean(PENDING_PUBLISH_KEY, mFacebookAdapter.isPendingPublish());
 	}
 
-//	@Override
-//	public void onPostExecute(Bitmap bitmap) {
-//		mImageView.setImageBitmap(bitmap);		
-//	}
 }

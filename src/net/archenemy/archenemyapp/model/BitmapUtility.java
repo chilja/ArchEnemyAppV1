@@ -33,7 +33,7 @@ public class BitmapUtility {
 	    final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
 	
 	    // Use 1/8th of the available memory for this memory cache.
-	    final int cacheSize = maxMemory / 4;
+	    final int cacheSize = maxMemory / 8;
 	
 	    mMemoryCache = new LruCache<String, Bitmap>(cacheSize) {
 	        @Override
@@ -226,9 +226,4 @@ public class BitmapUtility {
 	        mTasks.remove(this);
 	    }
 	}
-	
-//	public interface BitmapCallback {
-//		void onPostExecute(Bitmap bitmap);
-//	}
-
 }

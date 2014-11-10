@@ -1,9 +1,6 @@
 package net.archenemy.archenemyapp.model;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -11,11 +8,14 @@ import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.widget.Toast;
 
 public class Utility {
+	
+	private Utility () {
+		//prevent instantiation
+	}
 	
 	public static boolean isConnectedToNetwork(Activity activity, boolean makeToast){
 		//check internet connection
@@ -39,8 +39,7 @@ public class Utility {
 	    	activity.startActivity(intent);
 		}
 	}
-	
-	
+		
 	public static void makeTextShareIntent(Activity activity, String message, String subject){
 		Intent intent = new Intent();
 		intent.setAction(Intent.ACTION_SEND);
@@ -51,7 +50,6 @@ public class Utility {
 	}
 	
 	public static boolean saveImageToInternalStorage(Activity activity, Bitmap image) {
-
 		try {
 		    // Use the compress method on the Bitmap object to write image to
 		    // the OutputStream

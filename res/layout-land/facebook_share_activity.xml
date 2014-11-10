@@ -9,10 +9,10 @@
     android:background="@drawable/symbol_land">
 
 	<fragment android:name="net.archenemy.archenemyapp.presenter.FacebookAccountFragment"
-         android:id="@+id/FacebookAccountFragment"
-         android:layout_width="240dp"
-         android:layout_height="match_parent" 
-         android:layout_margin="10dp"/> 
+        android:id="@+id/FacebookAccountFragment"
+        android:layout_width="240dp"
+        android:layout_height="match_parent" 
+        android:layout_margin="10dp"/> 
 	    	   
 	<fragment android:name="net.archenemy.archenemyapp.presenter.FacebookShareFragment"
         android:id="@+id/FacebookShareFragment"

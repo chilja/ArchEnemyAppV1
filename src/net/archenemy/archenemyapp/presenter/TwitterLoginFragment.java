@@ -56,15 +56,19 @@ public class TwitterLoginFragment extends BaseFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
-	    mActivity = (ActionBarActivity) getActivity();
-	}
-	
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-	    super.onActivityResult(requestCode, resultCode, data);	 
-	    // Pass the activity result to the login button.
-	    if (mTwitterLoginButton != null) 
-	    	mTwitterLoginButton.onActivityResult(requestCode, resultCode, data);
+	  //widget to perform login
+  		mTwitterLoginButton = new TwitterLoginButton(getActivity());	
+  		mTwitterLoginButton.setCallback(new Callback<TwitterSession>() {
+  			@Override
+  			public void success(Result<TwitterSession> result) {
+  				mOnLoginListener.onTwitterLogin();
+  			}
+  			
+  			@Override
+  			public void failure(TwitterException exception) {
+  			// Do something on failure
+  			}
+  		});	
 	}
 	
 	@Override
@@ -75,7 +79,7 @@ public class TwitterLoginFragment extends BaseFragment {
 	    View view = inflater.inflate(getLayout(), container, false);
 	    
 	    final ImageView providerIcon = (ImageView) view.findViewById(R.id.providerIcon);
-	    final Animation birdAnimation = AnimationUtils.loadAnimation(mActivity, R.anim.circle);
+	    final Animation birdAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.circle);
 	    providerIcon.setOnClickListener(new View.OnClickListener() {
 		    @Override
 		    public void onClick(View v) {
@@ -93,20 +97,15 @@ public class TwitterLoginFragment extends BaseFragment {
 			}
 		});
 		
-		//invisible widget to perform login
-		mTwitterLoginButton = new TwitterLoginButton(mActivity);	
-		mTwitterLoginButton.setCallback(new Callback<TwitterSession>() {
-			@Override
-			public void success(Result<TwitterSession> result) {
-				mOnLoginListener.onTwitterLogin();
-			}
-			
-			@Override
-			public void failure(TwitterException exception) {
-			// Do something on failure
-			}
-		});				
 		return view;
+	}
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+	    super.onActivityResult(requestCode, resultCode, data);	 
+	    // Pass the activity result to the login button.
+	    if (mTwitterLoginButton != null) 
+	    	mTwitterLoginButton.onActivityResult(requestCode, resultCode, data);
 	}
 	
 	public interface OnLTwitteroginListener {

@@ -24,7 +24,6 @@
 		android:id="@+id/dateView"
 		style="@style/Timestamp"
 		android:layout_gravity="bottom|center"
-		android:gravity="bottom|center"
 		android:layout_below="@+id/messageView"/>
 	
 </RelativeLayout>

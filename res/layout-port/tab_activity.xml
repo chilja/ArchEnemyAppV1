@@ -3,13 +3,15 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:orientation="vertical"
-	android:background="@drawable/symbol_port">
+	android:background="@drawable/symbol_port"
+	android:animateLayoutChanges="true">
 	
     <LinearLayout 
         android:layout_width="match_parent"
 		android:layout_height="48dp"
 		android:animateLayoutChanges="true"
 		android:paddingTop="8dp">
+		
       	<ImageView
 			android:src="@drawable/facebook_medium"
 			android:id="@+id/facebookButton"
@@ -17,8 +19,8 @@
 			android:layout_height="32dp"
 			android:layout_gravity="center_horizontal"
 			android:layout_weight="1"
-			android:layout_margin="1dp"
-		/>
+			android:layout_margin="1dp"/>
+      	
         <ImageView
 			android:src="@drawable/twitter"
 			android:id="@+id/twitterButton"
@@ -26,13 +28,12 @@
 			android:layout_height="32dp"
 			android:layout_gravity="center_horizontal"
 			android:layout_weight="1"
-			android:layout_margin="1dp"
-		/>
+			android:layout_margin="1dp"/>
+        
     </LinearLayout>
            	
 	<FrameLayout
 		android:id="@+id/fragmentContainer"
-		android:animateLayoutChanges="true"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent" />
 	

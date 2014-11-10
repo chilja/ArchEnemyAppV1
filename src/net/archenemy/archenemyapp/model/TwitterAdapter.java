@@ -32,7 +32,36 @@ public class TwitterAdapter
 	private static final String KEY = "DqhZFiXkeerd1gaqeD1reFmVX";
 	private static final String SECRET = "pcpFXsv1YFqQ1BncuQw5qzBMvl9Ow3TUPKG2oFHnuR5RG9e2Ab";
 	
-    public TwitterAdapter(Activity activity) {
+	private ArrayList<FeedTask> mFeedTasks = new ArrayList<FeedTask>();
+	private ArrayList<UserTask> mUserTasks = new ArrayList<UserTask>();
+	
+	private static TwitterAdapter mTwitterAdapter;
+	
+	public static TwitterAdapter getInstance() {
+		if (mTwitterAdapter == null)
+			mTwitterAdapter = new TwitterAdapter();
+		return mTwitterAdapter;
+	}
+	
+    private TwitterAdapter() {
+	}
+    
+    public void onDestroy() {
+		if (!mFeedTasks.isEmpty()) {
+			for (FeedTask task:mFeedTasks) {
+				task.cancel(true);
+			}
+			mFeedTasks.clear();
+		}
+		Log.i(TAG, "all feed tasks cancelled");
+		
+		if (!mUserTasks.isEmpty()) {
+			for (UserTask task:mUserTasks) {
+				task.cancel(true);
+			}
+			mUserTasks.clear();
+		}
+		Log.i(TAG, "all user tasks cancelled");
 	}
 
     public boolean isEnabled() {
@@ -54,7 +83,9 @@ public class TwitterAdapter
 	public void makeUserRequest(Long userId, UserCallback callback) {
 		if (isLoggedIn()) {
 			Log.i(TAG, "Get user ...");
-			new UserTask(callback).execute(userId);
+			UserTask task = new UserTask(callback);
+			mUserTasks.add(task);
+			task.execute(userId);
 		}
 	}
 	
@@ -68,7 +99,9 @@ public class TwitterAdapter
 	public void makeFeedRequest(Long id, final FeedCallback callback) {
 		if (isEnabled() && isLoggedIn()) {
 			Log.d(TAG, "Get feeds...");
-			new FeedTask(callback, id).execute();
+			FeedTask task = new FeedTask(callback, id);
+			mFeedTasks.add(task);
+			task.execute();
 		}
 	}
 
@@ -171,7 +204,8 @@ public class TwitterAdapter
 		}
 
 		@Override
-		protected void onPostExecute(ArrayList<FeedElement> elements) {			
+		protected void onPostExecute(ArrayList<FeedElement> elements) {	
+			mFeedTasks.remove(this);
 			mCallback.onFeedRequestCompleted(elements, mId);
 		}
 	}
@@ -201,6 +235,7 @@ public class TwitterAdapter
 
 		@Override
 		protected void onPostExecute(User user) {
+			mUserTasks.remove(this);
 			mCallback.onUserRequestCompleted(user);
 		}
 	}

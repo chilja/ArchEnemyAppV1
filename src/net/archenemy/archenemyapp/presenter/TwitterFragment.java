@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import net.archenemy.archenemyapp.R;
+import net.archenemy.archenemyapp.model.DataAdapter;
 import net.archenemy.archenemyapp.model.SocialMediaUser;
 import net.archenemy.archenemyapp.model.TwitterAdapter;
 import net.archenemy.archenemyapp.model.TwitterAdapter.UserCallback;
@@ -44,9 +45,9 @@ public class TwitterFragment extends BaseFragment{
 
         mViewPager = (ViewPager) mView.findViewById(R.id.pager);
         
-        mSocialMediaUsers = mDataAdapter.getEnabledSocialMediaUsers();
+        mSocialMediaUsers = DataAdapter.getEnabledSocialMediaUsers(getActivity());
         
-        mTwitterAdapter = new TwitterAdapter(mActivity);
+        mTwitterAdapter = TwitterAdapter.getInstance();
         
         refresh();
 	    	
@@ -63,15 +64,12 @@ public class TwitterFragment extends BaseFragment{
 	}
 	
 	public void refresh(){ 	
-		if (mFragmentManager != null && mViewPager != null) {
-			synchronized (mFragmentManager) {
-
-		 	mPagerAdapter = new TwitterPagerAdapter(mFragmentManager);	        
-				if (mPagerAdapter != null) {
-					mViewPager.setOffscreenPageLimit(6);
-					mViewPager.setAdapter(mPagerAdapter);
-				}
-			}
+		if (getFragmentManager() != null && mViewPager != null) {
+		 	mPagerAdapter = new TwitterPagerAdapter(getFragmentManager());	        
+			if (mPagerAdapter != null) {
+				mViewPager.setOffscreenPageLimit(6);
+				mViewPager.setAdapter(mPagerAdapter);
+			}			
 		}
 	}
 	
@@ -101,7 +99,7 @@ public class TwitterFragment extends BaseFragment{
 	    protected TwitterPageFragment getNewFragment(int i) {
 			TwitterPageFragment fragment = new TwitterPageFragment();
 		    Bundle args = new Bundle();
-	        args.putInt(TwitterPageFragment.USER_ID, i+1);
+	        args.putInt(TwitterPageFragment.USER_ID, mSocialMediaUsers.get(i).getUserId());
 	        fragment.setArguments(args);
 	        return fragment;	
 		}

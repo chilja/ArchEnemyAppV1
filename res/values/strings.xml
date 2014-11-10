@@ -43,5 +43,8 @@
         <item>TWITTER</item>
     </string-array>
     
-    	
+    <string name="account_logged_in">Logged in as </string>
+    <string name="account_logged_out">Not logged in </string>
+    <string name="account_offline">You are offline</string>
+    
 </resources>

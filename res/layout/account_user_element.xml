@@ -8,17 +8,10 @@
    
 	<TextView
 		android:id="@+id/subTextView"
-		android:layout_height="wrap_content"
-		android:layout_width="200dp"
-		android:gravity="center"
-		android:textSize="14sp" />
+		style="@style/SubText" />
 	
 	<TextView
 	    android:id="@+id/userNameView"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:gravity="center"
-	    android:textSize="18sp" 
-	    android:textStyle="bold"/>
+	    style="@style/UserName"/>
 	
 </LinearLayout>

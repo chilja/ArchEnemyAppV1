@@ -5,9 +5,6 @@
     <string name="twitter_login">Log in with Twitter</string>
     <string name="twitter_logout">Log out</string>
     <string name="twitter_cancel">Cancel</string>
-    <string name="twitter_logged_in">Logged in as </string>
-    <string name="twitter_logged_out">Not logged in</string>
-    <string name="twitter_offline">You are offline</string>
     <string name="twitter_loading">Loading from Twitter...</string>
     
     <string name="pref_twitter_title">Twitter</string>

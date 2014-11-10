@@ -1,5 +1,4 @@
-
- package net.archenemy.archenemyapp.presenter;
+package net.archenemy.archenemyapp.presenter;
 
 import java.io.Serializable;
 

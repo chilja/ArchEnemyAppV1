@@ -17,12 +17,12 @@ public abstract class AccountFragment extends BaseFragment {
 	protected ProviderAdapter mProviderAdapter;
 
 	protected void init() {
-		if (mProviderAdapter.isLoggedIn()) {
+		if (mProviderAdapter != null && mProviderAdapter.isLoggedIn()) {
     		setLoggedIn();
 	    } else {
 	    	setLoggedOut();
     	}
-		if (Utility.isConnectedToNetwork(mActivity, false)) {
+		if (Utility.isConnectedToNetwork(getActivity(), false)) {
 			setOnline();
 		} else {
 			setOffline();
@@ -32,20 +32,20 @@ public abstract class AccountFragment extends BaseFragment {
 	protected void setLoggedOut(){
 		mLoginButton.setEnabled(true);
 		mLoginButton.setTextColor(getResources().getColor(Constants.WHITE));		
-		mSubtext.setText(R.string.facebook_logged_out);		
+		mSubtext.setText(R.string.account_logged_out);		
 		mUserNameView.setText(null);  	
 	}
 
 	protected void setLoggedIn(){
 		mLoginButton.setEnabled(true);
 		mLoginButton.setTextColor(getResources().getColor(Constants.WHITE));		
-		mSubtext.setText(R.string.facebook_logged_in);
+		mSubtext.setText(R.string.account_logged_in);
 	}
 	
 	protected void setOffline() {
 		mLoginButton.setEnabled(false);
 		mLoginButton.setTextColor(getResources().getColor(Constants.LIGHTGREY));		
-		mSubtext.setText(R.string.facebook_offline);
+		mSubtext.setText(R.string.account_offline);
 		mUserNameView.setText(null);
 	}
 	

@@ -3,7 +3,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
     
-     <ImageView 
+     <ImageView
         android:src="@drawable/twitter"
         android:id="@+id/providerIcon"
         android:layout_width="100dp"
@@ -18,9 +18,7 @@
     	android:layout_height="0dp"
     	android:layout_gravity="center"
     	android:layout_weight="1"
-    	style="@style/MediumText"
-    	android:gravity="center"
-    	android:textStyle="bold"/>
+    	style="@style/LoginHeader"/>
     
     <include layout="@layout/twitter_button" 
         android:layout_width="220dp"
